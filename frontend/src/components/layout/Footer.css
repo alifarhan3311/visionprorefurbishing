@@ -1,0 +1,131 @@
+.footer {
+  background-color: #0f172a;
+  color: #cbd5e1;
+  padding: 80px 0 0 0;
+  margin-top: 80px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 0.8fr 1.2fr;
+  gap: 40px;
+  padding-bottom: 60px;
+}
+
+.footer-brand {
+  margin-bottom: 25px;
+}
+
+.footer-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-logo-img {
+  height: 48px;
+  width: auto;
+  filter: brightness(0) invert(1); /* Makes the logo white for the dark footer */
+  opacity: 0.9;
+}
+
+.footer-brand-name {
+  font-size: 22px;
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.5px;
+}
+
+.footer-brand-name span {
+  color: var(--primary-color);
+}
+
+.footer-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  color: #94a3b8;
+}
+
+.social-links {
+  display: flex;
+  gap: 15px;
+}
+
+.social-links a {
+  color: #94a3b8;
+  transition: color 0.2s;
+}
+
+.social-links a:hover {
+  color: var(--primary-color);
+}
+
+.footer-title {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links li {
+  margin-bottom: 12px;
+}
+
+.footer-links li a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.footer-links li a:hover {
+  color: white;
+  padding-left: 5px;
+}
+
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contact-item {
+  display: flex;
+  gap: 15px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.contact-icon {
+  color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+.footer-bottom {
+  border-top: 1px solid #1e293b;
+  padding: 25px 0;
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+}
+
+@media (max-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}
