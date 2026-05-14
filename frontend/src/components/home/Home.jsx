@@ -47,7 +47,7 @@ const Home = () => {
       {/* Hero Section */}
       <section className="hero-slider">
         <div className="hero-content reveal">
-          <h1 className="hero-title shimmer-text">asd</h1>
+          <h1 className="hero-title shimmer-text">Premium B2B Parts & Devices</h1>
           <p className="hero-subtitle">Wholesale pricing on Apple, Samsung, and more. Register for a B2B account to unlock tier-based bulk discounts.</p>
           <button className="hero-btn">Shop The Catalog <ArrowRight size={18} style={{ verticalAlign: 'middle', marginLeft: '8px' }} /></button>
         </div>
