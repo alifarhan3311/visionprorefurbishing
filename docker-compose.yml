@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6
+    container_name: visionpro-db
+    restart: always
+    networks:
+      - vision-pro
+    volumes:
+      - mongo_backup_volume:/data/db
+
+  backend:
+    image: alifarhan3311/visionpro-backend:latest
+    container_name: visionpro-backend
+    restart: always
+    networks:
+      - vision-pro
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/visionpro
+      - JWT_SECRET=mobilesentrix_super_secret_key  
+    volumes:
+      - vision_pro_backup_uploads:/app/uploads
+    depends_on:
+      - mongodb
+
+  frontend:
+    image: alifarhan3311/visionpro-frontend:latest
+    container_name: visionpro-frontend
+    ports:
+      - "8083:80"
+    networks:
+      - vision-pro
+    volumes:
+      - vision_pro_backup_uploads:/var/www/uploads:ro
+    depends_on:
+      - backend
+
+networks:
+  vision-pro:
+    driver: bridge
+
+volumes:
+  vision_pro_backup_uploads:
+  mongo_backup_volume:

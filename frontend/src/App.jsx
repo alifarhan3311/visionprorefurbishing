@@ -83,7 +83,7 @@ function App() {
           <h3>Fast B2B Shipping</h3>
           <p>We provide expedited shipping across Canada. Orders placed before 3 PM EST are shipped the same day.</p>
           <ul>
-            <li>Standard (3-5 Days): $15 flat rate</li>
+            <li>Standard (3-5 Days): $150 flat rate</li>
             <li>Expedited (1-2 Days): $25</li>
             <li>Free shipping on orders over $500</li>
           </ul>
