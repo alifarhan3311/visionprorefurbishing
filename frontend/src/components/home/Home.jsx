@@ -33,7 +33,7 @@ const Home = () => {
 
 
   const getIcon = (type) => {
-    switch(type) {
+    switch (type) {
       case 'preowned': return <Smartphone size={40} />;
       case 'components': return <Cpu size={40} />;
       default: return <Box size={40} />;
@@ -43,15 +43,15 @@ const Home = () => {
   return (
     <div className="home-container">
       <Header />
-      
+
       {/* Hero Section */}
       <section className="hero-slider">
         <div className="hero-content reveal">
-          <h1 className="hero-title shimmer-text">Premium B2B Parts & Devices</h1>
+          <h1 className="hero-title shimmer-text">asd</h1>
           <p className="hero-subtitle">Wholesale pricing on Apple, Samsung, and more. Register for a B2B account to unlock tier-based bulk discounts.</p>
           <button className="hero-btn">Shop The Catalog <ArrowRight size={18} style={{ verticalAlign: 'middle', marginLeft: '8px' }} /></button>
         </div>
-        
+
         {/* Placeholder for slider background graphics */}
         <div style={{ position: 'absolute', right: '-5%', top: '10%', opacity: 0.05, transform: 'rotate(15deg)' }}>
           <Smartphone size={400} />
@@ -60,9 +60,9 @@ const Home = () => {
 
       {/* Main Content */}
       <div className="container" style={{ padding: '0 20px' }}>
-        
+
         <h2 className="section-title">Latest Inventory</h2>
-        
+
         {loading ? (
           <p style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>Loading products...</p>
         ) : products.length === 0 ? (
@@ -74,8 +74,8 @@ const Home = () => {
         ) : (
           <div className="product-grid">
             {products.map((product, index) => (
-              <div 
-                className="product-card reveal" 
+              <div
+                className="product-card reveal"
                 key={product._id}
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
@@ -94,7 +94,7 @@ const Home = () => {
                 <div className="product-category">{product.productType}</div>
                 <Link to={`/product/${product._id}`} className="product-name">{product.name}</Link>
                 <div className="product-price">${product.retailPrice}</div>
-                <button 
+                <button
                   className="add-to-cart-btn"
                   onClick={() => {
                     addToCart(product, 1);
