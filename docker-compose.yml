@@ -17,7 +17,7 @@ services:
     networks:
       - vision-pro
     environment:
-      - MONGO_URI=mongodb://mongodb:27017/visionpro
+      - MONGO_URI=mongodb+srv://alifarhan1531_db_user:azadar3311@cluster0.57zf8ot.mongodb.net/
       - JWT_SECRET=mobilesentrix_super_secret_key  
     volumes:
       - vision_pro_backup_uploads:/app/uploads
