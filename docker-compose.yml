@@ -9,11 +9,11 @@ services:
       - vision-pro
     environment:
       - MONGO_URI=mongodb+srv://alifarhan1531_db_user:azadar3311@cluster0.57zf8ot.mongodb.net/
-      - JWT_SECRET=mobilesentrix_super_secret_key  
+      - JWT_SECRET=mobilesentrix_super_secret_key
     volumes:
       - vision_pro_backup_uploads:/app/uploads
 
- frontend:
+  frontend:
     image: alifarhan3311/visionpro-frontend:latest
     container_name: visionpro-frontend
     ports:
