@@ -41,6 +41,8 @@ const productSchema = new mongoose.Schema({
     warrantyPeriod: { type: String }
   },
 
+  stockQuantity: { type: Number, default: 10 },
+
   status: {
     type: String,
     enum: ['in_stock', 'out_of_stock', 'discontinued'],

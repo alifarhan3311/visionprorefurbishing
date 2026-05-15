@@ -6,11 +6,12 @@ import { Trash2 } from 'lucide-react';
 import '../user/UserLayout.css'; // Reusing some card styles
 
 const Cart = () => {
-  const { cartItems, removeFromCart, updateCartQty } = useContext(CartContext);
+  const { cartItems: contextCartItems, removeFromCart, updateCartQty } = useContext(CartContext);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const cartTotal = cartItems.reduce((acc, item) => acc + item.qty * (item.price || 0), 0).toFixed(2);
+  const cartItems = (Array.isArray(contextCartItems) ? contextCartItems : []).filter(item => item !== null && typeof item === 'object');
+  const cartTotal = cartItems.reduce((acc, item) => acc + (item.qty || 0) * (item.price || 0), 0).toFixed(2);
 
   const checkoutHandler = () => {
     if (!user) {
@@ -47,7 +48,7 @@ const Cart = () => {
                 {cartItems.map(item => (
                   <tr key={item.product} style={{ borderBottom: '1px solid #e2e8f0' }}>
                     <td style={{ padding: '15px', fontWeight: '500' }}>{item.name}</td>
-                    <td style={{ padding: '15px', textAlign: 'center' }}>${(item.price || 0).toFixed(2)}</td>
+                    <td style={{ padding: '15px', textAlign: 'center' }}>${Number(item.price || 0).toFixed(2)}</td>
                     <td style={{ padding: '15px', textAlign: 'center' }}>
                       <select 
                         value={item.qty} 

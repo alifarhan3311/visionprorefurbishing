@@ -4,6 +4,7 @@ import { CartContext } from '../../context/CartContext';
 import api from '../../services/api';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { CheckCircle2 } from 'lucide-react';
 import '../user/UserLayout.css';
 
 // Replace with your Stripe publishable key
@@ -67,6 +68,7 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState('Store Credit / Invoice');
   const [loading, setLoading] = useState(false);
   const [clientSecret, setClientSecret] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const cartTotal = cartItems.reduce((acc, item) => acc + item.qty * item.price, 0);
   const tax = cartTotal * 0.08;
@@ -108,8 +110,7 @@ const Checkout = () => {
 
       if (response.data.success) {
         clearCart();
-        alert('Order placed successfully!');
-        navigate('/dashboard/orders');
+        setShowSuccessModal(true);
       }
     } catch (error) {
       console.error('Error placing order:', error);
@@ -210,6 +211,31 @@ const Checkout = () => {
           
         </div>
       </div>
+
+      {showSuccessModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
+          <div style={{ background: 'white', padding: '40px', borderRadius: '24px', textAlign: 'center', maxWidth: '400px', width: '90%', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', animation: 'modalPop 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+            <div style={{ width: '80px', height: '80px', background: '#ecfdf5', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px auto' }}>
+              <CheckCircle2 size={40} color="#10b981" />
+            </div>
+            <h2 style={{ margin: '0 0 12px 0', color: '#0f172a', fontSize: '24px', fontWeight: '700', fontFamily: "'Inter', sans-serif" }}>Order Confirmed!</h2>
+            <p style={{ color: '#64748b', marginBottom: '32px', fontSize: '15px', lineHeight: '1.5' }}>Your B2B order has been successfully placed. We're getting it ready for shipment.</p>
+            <button 
+              onClick={() => { setShowSuccessModal(false); navigate('/dashboard/orders'); }}
+              className="admin-btn-primary"
+              style={{ padding: '14px 24px', fontSize: '16px', width: '100%', backgroundColor: '#10b981', borderRadius: '12px', fontWeight: '600' }}
+            >
+              View My Orders
+            </button>
+          </div>
+          <style dangerouslySetInnerHTML={{ __html: `
+            @keyframes modalPop {
+              0% { transform: scale(0.9) translateY(20px); opacity: 0; }
+              100% { transform: scale(1) translateY(0); opacity: 1; }
+            }
+          `}} />
+        </div>
+      )}
     </div>
   );
 };

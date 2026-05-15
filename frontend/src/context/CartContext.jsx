@@ -9,8 +9,13 @@ export const CartProvider = ({ children }) => {
 
   useEffect(() => {
     const savedCart = localStorage.getItem('cartItems');
-    if (savedCart) {
-      setCartItems(JSON.parse(savedCart));
+    if (savedCart && savedCart !== "undefined" && savedCart !== "null") {
+      try {
+        const parsed = JSON.parse(savedCart);
+        setCartItems(Array.isArray(parsed) ? parsed : []);
+      } catch (e) {
+        setCartItems([]);
+      }
     }
   }, []);
 

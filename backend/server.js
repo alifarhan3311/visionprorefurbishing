@@ -1,6 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const rateLimit = require('express-rate-limit');
+const hpp = require('hpp');
 require('dotenv').config();
 
 const categoryRoutes = require('./routes/categoryRoutes');
@@ -18,20 +23,55 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// Security Middlewares (OWASP Top 10)
+
+// 1. Set security HTTP headers
+app.use(helmet({ crossOriginResourcePolicy: false })); // Allowed for cross-origin images
+
+// 2. Prevent Cross-Site Request Forgery (CSRF) via CORS configuration
 app.use(cors({
-  origin: ['http://localhost:8083', 'http://YOUR_SERVER_IP:8083'], // Frontend ports allow karein
+  origin: ['http://localhost:8083', 'http://localhost:5173', 'http://YOUR_SERVER_IP:8083'], 
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// 3. Body parser, reading data from body into req.body (with size limit against DOS attacks)
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+
+// 4. Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+
+// 5. Data sanitization against Cross-Site Scripting (XSS)
+app.use(xss());
+
+// 6. Prevent HTTP Parameter Pollution
+app.use(hpp({
+  whitelist: [
+    'price', 'category', 'qty', 'rating' // Allow array of these parameters if needed
+  ]
+}));
+
+// 7. Limit requests from same API (Rate Limiting to prevent Brute Force & DOS)
+const limiter = rateLimit({
+  max: 1000, // Allow 1000 requests from the same IP
+  windowMs: 60 * 60 * 1000, // In 1 hour
+  message: 'Too many requests from this IP, please try again in an hour!'
+});
+app.use('/api', limiter);
+
+// 8. Stricter Rate Limiting for Authentication routes (Brute Force prevention)
+const authLimiter = rateLimit({
+  max: 20, // Only 20 login/signup attempts per hour
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many login attempts from this IP, please try again after an hour'
+});
+app.use('/api/v1/auth', authLimiter);
 
 // Database Connection
 mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://alifarhan1531_db_user:azadar3311@cluster0.57zf8ot.mongodb.net/')
-.then(() => console.log('MongoDB Connected Successfully'))
-.catch(err => console.error('MongoDB Connection Error:', err));
+  .then(() => console.log('MongoDB Connected Successfully'))
+  .catch(err => console.error('MongoDB Connection Error:', err));
 
 // Mount Routes
 app.use('/api/v1/categories', categoryRoutes);
