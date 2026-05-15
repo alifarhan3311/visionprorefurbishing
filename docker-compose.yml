@@ -12,10 +12,8 @@ services:
       - JWT_SECRET=mobilesentrix_super_secret_key  
     volumes:
       - vision_pro_backup_uploads:/app/uploads
-    depends_on:
-      - mongodb
 
-  frontend:
+ frontend:
     image: alifarhan3311/visionpro-frontend:latest
     container_name: visionpro-frontend
     ports:
