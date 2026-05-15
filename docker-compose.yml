@@ -1,15 +1,6 @@
 version: '3.8'
 
 services:
-  mongodb:
-    image: mongo:6
-    container_name: visionpro-db
-    restart: always
-    networks:
-      - vision-pro
-    volumes:
-      - mongo_backup_volume:/data/db
-
   backend:
     image: alifarhan3311/visionpro-backend:latest
     container_name: visionpro-backend
@@ -42,4 +33,3 @@ networks:
 
 volumes:
   vision_pro_backup_uploads:
-  mongo_backup_volume:
