@@ -31,7 +31,7 @@ app.use(helmet({ crossOriginResourcePolicy: false })); // Allowed for cross-orig
 
 // 2. Prevent Cross-Site Request Forgery (CSRF) via CORS configuration
 app.use(cors({
-  origin: ['http://localhost:8083', 'http://localhost:5173', 'http://YOUR_SERVER_IP:8083'], 
+  origin: ['http://localhost:8083', 'http://localhost:5173', 'https://your-vercel-app.vercel.app'], 
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
@@ -79,7 +79,7 @@ const authLimiter = rateLimit({
 app.use('/api/v1/auth', authLimiter);
 
 // Database Connection
-mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/mobilesentrix')
+mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://alifarhan1531_db_user:azadar3311@cluster0.57zf8ot.mongodb.net/')
   .then(() => console.log('MongoDB Connected Successfully'))
   .catch(err => console.error('MongoDB Connection Error:', err));
 
@@ -111,5 +111,7 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`🚀 Server is blasting off on port ${PORT}`);
 });
+
+module.exports = app;
