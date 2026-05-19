@@ -5,13 +5,13 @@ const { getBuybackPricing, upsertBuybackPricing } = require('../controllers/buyb
 const { protect, admin } = require('../middleware/authMiddleware');
 
 router.route('/')
-  .post(createBuyback)
-  .get(getBuybacks);
+  .post(protect, createBuyback)
+  .get(protect, admin, getBuybacks);
 
 router.route('/pricing')
   .get(getBuybackPricing)
   .post(protect, admin, upsertBuybackPricing);
 
-router.put('/:id/status', updateBuybackStatus);
+router.put('/:id/status', protect, admin, updateBuybackStatus);
 
 module.exports = router;
