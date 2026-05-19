@@ -179,6 +179,10 @@ const ProductsManager = () => {
     setName(''); setSku(''); setBaseRetailPrice('');
     setImei(''); setBatteryHealth(''); setImageUrl('');
     setSelectedCategory(''); setBadge('');
+    setProductType('parts');
+    setGrade('Grade A');
+    setMoq('1');
+    setQualityType('Premium Aftermarket');
   };
 
   const filteredProducts = Array.isArray(products) ? products.filter(p => 
@@ -388,34 +392,60 @@ const ProductsManager = () => {
             <div className="inspector-body">
               <form onSubmit={handleSubmit} className="premium-form">
                 <div className="inspector-section">
-                   <label>Identity Transformation</label>
-                   <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Product Name" required />
-                   <div className="form-stack mt-3">
-                     <div className="input-with-icon">
-                       <DollarSign size={14} />
-                       <input type="number" step="0.01" value={baseRetailPrice} onChange={e => setBaseRetailPrice(e.target.value)} placeholder="Price" required />
-                     </div>
-                     <select value={badge} onChange={e => setBadge(e.target.value)}>
-                        <option value="">No Status Badge</option>
-                        <option value="New Arrival">New Arrival</option>
-                        <option value="Hot Seller">Hot Seller</option>
-                        <option value="Certified">Certified</option>
-                     </select>
-                   </div>
+                  <label>Structural Position</label>
+                  <div className="form-stack">
+                    <select value={productType} onChange={(e) => setProductType(e.target.value)}>
+                      <option value="parts">Repair Parts</option>
+                      <option value="preowned">Pre-Owned Device</option>
+                      <option value="components">IC Components</option>
+                    </select>
+                    <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} required>
+                      <option value="">Category...</option>
+                      {categories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="inspector-section">
+                  <label>Identity Transformation</label>
+                  <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Full Product Designation" required />
+                  <div className="form-stack mt-3">
+                    <input type="text" value={sku} onChange={e => setSku(e.target.value)} placeholder="System SKU" required />
+                    <div className="input-with-icon">
+                      <DollarSign size={14} />
+                      <input type="number" step="0.01" value={baseRetailPrice} onChange={e => setBaseRetailPrice(e.target.value)} placeholder="Unit Valuation" required />
+                    </div>
+                    <select value={badge} onChange={e => setBadge(e.target.value)}>
+                      <option value="">No Status Badge</option>
+                      <option value="New Arrival">New Arrival</option>
+                      <option value="Hot Seller">Hot Seller</option>
+                      <option value="Certified">Certified</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="inspector-section">
+                  <label>Asset Management</label>
+                  <div className="file-box-custom">
+                    <input type="file" onChange={uploadFileHandler} />
+                    <div className="meta">
+                      {uploading ? "Transmitting..." : (imageUrl ? "Verified ✓" : "Upload High-Res Asset")}
+                    </div>
+                  </div>
                 </div>
 
                 {productType === 'preowned' && (
-                  <div className="inspector-section">
-                    <label>Engineering Matrix</label>
-                    <input type="text" value={imei} onChange={e => setImei(e.target.value)} placeholder="IMEI" required />
-                    <div className="form-stack mt-3">
-                      <input type="number" value={batteryHealth} onChange={e => setBatteryHealth(e.target.value)} placeholder="Battery Health" required />
-                      <select value={grade} onChange={e => setGrade(e.target.value)}>
-                        <option value="Grade A">Grade A</option>
-                        <option value="Grade B">Grade B</option>
-                        <option value="Grade C">Grade C</option>
-                      </select>
+                  <div className="inspector-section dynamic-fade">
+                    <label>Engineering Spec</label>
+                    <div className="form-stack">
+                      <input type="text" value={imei} onChange={e => setImei(e.target.value)} placeholder="IMEI / Serial" required />
+                      <input type="number" value={batteryHealth} onChange={e => setBatteryHealth(e.target.value)} placeholder="Health %" required />
                     </div>
+                    <select value={grade} onChange={e => setGrade(e.target.value)} style={{ marginTop: '12px' }}>
+                      <option value="Grade A">Grade A (Pristine)</option>
+                      <option value="Grade B">Grade B (Standard)</option>
+                      <option value="Grade C">Grade C (Refurbished)</option>
+                    </select>
                   </div>
                 )}
 
