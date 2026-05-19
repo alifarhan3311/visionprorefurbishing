@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Smartphone, ArrowRight, Cpu, Box } from 'lucide-react';
 import Header from '../layout/Header';
 import { CartContext } from '../../context/CartContext';
@@ -9,8 +9,11 @@ import './Home.css';
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [slides, setSlides] = useState([]);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const { addToCart } = useContext(CartContext);
   const { id: categoryId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -31,6 +34,28 @@ const Home = () => {
     fetchProducts();
   }, [categoryId]);
 
+  useEffect(() => {
+    const fetchSlides = async () => {
+      try {
+        const response = await api.get('/heroslider');
+        if (response.data.success && Array.isArray(response.data.data)) {
+          setSlides(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching hero slides", error);
+      }
+    };
+    fetchSlides();
+  }, []);
+
+  // Auto-play slideshow timer
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [slides]);
 
   const getIcon = (type) => {
     switch (type) {
@@ -40,22 +65,68 @@ const Home = () => {
     }
   };
 
+  const handleCtaClick = (linkUrl) => {
+    if (!linkUrl) return;
+    if (linkUrl.startsWith('http')) {
+      window.open(linkUrl, '_blank');
+    } else {
+      navigate(linkUrl);
+    }
+  };
+
   return (
     <div className="home-container">
       <Header />
 
-      {/* Hero Section */}
-      <section className="hero-slider">
-        <div className="hero-content reveal">
-          <h1 className="hero-title shimmer-text">Premium B2B Parts & Devices</h1>
-          <p className="hero-subtitle">Wholesale pricing on Apple, Samsung, and more. Register for a B2B account to unlock tier-based bulk discounts.</p>
-          <button className="hero-btn">Shop The Catalog <ArrowRight size={18} style={{ verticalAlign: 'middle', marginLeft: '8px' }} /></button>
-        </div>
+      {/* Hero Section Dynamic Carousel */}
+      <section className="hero-slider-container">
+        {slides.length > 0 ? (
+          slides.map((slide, idx) => (
+            <div 
+              key={slide._id} 
+              className={`hero-slide ${idx === currentSlide ? 'active' : ''}`}
+              style={{ backgroundImage: `url(${slide.imageUrl})` }}
+            >
+              <div className="hero-slide-overlay"></div>
+              <div className="hero-slide-content">
+                {slide.title && <h1 className="hero-title shimmer-text">{slide.title}</h1>}
+                {slide.subtitle && <p className="hero-subtitle">{slide.subtitle}</p>}
+                {slide.linkUrl && (
+                  <button className="hero-btn" onClick={() => handleCtaClick(slide.linkUrl)}>
+                    Shop The Catalog <ArrowRight size={18} style={{ verticalAlign: 'middle', marginLeft: '8px' }} />
+                  </button>
+                )}
+              </div>
+            </div>
+          ))
+        ) : (
+          /* Fallback static slider */
+          <div className="hero-slide active" style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' }}>
+            <div className="hero-slide-content" style={{ opacity: 1, transform: 'translateY(0)' }}>
+              <h1 className="hero-title shimmer-text">Premium B2B Parts & Devices</h1>
+              <p className="hero-subtitle">Wholesale pricing on Apple, Samsung, and more. Register for a B2B account to unlock tier-based bulk discounts.</p>
+              <button className="hero-btn" onClick={() => navigate('/shop')}>
+                Shop The Catalog <ArrowRight size={18} style={{ verticalAlign: 'middle', marginLeft: '8px' }} />
+              </button>
+            </div>
+            <div style={{ position: 'absolute', right: '-5%', top: '10%', opacity: 0.05, transform: 'rotate(15deg)', zIndex: 1 }}>
+              <Smartphone size={400} />
+            </div>
+          </div>
+        )}
 
-        {/* Placeholder for slider background graphics */}
-        <div style={{ position: 'absolute', right: '-5%', top: '10%', opacity: 0.05, transform: 'rotate(15deg)' }}>
-          <Smartphone size={400} />
-        </div>
+        {/* Carousel Dots */}
+        {slides.length > 1 && (
+          <div className="slider-dots">
+            {slides.map((_, idx) => (
+              <button 
+                key={idx} 
+                className={`slider-dot ${idx === currentSlide ? 'active' : ''}`}
+                onClick={() => setCurrentSlide(idx)}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Main Content */}

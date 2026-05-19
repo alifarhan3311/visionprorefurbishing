@@ -10,8 +10,12 @@ const Signup = () => {
     email: '',
     password: ''
   });
+  const [step, setStep] = useState('register'); // 'register' | 'otp'
+  const [registeredEmail, setRegisteredEmail] = useState('');
+  const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
-  const { register, user } = useContext(AuthContext);
+  const [message, setMessage] = useState('');
+  const { register, verifyEmail, user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,6 +34,20 @@ const Signup = () => {
     
     const result = await register(formData);
     if (result.success) {
+      setRegisteredEmail(result.email);
+      setMessage(result.message);
+      setStep('otp');
+    } else {
+      setError(result.error);
+    }
+  };
+
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    
+    const result = await verifyEmail(registeredEmail, otp);
+    if (result.success) {
       navigate('/dashboard');
     } else {
       setError(result.error);
@@ -46,54 +64,73 @@ const Signup = () => {
         </div>
         
         {error && <div className="auth-error">{error}</div>}
+        {message && <div style={{backgroundColor: '#ecfdf5', color: '#047857', padding: '10px', borderRadius: '4px', marginBottom: '15px', fontSize: '13px'}}>{message}</div>}
         
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label>Full Name</label>
-            <input 
-              type="text" 
-              name="name"
-              value={formData.name} 
-              onChange={handleChange}
-              required 
-            />
-          </div>
+        {step === 'register' ? (
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="form-group">
+              <label>Full Name</label>
+              <input 
+                type="text" 
+                name="name"
+                value={formData.name} 
+                onChange={handleChange}
+                required 
+              />
+            </div>
 
-          <div className="form-group">
-            <label>Company / Store Name</label>
-            <input 
-              type="text" 
-              name="companyName"
-              value={formData.companyName} 
-              onChange={handleChange}
-              required 
-            />
-          </div>
-          
-          <div className="form-group">
-            <label>Email Address</label>
-            <input 
-              type="email" 
-              name="email"
-              value={formData.email} 
-              onChange={handleChange}
-              required 
-            />
-          </div>
-          
-          <div className="form-group">
-            <label>Password</label>
-            <input 
-              type="password" 
-              name="password"
-              value={formData.password} 
-              onChange={handleChange}
-              required 
-            />
-          </div>
-          
-          <button type="submit" className="auth-submit-btn">Create Account</button>
-        </form>
+            <div className="form-group">
+              <label>Company / Store Name</label>
+              <input 
+                type="text" 
+                name="companyName"
+                value={formData.companyName} 
+                onChange={handleChange}
+                required 
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>Email Address</label>
+              <input 
+                type="email" 
+                name="email"
+                value={formData.email} 
+                onChange={handleChange}
+                required 
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>Password</label>
+              <input 
+                type="password" 
+                name="password"
+                value={formData.password} 
+                onChange={handleChange}
+                required 
+              />
+            </div>
+            
+            <button type="submit" className="auth-submit-btn">Create Account</button>
+          </form>
+        ) : (
+          <form onSubmit={handleOtpSubmit} className="auth-form">
+            <div className="form-group">
+              <label>Enter 6-Digit OTP</label>
+              <input 
+                type="text" 
+                maxLength="6"
+                placeholder="000000"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                required 
+                style={{ textAlign: 'center', letterSpacing: '5px', fontSize: '20px', fontWeight: 'bold' }}
+              />
+            </div>
+            <button type="submit" className="auth-submit-btn">Verify Email & Login</button>
+          </form>
+        )}
         
         <div className="auth-footer">
           Already have an account? <Link to="/login">Login here</Link>

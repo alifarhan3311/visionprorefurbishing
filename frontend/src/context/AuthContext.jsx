@@ -51,14 +51,29 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await api.post('/auth/register', userData);
       if (res.data.success) {
-        localStorage.setItem('token', res.data.data.token);
-        setUser(res.data.data);
-        return { success: true };
+        // Backend now sends OTP, no token
+        return { success: true, email: res.data.email, message: res.data.message };
       }
     } catch (error) {
       return { 
         success: false, 
         error: error.response?.data?.error || 'Registration failed' 
+      };
+    }
+  };
+
+  const verifyEmail = async (email, otp) => {
+    try {
+      const res = await api.post('/auth/verify-email', { email, otp });
+      if (res.data.success) {
+        localStorage.setItem('token', res.data.data.token);
+        setUser(res.data.data);
+        return { success: true };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.error || 'Verification failed'
       };
     }
   };
@@ -70,7 +85,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, verifyEmail, logout }}>
       {children}
     </AuthContext.Provider>
   );

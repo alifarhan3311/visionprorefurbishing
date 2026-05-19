@@ -14,6 +14,7 @@ import AppointmentTickets from './components/admin/Tickets/AppointmentTickets';
 import CustomersManager from './components/admin/Customers/CustomersManager';
 import MarketingManager from './components/admin/Marketing/MarketingManager';
 import BlogManager from './components/admin/Marketing/BlogManager';
+import HeroSliderManager from './components/admin/Marketing/HeroSliderManager';
 import SettingsManager from './components/admin/SettingsManager';
 import UserLayout from './components/user/UserLayout';
 import DashboardHome from './components/user/DashboardHome';
@@ -26,6 +27,7 @@ import Appointments from './components/user/Appointments';
 import MarketingHub from './components/user/MarketingHub';
 import Login from './components/auth/Login';
 import Signup from './components/auth/Signup';
+import ForgotPassword from './components/auth/ForgotPassword';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Cart from './components/shop/Cart';
 import Checkout from './components/shop/Checkout';
@@ -116,6 +118,7 @@ function App() {
       {/* Auth Routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
       
       {/* Shop Routes */}
       <Route path="/cart" element={
@@ -158,6 +161,7 @@ function App() {
         <Route path="customers" element={<CustomersManager />} />
         <Route path="marketing" element={<MarketingManager />} />
         <Route path="blog" element={<BlogManager />} />
+        <Route path="heroslider" element={<HeroSliderManager />} />
         <Route path="settings" element={<SettingsManager />} />
       </Route>
     </Routes>

@@ -16,6 +16,16 @@ exports.registerUser = async (req, res) => {
     
     const userExists = await User.findOne({ email });
     if (userExists) {
+      if (!userExists.isEmailVerified) {
+        const otp = userExists.getEmailVerificationOtp();
+        await userExists.save({ validateBeforeSave: false });
+        await sendEmail({
+          to: userExists.email,
+          subject: 'Vision PRO - Email Verification OTP',
+          html: `<h1>Welcome to Vision PRO!</h1><p>Your OTP for email verification is: <strong style="font-size:24px;">${otp}</strong></p><p>It is valid for 10 minutes.</p>`
+        });
+        return res.status(200).json({ success: true, message: 'OTP resent to email. Please verify.', email: userExists.email });
+      }
       return res.status(400).json({ success: false, error: 'User already exists' });
     }
 
@@ -24,11 +34,52 @@ exports.registerUser = async (req, res) => {
       email,
       password,
       companyName,
-      // Temporarily making the first user an admin for testing purposes
-      role: email === 'admin@mobilesentrix.com' ? 'admin' : 'user'
+      role: 'user',
+      isEmailVerified: false
+    });
+
+    const otp = user.getEmailVerificationOtp();
+    await user.save({ validateBeforeSave: false });
+
+    await sendEmail({
+      to: user.email,
+      subject: 'Vision PRO - Email Verification OTP',
+      html: `<h1>Welcome to Vision PRO!</h1><p>Your OTP for email verification is: <strong style="font-size:24px;">${otp}</strong></p><p>It is valid for 10 minutes.</p>`
     });
 
     res.status(201).json({
+      success: true,
+      message: 'Registration successful. Please verify your OTP sent to your email.',
+      email: user.email
+    });
+  } catch (error) {
+    console.error('Registration Error:', error);
+    res.status(400).json({ success: false, error: error.message });
+  }
+};
+
+exports.verifyEmailOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ success: false, error: 'User not found' });
+
+    if (user.isEmailVerified) {
+      return res.status(400).json({ success: false, error: 'Email already verified' });
+    }
+
+    const hashedOtp = crypto.createHash('sha256').update(otp).digest('hex');
+
+    if (user.emailVerificationOtp !== hashedOtp || user.emailVerificationOtpExpire < Date.now()) {
+      return res.status(400).json({ success: false, error: 'Invalid or expired OTP' });
+    }
+
+    user.isEmailVerified = true;
+    user.emailVerificationOtp = undefined;
+    user.emailVerificationOtpExpire = undefined;
+    await user.save();
+
+    res.status(200).json({
       success: true,
       data: {
         _id: user._id,
@@ -40,7 +91,6 @@ exports.registerUser = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Registration Error:', error);
     res.status(400).json({ success: false, error: error.message });
   }
 };
@@ -52,6 +102,10 @@ exports.loginUser = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
+      if (!user.isEmailVerified && user.role !== 'admin' && user.email !== 'dealer@example.com') {
+         return res.status(403).json({ success: false, error: 'Please verify your email first', email: user.email, unverified: true });
+      }
+
       res.json({
         success: true,
         data: {
@@ -85,27 +139,25 @@ exports.forgotPassword = async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
     if (!user) return res.status(404).json({ success: false, error: 'User not found' });
 
-    const resetToken = user.getResetPasswordToken();
+    const otp = user.getResetPasswordOtp();
     await user.save({ validateBeforeSave: false });
 
-    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
-    
     const message = `
       <h1>Password Reset Request</h1>
-      <p>You requested a password reset. Please click the link below to reset your password:</p>
-      <a href="${resetUrl}" style="background: #10b981; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px;">Reset Password</a>
+      <p>Your OTP for password reset is: <strong style="font-size:24px;">${otp}</strong></p>
+      <p>This OTP is valid for 10 minutes. Do not share it with anyone.</p>
     `;
 
     try {
       await sendEmail({
         to: user.email,
-        subject: 'Vision PRO - Password Reset',
+        subject: 'Vision PRO - Password Reset OTP',
         html: message
       });
-      res.status(200).json({ success: true, data: 'Email sent' });
+      res.status(200).json({ success: true, data: 'OTP sent to email' });
     } catch (err) {
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpire = undefined;
+      user.resetPasswordOtp = undefined;
+      user.resetPasswordOtpExpire = undefined;
       await user.save({ validateBeforeSave: false });
       return res.status(500).json({ success: false, error: 'Email could not be sent' });
     }
@@ -116,17 +168,20 @@ exports.forgotPassword = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
   try {
-    const resetPasswordToken = crypto.createHash('sha256').update(req.params.resettoken).digest('hex');
+    const { email, otp, password } = req.body;
+    const hashedOtp = crypto.createHash('sha256').update(otp).digest('hex');
+    
     const user = await User.findOne({
-      resetPasswordToken,
-      resetPasswordExpire: { $gt: Date.now() }
+      email,
+      resetPasswordOtp: hashedOtp,
+      resetPasswordOtpExpire: { $gt: Date.now() }
     });
 
-    if (!user) return res.status(400).json({ success: false, error: 'Invalid token' });
+    if (!user) return res.status(400).json({ success: false, error: 'Invalid or expired OTP' });
 
-    user.password = req.body.password;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
+    user.password = password;
+    user.resetPasswordOtp = undefined;
+    user.resetPasswordOtpExpire = undefined;
     await user.save();
 
     res.status(200).json({ success: true, data: 'Password reset successful' });

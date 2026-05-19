@@ -12,6 +12,8 @@ const Appointment = require('./models/Appointment');
 const BlogPost = require('./models/BlogPost');
 const MarketingAsset = require('./models/MarketingAsset');
 const Settings = require('./models/Settings');
+const BuybackPricing = require('./models/BuybackPricing');
+const HeroSlider = require('./models/HeroSlider');
 
 const seedFullDB = async () => {
   try {
@@ -27,6 +29,8 @@ const seedFullDB = async () => {
     await BlogPost.deleteMany({});
     await MarketingAsset.deleteMany({});
     await Settings.deleteMany({});
+    await BuybackPricing.deleteMany({});
+    await HeroSlider.deleteMany({});
     console.log('Cleared old operational data.');
 
     // 1. Get Users
@@ -178,6 +182,46 @@ const seedFullDB = async () => {
       apiCache: true,
       twoFactor: false
     });
+    // 11. Seed Buyback Pricing
+    await BuybackPricing.create([
+      {
+        brand: 'Apple',
+        model: 'iPhone 13',
+        conditions: [
+          { grade: 'Grade A (Flawless)', price: 35.00 },
+          { grade: 'Grade B (Minor Scratches)', price: 25.00 },
+          { grade: 'Grade C (Heavy Wear)', price: 15.00 }
+        ]
+      },
+      {
+        brand: 'Apple',
+        model: 'iPhone 12',
+        conditions: [
+          { grade: 'Grade A (Flawless)', price: 25.00 },
+          { grade: 'Grade B (Minor Scratches)', price: 18.00 },
+          { grade: 'Grade C (Heavy Wear)', price: 10.00 }
+        ]
+      }
+    ]);
+    // 12. Seed Hero Slides
+    await HeroSlider.create([
+      {
+        title: 'Premium B2B Parts & Devices',
+        subtitle: 'Wholesale pricing on Apple, Samsung, and more. Register to unlock tier discounts.',
+        imageUrl: 'https://images.unsplash.com/photo-1591337676887-a21bfc42d103?auto=format&fit=crop&q=80&w=1920',
+        linkUrl: '/shop',
+        order: 1,
+        isActive: true
+      },
+      {
+        title: 'Industry-Leading Micro-Soldering Tools',
+        subtitle: 'Premium JBC and QianLi equipment for professional refurbishment shops.',
+        imageUrl: 'https://images.unsplash.com/photo-1504917595217-d4f3915ce113?auto=format&fit=crop&q=80&w=1920',
+        linkUrl: '/shop',
+        order: 2,
+        isActive: true
+      }
+    ]);
 
     console.log('✅ Success: All operational data has been seeded!');
     process.exit();

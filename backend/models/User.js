@@ -11,6 +11,11 @@ const UserSchema = new mongoose.Schema({
   companyName: { type: String },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
+  isEmailVerified: { type: Boolean, default: false },
+  emailVerificationOtp: String,
+  emailVerificationOtpExpire: Date,
+  resetPasswordOtp: String,
+  resetPasswordOtpExpire: Date,
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -32,6 +37,22 @@ UserSchema.methods.getResetPasswordToken = function() {
   this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
   this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
   return resetToken;
+};
+
+// Generate Email Verification OTP
+UserSchema.methods.getEmailVerificationOtp = function() {
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  this.emailVerificationOtp = crypto.createHash('sha256').update(otp).digest('hex');
+  this.emailVerificationOtpExpire = Date.now() + 10 * 60 * 1000;
+  return otp;
+};
+
+// Generate Password Reset OTP
+UserSchema.methods.getResetPasswordOtp = function() {
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  this.resetPasswordOtp = crypto.createHash('sha256').update(otp).digest('hex');
+  this.resetPasswordOtpExpire = Date.now() + 10 * 60 * 1000;
+  return otp;
 };
 
 module.exports = mongoose.model('User', UserSchema);

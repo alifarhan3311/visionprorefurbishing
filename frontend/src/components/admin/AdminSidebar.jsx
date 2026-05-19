@@ -5,7 +5,7 @@ import {
   LayoutDashboard, ShoppingCart, Users, Settings, 
   Wrench, Repeat, Activity, FileText, Megaphone, 
   Box, Layers, ClipboardList, ShieldCheck, 
-  LogOut, ChevronRight, UserCircle, X
+  LogOut, ChevronRight, UserCircle, X, Image as ImageIcon
 } from 'lucide-react';
 import './AdminLayout.css';
 
@@ -73,6 +73,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
         <div className="nav-group">
           <NavItem to="/admin/marketing" icon={Megaphone} label="Media Hub" />
           <NavItem to="/admin/blog" icon={FileText} label="Industry News" />
+          <NavItem to="/admin/heroslider" icon={ImageIcon} label="Hero Banners" />
           <NavItem to="/admin/settings" icon={Settings} label="System Config" />
         </div>
       </div>

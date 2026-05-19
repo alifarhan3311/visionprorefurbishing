@@ -15,6 +15,7 @@ const rmaRoutes = require('./routes/rmaRoutes');
 const authRoutes = require('./routes/authRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
+const heroSliderRoutes = require('./routes/heroSliderRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -40,6 +41,15 @@ app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // 4. Data sanitization against NoSQL query injection
+app.use((req, res, next) => {
+  Object.defineProperty(req, 'query', {
+    value: { ...req.query },
+    writable: true,
+    configurable: true,
+    enumerable: true,
+  });
+  next();
+});
 app.use(mongoSanitize());
 
 // 5. Data sanitization against Cross-Site Scripting (XSS)
@@ -69,9 +79,12 @@ const authLimiter = rateLimit({
 app.use('/api/v1/auth', authLimiter);
 
 // Database Connection
-mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://alifarhan1531_db_user:azadar3311@cluster0.57zf8ot.mongodb.net/')
+mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/mobilesentrix')
   .then(() => console.log('MongoDB Connected Successfully'))
   .catch(err => console.error('MongoDB Connection Error:', err));
+
+// Previous Atlas URI kept for reference:
+// mongodb+srv://alifarhan1531_db_user:azadar3311@cluster0.57zf8ot.mongodb.net/
 
 // Mount Routes
 app.use('/api/v1/categories', categoryRoutes);
@@ -83,6 +96,7 @@ app.use('/api/v1/rmas', rmaRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/payment', paymentRoutes);
+app.use('/api/v1/heroslider', heroSliderRoutes);
 app.use('/api/v1/appointments', appointmentRoutes);
 app.use('/api/v1/upload', uploadRoutes);
 app.use('/api/v1/users', userRoutes);
