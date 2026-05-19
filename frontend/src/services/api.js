@@ -9,7 +9,7 @@ import axios from 'axios';
 //local
 const api = axios.create({
   // Sirf /api/v1 likhein, browser khud IP aur Port (8083) utha lega
-  baseURL: 'http://localhost:5000/api/v1',
+  baseURL: import.meta.env.VITE_API_URL,
   headers: { 'Content-Type': 'application/json' }
 });
 // Interceptor to attach auth token

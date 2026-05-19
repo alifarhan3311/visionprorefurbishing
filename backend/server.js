@@ -31,7 +31,7 @@ app.use(helmet({ crossOriginResourcePolicy: false })); // Allowed for cross-orig
 
 // 2. Prevent Cross-Site Request Forgery (CSRF) via CORS configuration
 app.use(cors({
-  origin: ['http://localhost:8083', 'http://localhost:5173', 'https://your-vercel-app.vercel.app'], 
+  origin: ['http://localhost:8083', 'http://localhost:5173', 'https://visionprorefurbishing.vercel.app'], 
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
