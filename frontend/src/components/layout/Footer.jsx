@@ -11,7 +11,7 @@ const Footer = () => {
         <div className="footer-col">
           <div className="footer-brand">
             <div className="footer-logo-container">
-              <img src="/src/assets/visionpro-logo.png" alt="visionprorefurbishing" className="footer-logo-img" />
+              <img src="/assets/visionpro-logo.png" alt="visionprorefurbishing" className="footer-logo-img" />
               <div className="footer-brand-name">
                 visionpro<span>refurbishing</span>
               </div>

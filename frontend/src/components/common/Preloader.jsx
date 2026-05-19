@@ -16,7 +16,7 @@ const Preloader = () => {
   return (
     <div className="preloader">
       <div className="preloader-content">
-        <img src="/src/assets/visionpro-logo.png" alt="visionprorefurbishing" className="preloader-logo" />
+        <img src="/assets/visionpro-logo.png" alt="visionprorefurbishing" className="preloader-logo" />
         <div className="preloader-bar">
           <div className="preloader-progress"></div>
         </div>
