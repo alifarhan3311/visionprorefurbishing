@@ -24,10 +24,9 @@ const AdminTopBar = ({ onMenuClick }) => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleSearch = (e) => {
-    if (e.key === 'Enter' && searchTerm.trim()) {
-      navigate(`/admin/products?search=${encodeURIComponent(searchTerm)}`);
-    }
+  const handleSearchChange = (val) => {
+    setSearchTerm(val);
+    navigate(`/admin/products?search=${encodeURIComponent(val)}`);
   };
 
   return (
@@ -45,8 +44,7 @@ const AdminTopBar = ({ onMenuClick }) => {
               type="text" 
               placeholder="Search operational metadata..." 
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={handleSearch}
+              onChange={(e) => handleSearchChange(e.target.value)}
             />
             <div className="search-hint">
                <kbd><Command size={10} /></kbd>

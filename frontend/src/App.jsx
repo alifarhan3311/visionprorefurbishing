@@ -5,6 +5,8 @@ import Footer from './components/layout/Footer';
 import AdminLayout from './components/admin/AdminLayout';
 import AdminDashboardHome from './components/admin/AdminDashboardHome';
 import CategoriesManager from './components/admin/Catalog/CategoriesManager';
+import CategoryDashboard from './components/admin/Catalog/CategoryDashboard';
+import TierCategoryManager from './components/admin/Catalog/TierCategoryManager';
 import ProductsManager from './components/admin/Catalog/ProductsManager';
 import StockMonitoring from './components/admin/Catalog/StockMonitoring';
 import OrderList from './components/admin/Orders/OrderList';
@@ -16,6 +18,7 @@ import MarketingManager from './components/admin/Marketing/MarketingManager';
 import BlogManager from './components/admin/Marketing/BlogManager';
 import HeroSliderManager from './components/admin/Marketing/HeroSliderManager';
 import SettingsManager from './components/admin/SettingsManager';
+import ReviewsManager from './components/admin/Reviews/ReviewsManager';
 import UserLayout from './components/user/UserLayout';
 import DashboardHome from './components/user/DashboardHome';
 import LCDBuybackForm from './components/user/LCDBuybackForm';
@@ -94,7 +97,7 @@ function App() {
       <Route path="/terms" element={<PolicyPage title="Terms of Service" content={
         <div>
           <h3>1. B2B Terms</h3>
-          <p>By registering for a business account with visionprorefurbishing, you agree to our wholesale terms and bulk purchase conditions.</p>
+          <p>By registering for a business account with Vision Pro LCD, you agree to our wholesale terms and bulk purchase conditions.</p>
           <h3>2. Pricing</h3>
           <p>Prices are subject to change without notice based on market fluctuations in the mobile industry.</p>
         </div>
@@ -151,7 +154,11 @@ function App() {
       {/* Admin Routes */}
       <Route path="/admin" element={<ProtectedRoute adminOnly={true}><AdminLayout /></ProtectedRoute>}>
         <Route index element={<AdminDashboardHome />} />
-        <Route path="categories" element={<CategoriesManager />} />
+        <Route path="categories" element={<CategoryDashboard />} />
+        <Route path="categories/tier1" element={<TierCategoryManager tierLevel={1} />} />
+        <Route path="categories/tier2" element={<TierCategoryManager tierLevel={2} />} />
+        <Route path="categories/tier3" element={<TierCategoryManager tierLevel={3} />} />
+        <Route path="categories/tier4" element={<TierCategoryManager tierLevel={4} />} />
         <Route path="products" element={<ProductsManager />} />
         <Route path="stock-alerts" element={<StockMonitoring />} />
         <Route path="orders" element={<OrderList />} />
@@ -163,6 +170,7 @@ function App() {
         <Route path="blog" element={<BlogManager />} />
         <Route path="heroslider" element={<HeroSliderManager />} />
         <Route path="settings" element={<SettingsManager />} />
+        <Route path="reviews" element={<ReviewsManager />} />
       </Route>
     </Routes>
     </>

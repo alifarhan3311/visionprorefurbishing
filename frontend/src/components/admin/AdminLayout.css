@@ -18,7 +18,7 @@
   display: flex;
   min-height: 100vh;
   background-color: var(--bg-primary);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 /* Sidebar: Fixed & Glassy */
@@ -145,7 +145,7 @@
   box-shadow: 0 2px 0 #cbd5e1;
   color: #64748b;
   display: inline-block;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 10px;
   font-weight: 800;
   line-height: 1;

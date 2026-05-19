@@ -5,7 +5,7 @@ import {
   LayoutDashboard, ShoppingCart, Users, Settings, 
   Wrench, Repeat, Activity, FileText, Megaphone, 
   Box, Layers, ClipboardList, ShieldCheck, 
-  LogOut, ChevronRight, UserCircle, X, Image as ImageIcon
+  LogOut, ChevronRight, UserCircle, X, Image as ImageIcon, Star
 } from 'lucide-react';
 import './AdminLayout.css';
 
@@ -34,10 +34,10 @@ const AdminSidebar = ({ isOpen, onClose }) => {
       <div className="sidebar-brand">
         <div className="brand-logo">
            <div className="logo-cube">V</div>
-           <div className="brand-text">
-              <span className="main">VISIONPRO</span>
-              <span className="sub">CONTROL PANEL</span>
-           </div>
+            <div className="brand-text">
+               <span className="main" style={{ fontSize: '15px' }}>VISION PRO LCD</span>
+               <span className="sub">CONTROL PANEL</span>
+            </div>
         </div>
         <button className="mobile-close-btn" onClick={onClose}>
           <X size={20} />
@@ -53,6 +53,28 @@ const AdminSidebar = ({ isOpen, onClose }) => {
         <div className="nav-group">
           <NavItem to="/admin/products" icon={Box} label="Product Inventory" />
           <NavItem to="/admin/categories" icon={Layers} label="Taxonomy Engine" />
+          <div style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '2px', margin: '2px 0 8px 0' }}>
+            <Link to="/admin/categories/tier1" className={`nav-link-item ${isActive('/admin/categories/tier1')}`} style={{ padding: '6px 12px', fontSize: '12px', gap: '10px' }} onClick={() => { if (window.innerWidth <= 1024) onClose(); }}>
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--primary-color)' }}></div>
+              <span>Tier 1: Brands</span>
+              {isActive('/admin/categories/tier1') && <div className="active-glow"></div>}
+            </Link>
+            <Link to="/admin/categories/tier2" className={`nav-link-item ${isActive('/admin/categories/tier2')}`} style={{ padding: '6px 12px', fontSize: '12px', gap: '10px' }} onClick={() => { if (window.innerWidth <= 1024) onClose(); }}>
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f26522' }}></div>
+              <span>Tier 2: Services</span>
+              {isActive('/admin/categories/tier2') && <div className="active-glow"></div>}
+            </Link>
+            <Link to="/admin/categories/tier3" className={`nav-link-item ${isActive('/admin/categories/tier3')}`} style={{ padding: '6px 12px', fontSize: '12px', gap: '10px' }} onClick={() => { if (window.innerWidth <= 1024) onClose(); }}>
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#8b5cf6' }}></div>
+              <span>Tier 3: Families</span>
+              {isActive('/admin/categories/tier3') && <div className="active-glow"></div>}
+            </Link>
+            <Link to="/admin/categories/tier4" className={`nav-link-item ${isActive('/admin/categories/tier4')}`} style={{ padding: '6px 12px', fontSize: '12px', gap: '10px' }} onClick={() => { if (window.innerWidth <= 1024) onClose(); }}>
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></div>
+              <span>Tier 4: Models</span>
+              {isActive('/admin/categories/tier4') && <div className="active-glow"></div>}
+            </Link>
+          </div>
           <NavItem to="/admin/stock-alerts" icon={Activity} label="Stock Surveillance" />
         </div>
 
@@ -74,6 +96,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
           <NavItem to="/admin/marketing" icon={Megaphone} label="Media Hub" />
           <NavItem to="/admin/blog" icon={FileText} label="Industry News" />
           <NavItem to="/admin/heroslider" icon={ImageIcon} label="Hero Banners" />
+          <NavItem to="/admin/reviews" icon={Star} label="Reviews Moderation" />
           <NavItem to="/admin/settings" icon={Settings} label="System Config" />
         </div>
       </div>

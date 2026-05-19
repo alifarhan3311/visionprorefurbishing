@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Upload, Plus, ShoppingCart, Trash2, CheckCircle, AlertCircle } from 'lucide-react';
 import Papa from 'papaparse';
 import api from '../../services/api';
@@ -7,6 +8,7 @@ import '../admin/AdminForms.css';
 
 const QuickOrder = () => {
   const { addToCart } = useContext(CartContext);
+  const navigate = useNavigate();
   const [rows, setRows] = useState([
     { id: 1, sku: '', qty: 1, desc: 'Waiting for SKU...', price: 0, status: 'idle' },
   ]);
@@ -90,8 +92,8 @@ const QuickOrder = () => {
       addToCart({ _id: item.productId, name: item.desc, baseRetailPrice: item.price }, item.qty);
     });
     
-    alert(`${validItems.length} items added to cart!`);
     setRows([{ id: 1, sku: '', qty: 1, desc: 'Waiting for SKU...', price: 0, status: 'idle' }]);
+    navigate('/cart');
   };
 
   return (

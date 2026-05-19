@@ -102,6 +102,7 @@ app.use('/api/v1/upload', uploadRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/v1/settings', require('./routes/settingsRoutes'));
+app.use('/api/v1/reviews', require('./routes/reviewRoutes'));
 
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 

@@ -10,13 +10,13 @@ import './AdminForms.css';
 const SettingsManager = () => {
   const [activeTab, setActiveTab] = useState('general');
   const [settings, setSettings] = useState({
-    siteName: 'VisionPro Refurbishing',
-    contactEmail: 'support@visionpro.com',
+    siteName: 'Vision Pro LCD',
+    contactEmail: 'support@visionprolcd.com',
     currency: 'CAD',
     maintenanceMode: false,
     freeShippingThreshold: 500,
     taxRate: 13,
-    footerText: '© 2024 VisionPro Refurbishing. All Rights Reserved.',
+    footerText: '© 2026 Vision Pro LCD. All Rights Reserved.',
     apiCache: true,
     twoFactor: true
   });

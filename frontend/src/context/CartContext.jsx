@@ -33,7 +33,8 @@ export const CartProvider = ({ children }) => {
         name: product.name,
         image: product.imageUrl || '',
         price: product.retailPrice || product.baseRetailPrice || 0,
-        qty: parseInt(qty)
+        qty: parseInt(qty),
+        stockQuantity: product.stockQuantity !== undefined ? product.stockQuantity : 10
       }];
     }
     

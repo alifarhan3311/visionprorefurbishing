@@ -14,7 +14,8 @@ exports.createProduct = async (req, res) => {
       category,
       productType,
       imageUrl: dynamicFields.imageUrl,
-      badge: dynamicFields.badge
+      badge: dynamicFields.badge,
+      features: dynamicFields.features || []
     };
 
     // Handle Dynamic Polymorphic Fields Based on Type
@@ -146,7 +147,8 @@ exports.updateProduct = async (req, res) => {
       category,
       productType,
       imageUrl: dynamicFields.imageUrl,
-      badge: dynamicFields.badge
+      badge: dynamicFields.badge,
+      features: dynamicFields.features || []
     };
 
     // Handle Dynamic Polymorphic Fields

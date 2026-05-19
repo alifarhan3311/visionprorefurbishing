@@ -53,7 +53,8 @@ const productSchema = new mongoose.Schema({
     type: String, 
     enum: ['', 'New Arrival', 'Hot Seller', 'Genuine', 'Limited Stock'],
     default: ''
-  }
+  },
+  features: { type: [String], default: [] }
 
 }, { timestamps: true });
 

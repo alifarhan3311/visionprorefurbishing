@@ -14,6 +14,16 @@ const Cart = () => {
   const cartTotal = cartItems.reduce((acc, item) => acc + (item.qty || 0) * (item.price || 0), 0).toFixed(2);
 
   const checkoutHandler = () => {
+    // 1. Validate available stock quantities
+    for (const item of cartItems) {
+      const stock = item.stockQuantity !== undefined ? item.stockQuantity : 10;
+      if (item.qty > stock) {
+        alert(`Stock mismatch: Requested quantity for "${item.name}" exceeds current ledger availability. You can order a maximum of ${stock} units.`);
+        return;
+      }
+    }
+
+    // 2. Redirect check
     if (!user) {
       navigate('/login?redirect=checkout');
     } else {
@@ -50,15 +60,13 @@ const Cart = () => {
                     <td style={{ padding: '15px', fontWeight: '500' }}>{item.name}</td>
                     <td style={{ padding: '15px', textAlign: 'center' }}>${Number(item.price || 0).toFixed(2)}</td>
                     <td style={{ padding: '15px', textAlign: 'center' }}>
-                      <select 
+                      <input 
+                        type="number" 
+                        min="1"
                         value={item.qty} 
-                        onChange={(e) => updateCartQty(item.product, Number(e.target.value))}
-                        style={{ padding: '5px', borderRadius: '4px', border: '1px solid #cbd5e1' }}
-                      >
-                        {[...Array(10).keys()].map(x => (
-                          <option key={x + 1} value={x + 1}>{x + 1}</option>
-                        ))}
-                      </select>
+                        onChange={(e) => updateCartQty(item.product, Math.max(1, parseInt(e.target.value) || 1))}
+                        style={{ padding: '6px 10px', borderRadius: '8px', border: '1px solid #cbd5e1', width: '80px', textAlign: 'center', fontWeight: '600' }}
+                      />
                     </td>
                     <td style={{ padding: '15px', textAlign: 'center' }}>
                       <button onClick={() => removeFromCart(item.product)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}>

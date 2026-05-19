@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Shield, Truck, RefreshCw, Star, ChevronRight, Check } from 'lucide-react';
 import Header from '../layout/Header';
 import { CartContext } from '../../context/CartContext';
@@ -13,6 +13,7 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('specs');
   const { addToCart } = useContext(CartContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -88,6 +89,17 @@ const ProductDetails = () => {
               </div>
             </div>
 
+            {product.features && product.features.length > 0 && (
+              <div className="product-features-bullets" style={{ margin: '20px 0', padding: '15px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                <h4 style={{ margin: '0 0 10px 0', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.5px' }}>Highlights</h4>
+                <ul style={{ margin: 0, paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {product.features.map((feature, index) => (
+                    <li key={index} style={{ fontSize: '13px', fontWeight: '600', color: '#334155', lineHeight: '1.4' }}>{feature}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             {/* Tiered Pricing Table */}
             <div className="tiered-pricing">
               <h3>Bulk Savings</h3>
@@ -122,7 +134,10 @@ const ProductDetails = () => {
               </div>
               <button 
                 className="add-to-cart-premium"
-                onClick={() => addToCart(product, quantity)}
+                onClick={() => {
+                  addToCart(product, quantity);
+                  navigate('/cart');
+                }}
               >
                 <ShoppingCart size={20} /> Add to Cart
               </button>

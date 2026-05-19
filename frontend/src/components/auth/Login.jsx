@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
+import api from '../../services/api';
 import './Auth.css'; // Will create basic styles
 
 const Login = () => {
@@ -12,7 +13,13 @@ const Login = () => {
 
   useEffect(() => {
     if (user) {
-      navigate(user.role === 'admin' ? '/admin' : '/dashboard');
+      const queryParams = new URLSearchParams(window.location.search);
+      const redirect = queryParams.get('redirect');
+      if (redirect) {
+        navigate(`/${redirect}`);
+      } else {
+        navigate(user.role === 'admin' ? '/admin' : '/dashboard');
+      }
     }
   }, [user, navigate]);
 
@@ -22,8 +29,24 @@ const Login = () => {
     
     const result = await login(email, password);
     if (result.success) {
-      // Check if user is admin and redirect to /admin, otherwise /dashboard
-      if (result.user && result.user.role === 'admin') {
+      // Process pending booking if present
+      const pendingBookingStr = localStorage.getItem('pendingBooking');
+      if (pendingBookingStr) {
+        try {
+          const pendingBooking = JSON.parse(pendingBookingStr);
+          await api.post('/appointments', pendingBooking);
+          localStorage.removeItem('pendingBooking');
+          alert('Your pending repair appointment was successfully synced to your profile!');
+        } catch (err) {
+          console.error('Error booking pending appointment:', err);
+        }
+      }
+
+      const queryParams = new URLSearchParams(window.location.search);
+      const redirect = queryParams.get('redirect');
+      if (redirect) {
+        navigate(`/${redirect}`);
+      } else if (result.user && result.user.role === 'admin') {
         navigate('/admin');
       } else {
         navigate('/dashboard');
@@ -41,7 +64,7 @@ const Login = () => {
             <img src="/assets/visionpro-logo.png" alt="logo" style={{ height: '50px' }} />
           </div>
           <h2>Welcome Back</h2>
-          <p>Login to your VisionPro B2B portal</p>
+          <p>Login to your Vision Pro LCD B2B portal</p>
         </div>
         
         {error && <div className="auth-error">{error}</div>}
@@ -54,7 +77,7 @@ const Login = () => {
               value={email} 
               onChange={(e) => setEmail(e.target.value)}
               required 
-              placeholder="admin@visionpro.com"
+              placeholder="admin@visionprolcd.com"
             />
           </div>
           

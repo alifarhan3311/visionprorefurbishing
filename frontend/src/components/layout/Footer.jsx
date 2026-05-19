@@ -13,7 +13,7 @@ const Footer = () => {
             <div className="footer-logo-container">
               <img src="/assets/visionpro-logo.png" alt="visionprorefurbishing" className="footer-logo-img" />
               <div className="footer-brand-name">
-                visionpro<span>refurbishing</span>
+                Vision Pro <span>LCD</span>
               </div>
             </div>
           </div>
@@ -78,7 +78,7 @@ const Footer = () => {
       
       <div className="footer-bottom">
         <div className="container">
-          <p>&copy; {new Date().getFullYear()} visionprorefurbishing. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Vision Pro LCD. All rights reserved.</p>
         </div>
       </div>
     </footer>
