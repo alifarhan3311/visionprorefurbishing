@@ -42,7 +42,7 @@ function generateCustomerInformation(doc, order) {
     .text('Date:', 50, customerInformationTop + 15)
     .text(new Date(order.createdAt).toLocaleDateString(), 150, customerInformationTop + 15)
     .text('Total Amount:', 50, customerInformationTop + 30)
-    .text(`$${order.totalPrice.toFixed(2)}`, 150, customerInformationTop + 30)
+    .text(`$${Number(order.totalPrice).toFixed(2)}`, 150, customerInformationTop + 30)
 
     .font('Helvetica-Bold')
     .text(order.user.companyName || order.user.name || 'B2B Customer', 300, customerInformationTop)
@@ -83,9 +83,9 @@ function generateInvoiceTable(doc, order) {
       position,
       item.name.substring(0, 15),
       item.name,
-      `$${item.price.toFixed(2)}`,
+      `$${Number(item.price).toFixed(2)}`,
       item.qty,
-      `$${(item.price * item.qty).toFixed(2)}`
+      `$${(Number(item.price) * Number(item.qty)).toFixed(2)}`
     );
 
     generateHr(doc, position + 20);
@@ -99,7 +99,7 @@ function generateInvoiceTable(doc, order) {
     '',
     'Subtotal',
     '',
-    `$${order.itemsPrice.toFixed(2)}`
+    `$${Number(order.itemsPrice).toFixed(2)}`
   );
 
   const shippingPosition = subtotalPosition + 20;
@@ -110,7 +110,7 @@ function generateInvoiceTable(doc, order) {
     '',
     'Shipping',
     '',
-    `$${order.shippingPrice.toFixed(2)}`
+    `$${Number(order.shippingPrice).toFixed(2)}`
   );
 
   const totalPosition = shippingPosition + 25;
@@ -122,7 +122,7 @@ function generateInvoiceTable(doc, order) {
     '',
     'Total',
     '',
-    `$${order.totalPrice.toFixed(2)}`
+    `$${Number(order.totalPrice).toFixed(2)}`
   );
   doc.font('Helvetica');
 }

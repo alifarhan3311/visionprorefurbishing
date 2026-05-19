@@ -91,8 +91,8 @@ exports.addOrderItems = async (req, res) => {
           <tr>
             <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${item.name}</td>
             <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center;">${item.qty}</td>
-            <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: right;">$${item.price.toFixed(2)}</td>
-            <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: right;">$${(item.qty * item.price).toFixed(2)}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: right;">$${Number(item.price).toFixed(2)}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: right;">$${(Number(item.qty) * Number(item.price)).toFixed(2)}</td>
           </tr>
         `).join('');
 
@@ -132,10 +132,10 @@ exports.addOrderItems = async (req, res) => {
             </table>
 
             <div style="margin-top: 20px; text-align: right; font-size: 14px;">
-              <p style="margin: 5px 0;">Items Subtotal: <strong>$${itemsPrice.toFixed(2)}</strong></p>
-              <p style="margin: 5px 0;">Shipping: <strong>$${shippingPrice.toFixed(2)}</strong></p>
-              <p style="margin: 5px 0;">Tax (8%): <strong>$${taxPrice.toFixed(2)}</strong></p>
-              <h3 style="margin: 10px 0 0 0; color: #1e3a8a; font-size: 18px;">Order Total: $${totalPrice.toFixed(2)}</h3>
+              <p style="margin: 5px 0;">Items Subtotal: <strong>$${Number(itemsPrice).toFixed(2)}</strong></p>
+              <p style="margin: 5px 0;">Shipping: <strong>$${Number(shippingPrice).toFixed(2)}</strong></p>
+              <p style="margin: 5px 0;">Tax (8%): <strong>$${Number(taxPrice).toFixed(2)}</strong></p>
+              <h3 style="margin: 10px 0 0 0; color: #1e3a8a; font-size: 18px;">Order Total: $${Number(totalPrice).toFixed(2)}</h3>
             </div>
 
             <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 12px; color: #94a3b8;">
@@ -155,7 +155,7 @@ exports.addOrderItems = async (req, res) => {
       // Send SMS Notification
       const recipientPhone = phone || req.user.phone;
       if (recipientPhone) {
-        await sendSMS(recipientPhone, `MobileSentrix: Order #${createdOrder._id} placed successfully. Total: $${createdOrder.totalPrice.toFixed(2)}`);
+        await sendSMS(recipientPhone, `MobileSentrix: Order #${createdOrder._id} placed successfully. Total: $${Number(createdOrder.totalPrice).toFixed(2)}`);
       }
 
       res.status(201).json({ success: true, data: createdOrder });
