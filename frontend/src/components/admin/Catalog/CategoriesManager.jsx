@@ -475,6 +475,16 @@ const CategoriesManager = () => {
           .composition-panel { position: static; margin-bottom: 40px; max-width: 100%; }
           .editorial-header-premium { flex-direction: column; align-items: flex-start; }
         }
+
+        @media (max-width: 768px) {
+          .taxonomy-orchestrator { padding: 20px; }
+          .glass-stats { flex-direction: column; gap: 15px; width: 100%; padding: 20px; }
+          .stat-divider { width: 100%; height: 1px; }
+          .ledger-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+          .search-pill { width: 100%; }
+          .side-modal { width: 100%; }
+          .asset-upload-row { grid-template-columns: 1fr; }
+        }
       `}} />
     </div>
   );

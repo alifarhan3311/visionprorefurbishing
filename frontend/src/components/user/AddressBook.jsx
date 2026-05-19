@@ -5,7 +5,7 @@ import './UserLayout.css';
 const AddressBook = () => {
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
+      <div className="address-header">
         <div>
           <h1 className="user-page-title">Address Book</h1>
           <p style={{ color: '#64748b' }}>Manage your shipping and billing addresses.</p>
@@ -15,7 +15,7 @@ const AddressBook = () => {
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+      <div className="address-grid">
         <div className="user-card" style={{ border: '2px solid var(--primary-color)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
             <h3 style={{ fontSize: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -36,6 +36,14 @@ const AddressBook = () => {
           </div>
         </div>
       </div>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .address-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .address-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 768px) {
+          .address-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+          .address-grid { grid-template-columns: 1fr; }
+        }
+      `}} />
     </div>
   );
 };

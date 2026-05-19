@@ -52,7 +52,7 @@ const RMAForm = () => {
 
       {/* Search Section */}
       <div className="user-card" style={{ marginBottom: '25px' }}>
-        <div style={{ display: 'flex', gap: '20px', marginBottom: '15px' }}>
+        <div className="search-options">
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
             <input 
               type="radio" 
@@ -69,7 +69,7 @@ const RMAForm = () => {
           </label>
         </div>
 
-        <div style={{ display: 'flex', gap: '15px' }}>
+        <div className="search-inputs">
           <input 
             type="text" 
             value={searchValue}
@@ -137,6 +137,14 @@ const RMAForm = () => {
           </button>
         </div>
       )}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .search-options { display: flex; gap: 20px; margin-bottom: 15px; }
+        .search-inputs { display: flex; gap: 15px; }
+        @media (max-width: 768px) {
+          .search-options { flex-direction: column; gap: 10px; }
+          .search-inputs { flex-direction: column; }
+        }
+      `}} />
     </div>
   );
 };

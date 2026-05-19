@@ -101,7 +101,7 @@ const QuickOrder = () => {
         Instantly add multiple items by entering SKUs, or upload a CSV file.
       </p>
 
-      <div style={{ display: 'flex', gap: '20px', marginBottom: '30px' }}>
+      <div className="quick-order-top">
         <div className="user-card" style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '30px' }}>
           <Upload size={32} color="var(--primary-color)" style={{ marginBottom: '15px' }} />
           <h3 style={{ fontSize: '16px', marginBottom: '10px' }}>Upload Order File</h3>
@@ -129,7 +129,8 @@ const QuickOrder = () => {
       <div className="user-card">
         <h3 style={{ fontSize: '16px', marginBottom: '20px' }}>Manual SKU Entry</h3>
         
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
+        <div className="table-responsive">
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px', minWidth: '700px' }}>
           <thead>
             <tr style={{ backgroundColor: '#f8fafc', borderBottom: '2px solid #e2e8f0', textAlign: 'left' }}>
               <th style={{ padding: '12px', width: '25%' }}>SKU</th>
@@ -190,8 +191,9 @@ const QuickOrder = () => {
             ))}
           </tbody>
         </table>
+        </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="quick-order-actions">
           <button onClick={handleAddRow} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '8px 15px', border: '1px dashed #cbd5e1', background: 'transparent', cursor: 'pointer', borderRadius: '4px' }}>
             <Plus size={16} /> Add Row
           </button>
@@ -206,6 +208,16 @@ const QuickOrder = () => {
           </button>
         </div>
       </div>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .quick-order-top { display: flex; gap: 20px; margin-bottom: 30px; }
+        .quick-order-actions { display: flex; justify-content: space-between; align-items: center; }
+        .table-responsive { width: 100%; overflow-x: auto; }
+        @media (max-width: 768px) {
+          .quick-order-top { flex-direction: column; }
+          .quick-order-top > div:nth-child(2) { margin: 20px 0; }
+          .quick-order-actions { flex-direction: column; gap: 15px; align-items: stretch; }
+        }
+      `}} />
     </div>
   );
 };

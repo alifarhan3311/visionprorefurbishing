@@ -373,6 +373,25 @@ const SettingsManager = () => {
         .mt-20 { margin-top: 20px; }
         .spin { animation: spin 2s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 1024px) {
+          .settings-layout { grid-template-columns: 1fr; }
+          .settings-sidebar { flex-direction: row; flex-wrap: wrap; }
+          .settings-nav-item { width: auto; flex: 1; min-width: 200px; }
+        }
+        @media (max-width: 768px) {
+          .command-center { padding: 20px; }
+          .editorial-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+          .glass-stats { flex-direction: column; width: 100%; gap: 15px; padding: 20px; }
+          .stat-divider { width: 100%; height: 1px; margin: 0; }
+          .grid-2 { grid-template-columns: 1fr; }
+          .panel-content { padding: 25px; }
+          .control-row { flex-direction: column; align-items: flex-start; gap: 15px; }
+          .action-card { flex-direction: column; align-items: flex-start; gap: 15px; }
+          .card-btn { margin-left: 0; width: 100%; }
+          .panel-footer { flex-direction: column; gap: 15px; padding: 25px; }
+          .commit-btn { width: 100%; justify-content: center; }
+        }
       `}} />
     </div>
   );

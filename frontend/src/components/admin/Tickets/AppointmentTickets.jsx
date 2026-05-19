@@ -382,6 +382,19 @@ const AppointmentTickets = () => {
 
         .animate-fade { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 768px) {
+          .appointments-orchestrator { padding: 20px; }
+          .editorial-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+          .glass-stats { flex-direction: column; width: 100%; gap: 15px; padding: 20px; }
+          .stat-divider { width: 100%; height: 1px; }
+          .queue-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+          .header-actions { flex-direction: column; width: 100%; }
+          .search-pill { width: 100%; }
+          .utility-btn-premium, .action-btn-premium { width: 100%; justify-content: center; }
+          .side-modal { width: 100%; }
+          .context-grid { grid-template-columns: 1fr; }
+        }
       `}} />
     </div>
   );

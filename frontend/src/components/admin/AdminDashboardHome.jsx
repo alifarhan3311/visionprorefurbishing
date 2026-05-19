@@ -268,6 +268,22 @@ const AdminDashboardHome = () => {
         
         .animate-fade { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 1200px) {
+          .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+          .main-operational-grid { grid-template-columns: 1fr; }
+        }
+        
+        @media (max-width: 768px) {
+          .executive-dashboard { padding: 20px; }
+          .hero-section { flex-direction: column; align-items: flex-start; gap: 20px; padding: 30px 20px; }
+          .hero-actions { flex-direction: column; width: 100%; }
+          .hero-actions a, .hero-actions button { width: 100%; justify-content: center; }
+          .kpi-grid { grid-template-columns: 1fr; gap: 15px; }
+          .nodes-grid { grid-template-columns: 1fr; }
+          .hero-content h1 { font-size: 28px; }
+          .hero-content p { font-size: 15px; }
+        }
       `}} />
     </div>
   );

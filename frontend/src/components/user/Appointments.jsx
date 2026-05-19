@@ -68,7 +68,7 @@ const Appointments = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
+      <div className="appointments-header">
         <div>
           <h1 className="user-page-title">Repair Appointments</h1>
           <p style={{ color: '#64748b' }}>Book and manage in-store repair service appointments.</p>
@@ -88,7 +88,7 @@ const Appointments = () => {
         ) : appointments.length > 0 ? (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '15px' }}>
             {appointments.map((app) => (
-              <div key={app._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+              <div key={app._id} className="appointment-card">
                 <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
                   <div style={{ backgroundColor: '#f1f5f9', padding: '10px', borderRadius: '8px', color: '#3b82f6' }}>
                     <Clock size={24} />
@@ -139,7 +139,7 @@ const Appointments = () => {
                   value={formData.fullName} onChange={handleInputChange}
                   style={{ padding: '10px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
                 />
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                <div className="form-grid">
                   <input 
                     type="email" name="email" placeholder="Email" required 
                     value={formData.email} onChange={handleInputChange}
@@ -161,7 +161,7 @@ const Appointments = () => {
                   <option value="Heavy Machinery Service">Heavy Machinery Service</option>
                   <option value="Other">Other</option>
                 </select>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                <div className="form-grid">
                   <input 
                     type="date" name="date" required 
                     value={formData.date} onChange={handleInputChange}
@@ -190,6 +190,16 @@ const Appointments = () => {
           </div>
         </div>
       )}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .appointments-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .appointment-card { display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        @media (max-width: 768px) {
+          .appointments-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+          .appointment-card { flex-direction: column; align-items: flex-start; gap: 15px; }
+          .form-grid { grid-template-columns: 1fr; }
+        }
+      `}} />
     </div>
   );
 };

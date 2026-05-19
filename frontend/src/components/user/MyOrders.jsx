@@ -61,7 +61,7 @@ const MyOrders = () => {
         <div className="orders-list">
           {orders.map((order) => (
             <div key={order._id} className="user-card" style={{ marginBottom: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+              <div className="order-card-header">
                 <div>
                   <h4 style={{ fontSize: '16px', fontWeight: 700 }}>Order ID: {order._id}</h4>
                   <p style={{ fontSize: '13px', color: '#64748b' }}>Placed on: {new Date(order.createdAt).toLocaleDateString()}</p>
@@ -83,7 +83,7 @@ const MyOrders = () => {
                 </div>
               </div>
 
-              <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '15px', display: 'flex', justifyContent: 'space-between' }}>
+              <div className="order-card-footer">
                 <div style={{ fontSize: '14px', color: '#475569' }}>
                   {order.orderItems.length} items • Status: {order.isDelivered ? 'Delivered' : 'Processing'}
                 </div>
@@ -110,6 +110,15 @@ const MyOrders = () => {
           ))}
         </div>
       )}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .order-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .order-card-footer { border-top: 1px solid #f1f5f9; padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
+        @media (max-width: 768px) {
+          .order-card-header { flex-direction: column; gap: 10px; }
+          .order-card-header > div:last-child { text-align: left !important; }
+          .order-card-footer { flex-direction: column; gap: 15px; align-items: flex-start; }
+        }
+      `}} />
     </div>
   );
 };

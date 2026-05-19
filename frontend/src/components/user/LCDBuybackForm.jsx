@@ -114,7 +114,8 @@ const LCDBuybackForm = () => {
           </p>
         </div>
 
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="table-responsive">
+          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
           <thead>
             <tr style={{ textAlign: 'left', borderBottom: '2px solid #f1f5f9' }}>
               <th style={{ padding: '12px' }}>Brand</th>
@@ -185,14 +186,15 @@ const LCDBuybackForm = () => {
             ))}
           </tbody>
         </table>
+        </div>
 
         <button onClick={addRow} style={{ marginTop: '20px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary-color)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
           <Plus size={18} /> Add Another Screen
         </button>
       </div>
 
-      <div className="user-card" style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', border: 'none' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="user-card buyback-summary">
+        <div className="summary-content">
           <div>
             <h3 style={{ fontSize: '20px', fontWeight: 800 }}>Estimated Buyback Value</h3>
             <p style={{ opacity: 0.9, fontSize: '14px' }}>Submission ID: {Date.now().toString().slice(-6)}</p>
@@ -210,6 +212,15 @@ const LCDBuybackForm = () => {
           </div>
         </div>
       </div>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .table-responsive { width: 100%; overflow-x: auto; }
+        .buyback-summary { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; }
+        .summary-content { display: flex; justify-content: space-between; align-items: center; }
+        @media (max-width: 768px) {
+          .summary-content { flex-direction: column; align-items: flex-start; gap: 20px; }
+          .summary-content > div:last-child { text-align: left !important; }
+        }
+      `}} />
     </div>
   );
 };
