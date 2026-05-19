@@ -4,3 +4,7 @@ node_modules/
 dist/
 build/
 *.log
+
+# Explicitly ensure uploads and assets are tracked
+!backend/uploads/
+!frontend/public/assets/
