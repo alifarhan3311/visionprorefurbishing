@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Download, FileText, Image, FileArchive, Search, Filter } from 'lucide-react';
-import api from '../../services/api';
+import api, { getImageUrl } from '../../services/api';
 import '../admin/AdminForms.css';
 
 const MarketingHub = () => {
@@ -74,7 +74,7 @@ const MarketingHub = () => {
             <div key={asset._id} className="user-card" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
               <div style={{ height: '160px', backgroundColor: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #f1f5f9' }}>
                 {asset.thumbnailUrl ? (
-                  <img src={asset.thumbnailUrl} alt={asset.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={getImageUrl(asset.thumbnailUrl)} alt={asset.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   getFileIcon(asset.fileType)
                 )}
@@ -87,7 +87,7 @@ const MarketingHub = () => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '15px', borderTop: '1px solid #f1f5f9' }}>
                   <div style={{ fontSize: '12px', color: '#94a3b8' }}>{asset.fileType} • {asset.fileSize || 'N/A'}</div>
                   <a 
-                    href={asset.fileUrl} 
+                    href={getImageUrl(asset.fileUrl)} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     style={{ 

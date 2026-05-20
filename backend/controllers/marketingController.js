@@ -17,7 +17,16 @@ exports.getAssets = async (req, res) => {
 // @access  Private/Admin
 exports.createAsset = async (req, res) => {
   try {
-    const asset = await MarketingAsset.create(req.body);
+    const assetData = { ...req.body };
+    if (req.files) {
+      if (req.files.file && req.files.file[0]) {
+        assetData.fileUrl = `/uploads/${req.files.file[0].filename}`;
+      }
+      if (req.files.thumbnail && req.files.thumbnail[0]) {
+        assetData.thumbnailUrl = `/uploads/${req.files.thumbnail[0].filename}`;
+      }
+    }
+    const asset = await MarketingAsset.create(assetData);
     res.status(201).json({ success: true, data: asset });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
@@ -41,7 +50,16 @@ exports.deleteAsset = async (req, res) => {
 // @access  Private/Admin
 exports.updateAsset = async (req, res) => {
   try {
-    const asset = await MarketingAsset.findByIdAndUpdate(req.params.id, req.body, {
+    const updateData = { ...req.body };
+    if (req.files) {
+      if (req.files.file && req.files.file[0]) {
+        updateData.fileUrl = `/uploads/${req.files.file[0].filename}`;
+      }
+      if (req.files.thumbnail && req.files.thumbnail[0]) {
+        updateData.thumbnailUrl = `/uploads/${req.files.thumbnail[0].filename}`;
+      }
+    }
+    const asset = await MarketingAsset.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
       runValidators: true
     });

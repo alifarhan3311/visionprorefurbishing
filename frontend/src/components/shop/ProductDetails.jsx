@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Shield, Truck, RefreshCw, Star, ChevronRight, Check } from 'lucide-react';
 import Header from '../layout/Header';
 import { CartContext } from '../../context/CartContext';
-import api from '../../services/api';
+import api, { getImageUrl } from '../../services/api';
 import './ProductDetails.css';
 
 const ProductDetails = () => {
@@ -50,14 +50,14 @@ const ProductDetails = () => {
           {/* Left: Images & Zoom Area */}
           <div className="product-gallery">
             <div className="main-image-container">
-              <img src={product.imageUrl || '/placeholder-product.png'} alt={product.name} className="main-product-image" />
+              <img src={product.imageUrl ? getImageUrl(product.imageUrl) : '/placeholder-product.png'} alt={product.name} className="main-product-image" />
               <div className="zoom-hint">Hover to Zoom</div>
             </div>
             {/* Thumbnails Placeholder */}
             <div className="thumbnail-strip">
               {[1, 2, 3].map(i => (
                 <div key={i} className="thumb-item">
-                  <img src={product.imageUrl || '/placeholder-product.png'} alt="thumb" />
+                  <img src={product.imageUrl ? getImageUrl(product.imageUrl) : '/placeholder-product.png'} alt="thumb" />
                 </div>
               ))}
             </div>

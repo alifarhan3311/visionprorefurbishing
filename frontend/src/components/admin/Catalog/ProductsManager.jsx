@@ -8,7 +8,7 @@ import {
   Download, ExternalLink, ShieldCheck, Zap, Copy
 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
-import api from '../../../services/api';
+import api, { getImageUrl } from '../../../services/api';
 import '../AdminForms.css';
 
 const ProductsManager = () => {
@@ -42,6 +42,7 @@ const ProductsManager = () => {
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [imageUrl, setImageUrl] = useState('');
+  const [imageFile, setImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   
@@ -118,6 +119,7 @@ const ProductsManager = () => {
     setSelectedCategory(product.category?._id || product.category || '');
     setBadge(product.badge || '');
     setImageUrl(product.imageUrl || '');
+    setImageFile(null);
     setStockQuantity((product.stockQuantity || 10).toString());
     setFeaturesText(product.features ? product.features.join('\n') : '');
     
@@ -149,6 +151,7 @@ const ProductsManager = () => {
     setSelectedCategory(product.category?._id || product.category || '');
     setBadge(product.badge || '');
     setImageUrl(product.imageUrl || '');
+    setImageFile(null);
     setStockQuantity((product.stockQuantity || 10).toString());
     setFeaturesText(product.features ? product.features.join('\n') : '');
     
@@ -172,23 +175,8 @@ const ProductsManager = () => {
     resetForm();
   };
 
-  const uploadFileHandler = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const formData = new FormData();
-    formData.append('image', file);
-    setUploading(true);
-
-    try {
-      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-      const { data } = await api.post('/upload', formData, config);
-      setImageUrl(data.image);
-    } catch (error) {
-      console.error(error);
-      alert('Upload failed');
-    } finally {
-      setUploading(false);
-    }
+  const handleImageChange = (e) => {
+    if (e.target.files[0]) setImageFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
@@ -202,32 +190,40 @@ const ProductsManager = () => {
         .map(f => f.trim())
         .filter(Boolean);
 
-      const payload = {
-        name, 
-        sku,
-        baseRetailPrice: parseFloat(baseRetailPrice) || 0,
-        category: selectedCategory, 
-        productType, 
-        imageUrl, 
-        badge,
-        stockQuantity: parseInt(stockQuantity) || 10,
-        features: parsedFeatures
-      };
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('sku', sku);
+      formData.append('baseRetailPrice', parseFloat(baseRetailPrice) || 0);
+      formData.append('category', selectedCategory);
+      formData.append('productType', productType);
+      formData.append('badge', badge);
+      formData.append('stockQuantity', parseInt(stockQuantity) || 10);
+      formData.append('imageUrl', imageUrl);
+
+      parsedFeatures.forEach((f) => {
+        formData.append('features', f);
+      });
 
       if (productType === 'preowned') {
-        payload.preOwnedDetails = { imei, grade, batteryHealth: parseInt(batteryHealth) || 0 };
+        formData.append('imei', imei);
+        formData.append('grade', grade);
+        formData.append('batteryHealth', parseInt(batteryHealth) || 0);
       } else if (productType === 'components') {
-        payload.componentDetails = { minimumOrderQuantity: parseInt(moq) || 1 };
+        formData.append('minimumOrderQuantity', parseInt(moq) || 1);
       } else if (productType === 'parts') {
-        payload.partDetails = { qualityType };
+        formData.append('qualityType', qualityType);
       }
 
+      if (imageFile) formData.append('image', imageFile);
+
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+
       if (editingId) {
-        await api.put(`/products/${editingId}`, payload);
+        await api.put(`/products/${editingId}`, formData, config);
         setIsEditModalOpen(false);
         setEditingId(null);
       } else {
-        await api.post('/products', payload);
+        await api.post('/products', formData, config);
       }
 
       resetForm();
@@ -249,6 +245,7 @@ const ProductsManager = () => {
     setImei(''); 
     setBatteryHealth(''); 
     setImageUrl('');
+    setImageFile(null);
     setSelectedCategory(''); 
     setBadge('');
     setProductType('parts');
@@ -506,14 +503,14 @@ const ProductsManager = () => {
                 <div className="form-section">
                   <label>Asset Management</label>
                   <div className="file-box-custom">
-                    <input type="file" onChange={uploadFileHandler} />
+                    <input type="file" onChange={handleImageChange} accept="image/*" />
                     <div className="meta">
-                      {uploading ? "Transmitting..." : (imageUrl ? "Image Verified ✓" : "Upload Product Image")}
+                      {imageFile ? imageFile.name : (imageUrl ? "Image Verified ✓" : "Upload Product Image")}
                     </div>
                   </div>
                   {imageUrl && (
                     <div style={{ marginTop: '12px', textAlign: 'center' }}>
-                      <img src={imageUrl} alt="preview" style={{ maxHeight: '100px', borderRadius: '12px', border: '1px solid #cbd5e1' }} />
+                      <img src={getImageUrl(imageUrl)} alt="preview" style={{ maxHeight: '100px', borderRadius: '12px', border: '1px solid #cbd5e1' }} />
                     </div>
                   )}
                 </div>
@@ -613,7 +610,7 @@ const ProductsManager = () => {
                       <td>
                         <div className="product-cell">
                           <div className="prod-img">
-                            {product.imageUrl ? <img src={product.imageUrl} alt="" /> : <ImageIcon size={20} />}
+                            {product.imageUrl ? <img src={getImageUrl(product.imageUrl)} alt="" /> : <ImageIcon size={20} />}
                           </div>
                           <div className="meta-stack">
                             <span className="n">{product.name || 'Untitled Product'}</span>
@@ -840,14 +837,14 @@ const ProductsManager = () => {
                     <div className="inspector-section">
                       <label>Product Image</label>
                       <div className="file-box-custom">
-                        <input type="file" onChange={uploadFileHandler} />
+                        <input type="file" onChange={handleImageChange} accept="image/*" />
                         <div className="meta">
-                          {uploading ? "Uploading..." : (imageUrl ? "Image Set ✓" : "Upload File")}
+                          {imageFile ? imageFile.name : (imageUrl ? "Image Set ✓" : "Upload File")}
                         </div>
                       </div>
                       {imageUrl && (
                         <div style={{ marginTop: '12px', textAlign: 'center' }}>
-                          <img src={imageUrl} alt="preview" style={{ maxHeight: '100px', borderRadius: '12px', border: '1px solid #cbd5e1' }} />
+                          <img src={getImageUrl(imageUrl)} alt="preview" style={{ maxHeight: '100px', borderRadius: '12px', border: '1px solid #cbd5e1' }} />
                         </div>
                       )}
                     </div>

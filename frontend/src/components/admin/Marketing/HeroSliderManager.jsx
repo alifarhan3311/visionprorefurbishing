@@ -12,6 +12,7 @@ const HeroSliderManager = () => {
   const [subtitle, setSubtitle] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [imageFile, setImageFile] = useState(null);
   const [order, setOrder] = useState(0);
   const [isActive, setIsActive] = useState(true);
 
@@ -45,42 +46,35 @@ const HeroSliderManager = () => {
     }
   };
 
-  const uploadFileHandler = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('image', file);
-    setUploading(true);
-
-    try {
-      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-      const { data } = await api.post('/upload', formData, config);
-      setImageUrl(data.image);
-    } catch (error) {
-      console.error(error);
-      alert('Upload failed');
-    } finally {
-      setUploading(false);
-    }
+  const handleImageChange = (e) => {
+    if (e.target.files[0]) setImageFile(e.target.files[0]);
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
-    if (!imageUrl) {
-      alert('Hero image URL is required.');
+    if (!imageUrl && !imageFile) {
+      alert('Hero image URL or file is required.');
       return;
     }
     setSubmitting(true);
     try {
-      const payload = { title, subtitle, linkUrl, imageUrl, order, isActive };
-      
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('subtitle', subtitle);
+      formData.append('linkUrl', linkUrl);
+      formData.append('order', order);
+      formData.append('isActive', isActive);
+      formData.append('imageUrl', imageUrl);
+      if (imageFile) formData.append('image', imageFile);
+
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+
       if (editingId) {
-        await api.put(`/heroslider/${editingId}`, payload);
+        await api.put(`/heroslider/${editingId}`, formData, config);
         setIsEditModalOpen(false);
         setEditingId(null);
       } else {
-        await api.post('/heroslider', payload);
+        await api.post('/heroslider', formData, config);
       }
 
       resetForm();
@@ -98,6 +92,7 @@ const HeroSliderManager = () => {
     setSubtitle('');
     setLinkUrl('');
     setImageUrl('');
+    setImageFile(null);
     setOrder(0);
     setIsActive(true);
   };
@@ -109,6 +104,7 @@ const HeroSliderManager = () => {
     setSubtitle(slide.subtitle || '');
     setLinkUrl(slide.linkUrl || '');
     setImageUrl(slide.imageUrl || '');
+    setImageFile(null);
     setOrder(slide.order || 0);
     setIsActive(slide.isActive !== false);
     setIsEditModalOpen(true);
@@ -267,18 +263,17 @@ const HeroSliderManager = () => {
             <div className="form-section">
               <label>Banner Image Asset</label>
               <div className="file-box-custom">
-                <input type="file" onChange={uploadFileHandler} accept="image/*" />
+                <input type="file" onChange={handleImageChange} accept="image/*" />
                 <div className="meta">
-                  {uploading ? "Analyzing Payload..." : (imageUrl ? "Image Secured ✓" : "Upload local image file")}
+                  {imageFile ? imageFile.name : (imageUrl ? "Image Secured ✓" : "Upload local image file")}
                 </div>
               </div>
               <input 
                 type="text" 
                 value={imageUrl} 
                 onChange={e => setImageUrl(e.target.value)} 
-                placeholder="Remote Image URL (CDN Link)" 
+                placeholder="Or provide Remote Image URL (CDN Link)" 
                 style={{ marginTop: '12px' }}
-                required
               />
             </div>
 
@@ -453,8 +448,14 @@ const HeroSliderManager = () => {
                   </label>
                 </div>
                 <div className="inspector-section">
-                  <label>Remote Image URL</label>
-                  <input type="text" value={imageUrl} onChange={e => setImageUrl(e.target.value)} required />
+                  <label>Banner Image Asset</label>
+                  <div className="file-box-custom">
+                    <input type="file" onChange={handleImageChange} accept="image/*" />
+                    <div className="meta" style={{ textAlign: 'center', marginTop: '10px' }}>
+                      {imageFile ? imageFile.name : (imageUrl ? "Image Secured ✓" : "Upload new image file")}
+                    </div>
+                  </div>
+                  <input type="text" value={imageUrl} onChange={e => setImageUrl(e.target.value)} style={{ marginTop: '10px' }} placeholder="Or Remote Image URL" />
                 </div>
                 <div className="modal-footer-custom">
                   <button type="submit" className="save-btn" disabled={submitting}>

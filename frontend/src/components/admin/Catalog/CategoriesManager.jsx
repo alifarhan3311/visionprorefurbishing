@@ -16,6 +16,8 @@ const CategoriesManager = () => {
   const [parentCategory, setParentCategory] = useState('');
   const [navIconUrl, setNavIconUrl] = useState('');
   const [promoBannerUrl, setPromoBannerUrl] = useState('');
+  const [navIconFile, setNavIconFile] = useState(null);
+  const [promoBannerFile, setPromoBannerFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [existingCategories, setExistingCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -57,6 +59,8 @@ const CategoriesManager = () => {
     setParentCategory(category.parentCategory?._id || '');
     setNavIconUrl(category.navIconUrl || '');
     setPromoBannerUrl(category.promoBannerUrl || '');
+    setNavIconFile(null);
+    setPromoBannerFile(null);
     setIsEditModalOpen(true);
   };
 
@@ -68,6 +72,7 @@ const CategoriesManager = () => {
 
   const resetForm = () => {
     setName(''); setSlug(''); setNavIconUrl(''); setPromoBannerUrl('');
+    setNavIconFile(null); setPromoBannerFile(null);
     setParentCategory(''); setTierLevel('1');
   };
 
@@ -82,23 +87,12 @@ const CategoriesManager = () => {
     }
   };
 
-  const uploadFileHandler = async (e, setUrl) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const formData = new FormData();
-    formData.append('image', file);
-    setUploading(true);
+  const handleIconChange = (e) => {
+    if (e.target.files[0]) setNavIconFile(e.target.files[0]);
+  };
 
-    try {
-      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-      const { data } = await api.post('/upload', formData, config);
-      setUrl(data.image);
-    } catch (error) {
-      console.error(error);
-      alert('Upload failed');
-    } finally {
-      setUploading(false);
-    }
+  const handleBannerChange = (e) => {
+    if (e.target.files[0]) setPromoBannerFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
@@ -107,19 +101,29 @@ const CategoriesManager = () => {
     setStatusMsg('Processing taxonomy change...');
     
     try {
-      const payload = {
-        name, slug,
-        tierLevel: parseInt(tierLevel),
-        parentCategory: tierLevel !== '1' ? parentCategory : null,
-        navIconUrl, promoBannerUrl
-      };
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('slug', slug);
+      formData.append('tierLevel', tierLevel);
+      if (tierLevel !== '1' && parentCategory) {
+        formData.append('parentCategory', parentCategory);
+      }
+      
+      // If we aren't uploading a new file, we should pass the existing URL (or empty) so the backend knows
+      formData.append('navIconUrl', navIconUrl);
+      formData.append('promoBannerUrl', promoBannerUrl);
+
+      if (navIconFile) formData.append('icon', navIconFile);
+      if (promoBannerFile) formData.append('banner', promoBannerFile);
+
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
 
       if (editingId) {
-        await api.put(`/categories/${editingId}`, payload);
+        await api.put(`/categories/${editingId}`, formData, config);
         setIsEditModalOpen(false);
         setEditingId(null);
       } else {
-        await api.post('/categories', payload);
+        await api.post('/categories', formData, config);
       }
 
       resetForm();
@@ -223,17 +227,17 @@ const CategoriesManager = () => {
                 <label>Global Navigation Assets</label>
                 <div className="asset-upload-row">
                   <div className="file-box-custom mini">
-                    <input type="file" onChange={(e) => uploadFileHandler(e, setNavIconUrl)} />
+                    <input type="file" onChange={handleIconChange} accept="image/*" />
                     <div className="meta">
                        <ImageIcon size={14} />
-                       <span>{navIconUrl ? "Icon ✓" : "Set Icon"}</span>
+                       <span>{navIconFile ? navIconFile.name : (navIconUrl ? "Icon ✓" : "Set Icon")}</span>
                     </div>
                   </div>
                   <div className="file-box-custom mini">
-                    <input type="file" onChange={(e) => uploadFileHandler(e, setPromoBannerUrl)} />
+                    <input type="file" onChange={handleBannerChange} accept="image/*" />
                     <div className="meta">
                        <Layout size={14} />
-                       <span>{promoBannerUrl ? "Banner ✓" : "Set Banner"}</span>
+                       <span>{promoBannerFile ? promoBannerFile.name : (promoBannerUrl ? "Banner ✓" : "Set Banner")}</span>
                     </div>
                   </div>
                 </div>
@@ -355,6 +359,17 @@ const CategoriesManager = () => {
                     </select>
                   </div>
                 )}
+                
+                <div className="inspector-section">
+                  <label>Node Icon Asset</label>
+                  <div className="file-box-custom">
+                    <input type="file" onChange={handleIconChange} accept="image/*" />
+                    <div className="meta" style={{ textAlign: 'center', marginTop: '10px' }}>
+                      {iconFile ? iconFile.name : (iconUrl ? "Icon Secured ✓" : "Upload new SVG/PNG")}
+                    </div>
+                  </div>
+                  <input type="text" value={iconUrl} onChange={e => setIconUrl(e.target.value)} style={{ marginTop: '10px' }} placeholder="Or Remote Icon URL" />
+                </div>
 
                 <div className="modal-footer-custom">
                   <button type="submit" className="save-btn" disabled={submitting}>Commit Changes</button>

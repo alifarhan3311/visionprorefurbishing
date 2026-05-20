@@ -15,6 +15,7 @@ const MarketingManager = () => {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Flyers');
   const [fileUrl, setFileUrl] = useState('');
+  const [fileToUpload, setFileToUpload] = useState(null);
   const [fileType, setFileType] = useState('PDF');
   const [fileSize, setFileSize] = useState('');
   const [loading, setLoading] = useState(true);
@@ -47,27 +48,13 @@ const MarketingManager = () => {
     }
   };
 
-  const uploadFileHandler = async (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('image', file);
-    setUploading(true);
-
-    try {
-      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-      const { data } = await api.post('/upload', formData, config);
-      setFileUrl(data.image);
-      
+    if (file) {
+      setFileToUpload(file);
       const extension = file.name.split('.').pop().toUpperCase();
       setFileType(extension);
       setFileSize((file.size / (1024 * 1024)).toFixed(1) + ' MB');
-    } catch (error) {
-      console.error(error);
-      alert('Upload failed');
-    } finally {
-      setUploading(false);
     }
   };
 
@@ -75,14 +62,23 @@ const MarketingManager = () => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const payload = { title, description, category, fileUrl, fileType, fileSize };
-      
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('category', category);
+      formData.append('fileType', fileType);
+      formData.append('fileSize', fileSize);
+      formData.append('fileUrl', fileUrl);
+      if (fileToUpload) formData.append('image', fileToUpload);
+
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+
       if (editingId) {
-        await api.put(`/marketing/${editingId}`, payload);
+        await api.put(`/marketing/${editingId}`, formData, config);
         setIsEditModalOpen(false);
         setEditingId(null);
       } else {
-        await api.post('/marketing', payload);
+        await api.post('/marketing', formData, config);
       }
 
       resetForm();
@@ -96,7 +92,7 @@ const MarketingManager = () => {
   };
 
   const resetForm = () => {
-    setTitle(''); setDescription(''); setFileUrl('');
+    setTitle(''); setDescription(''); setFileUrl(''); setFileToUpload(null);
     setCategory('Flyers'); setFileType('PDF'); setFileSize('');
   };
 
@@ -107,6 +103,7 @@ const MarketingManager = () => {
     setDescription(asset.description || '');
     setCategory(asset.category || 'Flyers');
     setFileUrl(asset.fileUrl || '');
+    setFileToUpload(null);
     setFileType(asset.fileType || 'PDF');
     setFileSize(asset.fileSize || '');
     setIsEditModalOpen(true);
@@ -206,9 +203,9 @@ const MarketingManager = () => {
             <div className="form-section">
               <label>File Distribution</label>
               <div className="file-box-custom">
-                <input type="file" onChange={uploadFileHandler} />
+                <input type="file" onChange={handleFileChange} />
                 <div className="meta">
-                  {uploading ? "Analyzing Payload..." : (fileUrl ? "Asset Secured ✓" : "Upload source file (PDF/IMG/ZIP)")}
+                  {fileToUpload ? fileToUpload.name : (fileUrl ? "Asset Secured ✓" : "Upload source file (PDF/IMG/ZIP)")}
                 </div>
               </div>
               <input 
@@ -336,6 +333,16 @@ const MarketingManager = () => {
                       <option value="Technical Documents">Technical Manuals</option>
                     </select>
                   </div>
+                </div>
+                <div className="inspector-section">
+                  <label>File Distribution</label>
+                  <div className="file-box-custom">
+                    <input type="file" onChange={handleFileChange} />
+                    <div className="meta" style={{ textAlign: 'center', marginTop: '10px' }}>
+                      {fileToUpload ? fileToUpload.name : (fileUrl ? "Asset Secured ✓" : "Upload new source file")}
+                    </div>
+                  </div>
+                  <input type="text" value={fileUrl} onChange={e => setFileUrl(e.target.value)} style={{ marginTop: '10px' }} placeholder="Or Remote URL" />
                 </div>
                 <div className="modal-footer-custom">
                   <button type="submit" className="save-btn" disabled={submitting}>
