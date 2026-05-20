@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, AlertTriangle } from 'lucide-react';
+import { Search, AlertTriangle, CheckCircle2, XCircle } from 'lucide-react';
 import api from '../../services/api';
 import '../admin/AdminForms.css';
 
@@ -11,11 +11,26 @@ const RMAForm = () => {
   const [description, setDescription] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [alertConfig, setAlertConfig] = useState({
+    show: false,
+    type: 'success', // 'success', 'warning', 'error'
+    title: '',
+    message: ''
+  });
+
+  const showAlert = (type, title, message) => {
+    setAlertConfig({ show: true, type, title, message });
+  };
+
+  const closeAlert = () => {
+    setAlertConfig(prev => ({ ...prev, show: false }));
+  };
+
   const handleSearch = () => {
     if (searchValue.trim() !== '') {
       setIsSearched(true);
     } else {
-      alert('Please enter a value to search');
+      showAlert('warning', 'Search Value Required', 'Please enter a valid Order ID or device IMEI to locate the item.');
     }
   };
 
@@ -30,14 +45,22 @@ const RMAForm = () => {
         description
       });
       if (response.data.success) {
-        alert('RMA Request submitted successfully!');
+        showAlert(
+          'success',
+          'RMA Claim Submitted!',
+          'Your order return request has been submitted successfully. The administrator has been notified and you will receive an email update once the status is updated.'
+        );
         setIsSearched(false);
         setSearchValue('');
         setDescription('');
       }
     } catch (error) {
       console.error("Error submitting RMA:", error);
-      alert('Error submitting RMA');
+      showAlert(
+        'error',
+        'Submission Failed',
+        'There was an unexpected error processing your RMA request. Please try again or reach out to our dealer support desk.'
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -137,12 +160,209 @@ const RMAForm = () => {
           </button>
         </div>
       )}
+      {/* Premium Glassmorphism Alert Modal */}
+      {alertConfig.show && (
+        <div className="alert-overlay animate-fadeIn" onClick={closeAlert}>
+          <div className="alert-card animate-scaleIn" onClick={e => e.stopPropagation()}>
+            <div className={`alert-icon-wrapper ${alertConfig.type}`}>
+              {alertConfig.type === 'success' && <CheckCircle2 size={40} className="alert-icon success-icon" />}
+              {alertConfig.type === 'warning' && <AlertTriangle size={40} className="alert-icon warning-icon" />}
+              {alertConfig.type === 'error' && <XCircle size={40} className="alert-icon error-icon" />}
+            </div>
+            <h2 className="alert-title">{alertConfig.title}</h2>
+            <p className="alert-message">{alertConfig.message}</p>
+            <button 
+              className={`alert-close-btn ${alertConfig.type}`} 
+              onClick={closeAlert}
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      )}
+
       <style dangerouslySetInnerHTML={{ __html: `
         .search-options { display: flex; gap: 20px; margin-bottom: 15px; }
         .search-inputs { display: flex; gap: 15px; }
         @media (max-width: 768px) {
           .search-options { flex-direction: column; gap: 10px; }
           .search-inputs { flex-direction: column; }
+        }
+
+        /* Premium Glassmorphism Alert Overlay */
+        .alert-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(15, 23, 42, 0.45);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          z-index: 99999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        /* Glassmorphism Alert Card */
+        .alert-card {
+          background: rgba(255, 255, 255, 0.95);
+          border-radius: 24px;
+          padding: 45px 35px;
+          max-width: 440px;
+          width: 90%;
+          text-align: center;
+          border: 1px solid rgba(255, 255, 255, 0.85);
+          box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.25);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          transition: all 0.3s ease;
+        }
+
+        /* Elegant Pulsing Icon Wrapper */
+        .alert-icon-wrapper {
+          width: 84px;
+          height: 84px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 24px;
+        }
+
+        .alert-icon-wrapper.success {
+          background-color: #ecfdf5;
+          color: #10b981;
+          animation: pulseSuccess 2.5s infinite;
+        }
+
+        .alert-icon-wrapper.warning {
+          background-color: #fffbeb;
+          color: #f59e0b;
+          animation: pulseWarning 2.5s infinite;
+        }
+
+        .alert-icon-wrapper.error {
+          background-color: #fff1f2;
+          color: #f43f5e;
+          animation: pulseError 2.5s infinite;
+        }
+
+        .alert-icon {
+          stroke-width: 2.2px;
+        }
+
+        /* Bold Premium Typography */
+        .alert-title {
+          font-size: 24px;
+          font-weight: 800;
+          color: #0f172a;
+          margin: 0 0 12px 0;
+          letter-spacing: -0.02em;
+          font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        .alert-message {
+          font-size: 15px;
+          color: #475569;
+          line-height: 1.6;
+          margin: 0 0 32px 0;
+          font-weight: 500;
+        }
+
+        /* Premium Interaction Button */
+        .alert-close-btn {
+          width: 100%;
+          padding: 15px 28px;
+          border-radius: 14px;
+          font-size: 15px;
+          font-weight: 700;
+          border: none;
+          cursor: pointer;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+          outline: none;
+        }
+
+        .alert-close-btn.success {
+          background-color: #10b981;
+          color: white;
+        }
+        .alert-close-btn.success:hover {
+          background-color: #059669;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+        }
+        .alert-close-btn.success:active {
+          transform: translateY(0);
+        }
+
+        .alert-close-btn.warning {
+          background-color: #f59e0b;
+          color: white;
+        }
+        .alert-close-btn.warning:hover {
+          background-color: #d97706;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(245, 158, 11, 0.35);
+        }
+        .alert-close-btn.warning:active {
+          transform: translateY(0);
+        }
+
+        .alert-close-btn.error {
+          background-color: #f43f5e;
+          color: white;
+        }
+        .alert-close-btn.error:hover {
+          background-color: #e11d48;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(244, 63, 94, 0.35);
+        }
+        .alert-close-btn.error:active {
+          transform: translateY(0);
+        }
+
+        /* Animation Keyframes */
+        .animate-fadeIn {
+          animation: alertFadeIn 0.3s ease-out forwards;
+        }
+
+        .animate-scaleIn {
+          animation: alertScaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes alertFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        @keyframes alertScaleIn {
+          from {
+            transform: scale(0.92) translateY(15px);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+          }
+        }
+
+        @keyframes pulseSuccess {
+          0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45); }
+          70% { box-shadow: 0 0 0 14px rgba(16, 185, 129, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        @keyframes pulseWarning {
+          0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.45); }
+          70% { box-shadow: 0 0 0 14px rgba(245, 158, 11, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+
+        @keyframes pulseError {
+          0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.45); }
+          70% { box-shadow: 0 0 0 14px rgba(244, 63, 94, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
         }
       `}} />
     </div>

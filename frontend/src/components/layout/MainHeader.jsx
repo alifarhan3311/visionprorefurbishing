@@ -72,7 +72,7 @@ const MainHeader = ({ onMenuToggle }) => {
           </button>
           {/* Logo */}
           <Link to="/" className="main-logo">
-            <img src="/assets/visionpro-logo.png" alt="Vision Pro LCD" style={{ height: '48px' }} />
+            <img src="/assets/visionpro-logo.png" alt="Vision Pro LCD" className="header-logo-img" />
           </Link>
         </div>
 

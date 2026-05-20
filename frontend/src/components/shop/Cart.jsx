@@ -1,14 +1,28 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import { AuthContext } from '../../context/AuthContext';
-import { Trash2 } from 'lucide-react';
+import { Trash2, AlertTriangle } from 'lucide-react';
 import '../user/UserLayout.css'; // Reusing some card styles
 
 const Cart = () => {
   const { cartItems: contextCartItems, removeFromCart, updateCartQty } = useContext(CartContext);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  const [alertConfig, setAlertConfig] = useState({
+    show: false,
+    title: '',
+    message: ''
+  });
+
+  const showAlert = (title, message) => {
+    setAlertConfig({ show: true, title, message });
+  };
+
+  const closeAlert = () => {
+    setAlertConfig(prev => ({ ...prev, show: false }));
+  };
 
   const cartItems = (Array.isArray(contextCartItems) ? contextCartItems : []).filter(item => item !== null && typeof item === 'object');
   const cartTotal = cartItems.reduce((acc, item) => acc + (item.qty || 0) * (item.price || 0), 0).toFixed(2);
@@ -18,7 +32,10 @@ const Cart = () => {
     for (const item of cartItems) {
       const stock = item.stockQuantity !== undefined ? item.stockQuantity : 10;
       if (item.qty > stock) {
-        alert(`Stock mismatch: Requested quantity for "${item.name}" exceeds current ledger availability. You can order a maximum of ${stock} units.`);
+        showAlert(
+          'Stock Mismatch',
+          `Requested quantity for "${item.name}" exceeds current ledger availability. You can order a maximum of ${stock} units.`
+        );
         return;
       }
     }
@@ -100,6 +117,147 @@ const Cart = () => {
 
         </div>
       )}
+
+      {/* Premium Glassmorphism Alert Modal */}
+      {alertConfig.show && (
+        <div className="cart-alert-overlay animate-fadeIn" onClick={closeAlert}>
+          <div className="cart-alert-card animate-scaleIn" onClick={e => e.stopPropagation()}>
+            <div className="cart-alert-icon-wrapper">
+              <AlertTriangle size={40} className="cart-alert-icon" />
+            </div>
+            <h2 className="cart-alert-title">{alertConfig.title}</h2>
+            <p className="cart-alert-message">{alertConfig.message}</p>
+            <button 
+              className="cart-alert-close-btn" 
+              onClick={closeAlert}
+            >
+              Adjust Quantity
+            </button>
+          </div>
+        </div>
+      )}
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        /* Premium Glassmorphism Alert Overlay */
+        .cart-alert-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(15, 23, 42, 0.45);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          z-index: 99999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        /* Glassmorphism Alert Card */
+        .cart-alert-card {
+          background: rgba(255, 255, 255, 0.96);
+          border-radius: 24px;
+          padding: 45px 35px;
+          max-width: 460px;
+          width: 90%;
+          text-align: center;
+          border: 1px solid rgba(255, 255, 255, 0.85);
+          box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.3);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          transition: all 0.3s ease;
+        }
+
+        /* Elegant Pulsing Icon Wrapper */
+        .cart-alert-icon-wrapper {
+          width: 84px;
+          height: 84px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 24px;
+          background-color: #fffbeb;
+          color: #f59e0b;
+          animation: cartPulseWarning 2.5s infinite;
+        }
+
+        .cart-alert-icon {
+          stroke-width: 2.2px;
+        }
+
+        /* Bold Premium Typography */
+        .cart-alert-title {
+          font-size: 24px;
+          font-weight: 800;
+          color: #0f172a;
+          margin: 0 0 14px 0;
+          letter-spacing: -0.025em;
+          font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        .cart-alert-message {
+          font-size: 15px;
+          color: #475569;
+          line-height: 1.6;
+          margin: 0 0 32px 0;
+          font-weight: 500;
+        }
+
+        /* Premium Interaction Button */
+        .cart-alert-close-btn {
+          width: 100%;
+          padding: 15px 28px;
+          border-radius: 14px;
+          font-size: 15px;
+          font-weight: 700;
+          border: none;
+          cursor: pointer;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+          outline: none;
+          background-color: #f59e0b;
+          color: white;
+        }
+        .cart-alert-close-btn:hover {
+          background-color: #d97706;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(245, 158, 11, 0.35);
+        }
+        .cart-alert-close-btn:active {
+          transform: translateY(0);
+        }
+
+        /* Animation Keyframes */
+        .animate-fadeIn {
+          animation: cartFadeIn 0.3s ease-out forwards;
+        }
+
+        .animate-scaleIn {
+          animation: cartScaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes cartFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        @keyframes cartScaleIn {
+          from {
+            transform: scale(0.92) translateY(15px);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+          }
+        }
+
+        @keyframes cartPulseWarning {
+          0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.45); }
+          70% { box-shadow: 0 0 0 14px rgba(245, 158, 11, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+      `}} />
     </div>
   );
 };

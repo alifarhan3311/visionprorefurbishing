@@ -234,17 +234,16 @@ const BuybackTickets = () => {
 
             <div className="modal-footer-custom">
               <button 
-                className="save-btn" 
+                className="save-btn approve" 
                 onClick={() => handleStatusUpdate(selectedTicket._id, 'Approved')}
                 disabled={updating || selectedTicket.status === 'Approved'}
               >
                 <CheckCircle size={18} /> Approve Batch
               </button>
               <button 
-                className="save-btn secondary" 
+                className="save-btn payment" 
                 onClick={() => handleStatusUpdate(selectedTicket._id, 'Paid')}
                 disabled={updating || selectedTicket.status === 'Paid'}
-                style={{ background: '#0f172a' }}
               >
                 <CreditCard size={18} /> Confirm Payment
               </button>
@@ -252,7 +251,6 @@ const BuybackTickets = () => {
                 className="cancel-btn" 
                 onClick={() => handleStatusUpdate(selectedTicket._id, 'Rejected')}
                 disabled={updating || selectedTicket.status === 'Rejected'}
-                style={{ color: '#ef4444', borderColor: '#fee2e2' }}
               >
                 <XCircle size={18} /> Reject Batch
               </button>
@@ -262,7 +260,7 @@ const BuybackTickets = () => {
       )}
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .buyback-orchestrator { padding: 40px; background: #f8fafc; min-height: 100vh; font-family: 'Inter', sans-serif; }
+        .buyback-orchestrator { padding: 40px; background: #f8fafc; min-height: 100vh; font-family: 'Outfit', sans-serif; }
         
         .editorial-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
         .header-meta h1 { font-size: 32px; font-weight: 800; margin: 8px 0; letter-spacing: -0.02em; color: #0f172a; }
@@ -318,7 +316,9 @@ const BuybackTickets = () => {
         .status-pill.rejected { background: #fee2e2; color: #b91c1c; }
         .status-pill .dot { width: 6px; height: 6px; border-radius: 50%; }
         .status-pill.pending .dot { background: #f97316; }
+        .status-pill.approved .dot { background: #3b82f6; }
         .status-pill.paid .dot { background: #10b981; }
+        .status-pill.rejected .dot { background: #ef4444; }
 
         .hub-icon-btn { width: 40px; height: 40px; border-radius: 12px; border: 1px solid #e2e8f0; background: white; color: #94a3b8; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .premium-row:hover .hub-icon-btn { background: #0f172a; color: white; border-color: #0f172a; }
@@ -356,11 +356,15 @@ const BuybackTickets = () => {
         .op-row:last-child { margin-bottom: 0; }
         .op-row svg { color: #94a3b8; }
 
-        .modal-footer-custom { padding: 40px; border-top: 1px solid #f1f5f9; display: grid; gap: 12px; }
-        .save-btn { padding: 18px; border-radius: 20px; border: none; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: all 0.2s; background: #3b82f6; color: white; }
-        .cancel-btn { padding: 18px; border-radius: 20px; border: 1px solid #e2e8f0; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: all 0.2s; background: transparent; }
-        .save-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2); }
-        .save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .modal-footer-custom { padding: 30px; border-top: 1px solid #f1f5f9; display: flex; flex-direction: column; gap: 12px; background: #fafafa; }
+        .save-btn { padding: 14px 20px; border-radius: 16px; border: none; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1); }
+        .save-btn.approve { background: #4f46e5; color: white; }
+        .save-btn.approve:hover:not(:disabled) { background: #4338ca; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25); }
+        .save-btn.payment { background: #10b981; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1); }
+        .save-btn.payment:hover:not(:disabled) { background: #059669; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25); }
+        .cancel-btn { padding: 14px 20px; border-radius: 16px; border: 1px solid #fee2e2; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); background: transparent; color: #ef4444; }
+        .cancel-btn:hover:not(:disabled) { background: #fef2f2; color: #dc2626; border-color: #fca5a5; transform: translateY(-1px); }
+        .save-btn:disabled, .cancel-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
         .animate-fade { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

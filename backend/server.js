@@ -14,7 +14,6 @@ const buybackRoutes = require('./routes/buybackRoutes');
 const rmaRoutes = require('./routes/rmaRoutes');
 const authRoutes = require('./routes/authRoutes');
 const orderRoutes = require('./routes/orderRoutes');
-const paymentRoutes = require('./routes/paymentRoutes');
 const heroSliderRoutes = require('./routes/heroSliderRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
@@ -88,14 +87,13 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://alifarhan1531_db_user:a
 
 // Mount Routes
 app.use('/api/v1/categories', categoryRoutes);
-app.use('/api/v1/products', productRoutes);
+app.use('/api/v1/products', productRoutes)
 app.use('/api/v1/buybacks', require('./routes/buybackRoutes'));
 app.use('/api/v1/marketing', require('./routes/marketingRoutes'));
 app.use('/api/v1/blog', require('./routes/blogRoutes'));
 app.use('/api/v1/rmas', rmaRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/orders', orderRoutes);
-app.use('/api/v1/payment', paymentRoutes);
 app.use('/api/v1/heroslider', heroSliderRoutes);
 app.use('/api/v1/appointments', appointmentRoutes);
 app.use('/api/v1/upload', uploadRoutes);

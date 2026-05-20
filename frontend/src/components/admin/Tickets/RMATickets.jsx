@@ -50,7 +50,9 @@ const RMATickets = () => {
   const filteredTickets = tickets.filter(t => 
     t._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
     t.reason.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    t.userId.toLowerCase().includes(searchTerm.toLowerCase())
+    (t.userId && t.userId.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (t.user?.companyName && t.user.companyName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (t.user?.name && t.user.name.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const stats = {
@@ -144,15 +146,17 @@ const RMATickets = () => {
                     <div className="dealer-cell">
                       <User size={14} />
                       <div className="meta-stack">
-                        <span className="n">{ticket.userId.substring(ticket.userId.length - 10)}...</span>
+                        <span className="n">
+                          {ticket.user?.companyName || ticket.user?.name || (ticket.userId ? `${ticket.userId.substring(ticket.userId.length - 10)}...` : 'Dealer')}
+                        </span>
                         <span className="m">{ticket.searchMethod.toUpperCase()}: {ticket.searchValue}</span>
                       </div>
                     </div>
                   </td>
                   <td>
-                    <div className="reason-pill">
+                    <div className="reason-pill" title={ticket.reason}>
                       <AlertCircle size={12} />
-                      <span>{ticket.reason}</span>
+                      <span>{ticket.reason.length > 20 ? `${ticket.reason.substring(0, 20)}...` : ticket.reason}</span>
                     </div>
                   </td>
                   <td>

@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { createBuyback, getBuybacks, updateBuybackStatus } = require('../controllers/buybackController');
+const { createBuyback, getBuybacks, getMyBuybacks, updateBuybackStatus } = require('../controllers/buybackController');
 const { getBuybackPricing, upsertBuybackPricing } = require('../controllers/buybackPricingController');
 const { protect, admin } = require('../middleware/authMiddleware');
+
+router.get('/mybuybacks', protect, getMyBuybacks);
 
 router.route('/')
   .post(protect, createBuyback)

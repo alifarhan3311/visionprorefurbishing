@@ -55,7 +55,7 @@ const Login = () => {
       <div className="auth-card">
         <div className="auth-header">
           <div className="auth-logo-container" style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-            <img src="/assets/visionpro-logo.png" alt="logo" style={{ height: '50px' }} />
+            <img src="/assets/visionpro-logo.png" alt="logo" style={{ height: '65px' }} />
           </div>
           <h2>Welcome Back</h2>
           <p>Login to your Vision Pro LCD B2B portal</p>

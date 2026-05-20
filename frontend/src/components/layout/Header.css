@@ -1,5 +1,22 @@
 /* Header.css - Pixel Perfect Styling for the 3-Tier Header */
 
+.main-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.header-logo-img {
+  height: 60px; /* Highly visible premium scale */
+  width: auto;
+  display: block;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.header-logo-img:hover {
+  transform: scale(1.05);
+}
+
 /* --- Top Bar --- */
 .top-bar {
   background-color: var(--top-bar-bg);
@@ -315,6 +332,7 @@
   
   .main-header-content { flex-wrap: wrap; gap: 15px; }
   .logo-section { display: flex; align-items: center; gap: 15px; flex-grow: 1; }
+  .header-logo-img { height: 48px; }
   .mobile-menu-toggle { display: block; }
   
   .search-container { order: 3; width: 100%; max-width: 100%; margin-top: 10px; }

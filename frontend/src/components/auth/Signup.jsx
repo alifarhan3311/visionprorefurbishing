@@ -58,7 +58,9 @@ const Signup = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <span className="auth-logo-highlight">Mobile</span>Sentrix
+          <div className="auth-logo-container" style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+            <img src="/assets/visionpro-logo.png" alt="logo" style={{ height: '65px' }} />
+          </div>
           <h2>Apply for B2B Account</h2>
           <p>Get access to wholesale pricing</p>
         </div>
