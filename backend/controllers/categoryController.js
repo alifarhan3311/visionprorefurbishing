@@ -5,7 +5,28 @@ const Category = require('../models/Category');
 // @access  Private/Admin
 exports.createCategory = async (req, res) => {
   try {
-    const { name, slug, tierLevel, parentCategory, navIconUrl, promoBannerUrl, highlightThumbnail } = req.body;
+    const { name, slug, tierLevel, parentCategory, highlightThumbnail } = req.body;
+    
+    let navIconUrl = req.body.navIconUrl || '';
+    let promoBannerUrl = req.body.promoBannerUrl || '';
+
+    if (req.files) {
+      if (req.files.icon && req.files.icon[0]) {
+        navIconUrl = `/uploads/${req.files.icon[0].filename}`;
+      }
+      if (req.files.banner && req.files.banner[0]) {
+        promoBannerUrl = `/uploads/${req.files.banner[0].filename}`;
+      }
+    }
+    
+    let parsedTopProducts = [];
+    if (req.body.topProducts) {
+      try {
+        parsedTopProducts = JSON.parse(req.body.topProducts);
+      } catch (e) {
+        parsedTopProducts = [];
+      }
+    }
     
     const category = await Category.create({
       name,
@@ -14,7 +35,8 @@ exports.createCategory = async (req, res) => {
       parentCategory: tierLevel > 1 ? parentCategory : null,
       navIconUrl,
       promoBannerUrl,
-      highlightThumbnail
+      highlightThumbnail,
+      topProducts: parsedTopProducts
     });
 
     res.status(201).json({ success: true, data: category });
@@ -29,7 +51,12 @@ exports.createCategory = async (req, res) => {
 exports.getMegaMenu = async (req, res) => {
   try {
     // 1. Fetch ALL active categories in a single query (Fastest approach)
-    const allCategories = await Category.find({ status: 'active' }).lean();
+    const allCategories = await Category.find({ status: 'active' })
+      .populate({
+        path: 'topProducts',
+        match: { status: 'in_stock' }
+      })
+      .lean();
 
     // 2. Build the tree using an O(N) mapping approach
     const categoryMap = {};
@@ -85,7 +112,28 @@ exports.updateCategory = async (req, res) => {
       return res.status(404).json({ success: false, error: 'Category not found' });
     }
 
-    const { name, slug, tierLevel, parentCategory, navIconUrl, promoBannerUrl, highlightThumbnail } = req.body;
+    const { name, slug, tierLevel, parentCategory, highlightThumbnail } = req.body;
+
+    let parsedTopProducts = category.topProducts || [];
+    if (req.body.topProducts) {
+      try {
+        parsedTopProducts = JSON.parse(req.body.topProducts);
+      } catch (e) {
+        parsedTopProducts = category.topProducts || [];
+      }
+    }
+
+    let navIconUrl = req.body.navIconUrl || category.navIconUrl;
+    let promoBannerUrl = req.body.promoBannerUrl || category.promoBannerUrl;
+
+    if (req.files) {
+      if (req.files.icon && req.files.icon[0]) {
+        navIconUrl = `/uploads/${req.files.icon[0].filename}`;
+      }
+      if (req.files.banner && req.files.banner[0]) {
+        promoBannerUrl = `/uploads/${req.files.banner[0].filename}`;
+      }
+    }
 
     category = await Category.findByIdAndUpdate(req.params.id, {
       name,
@@ -94,7 +142,8 @@ exports.updateCategory = async (req, res) => {
       parentCategory: tierLevel > 1 ? parentCategory : null,
       navIconUrl,
       promoBannerUrl,
-      highlightThumbnail
+      highlightThumbnail,
+      topProducts: parsedTopProducts
     }, {
       new: true,
       runValidators: true

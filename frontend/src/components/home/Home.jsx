@@ -9,7 +9,7 @@ import {
 import Header from '../layout/Header';
 import { CartContext } from '../../context/CartContext';
 import { AuthContext } from '../../context/AuthContext';
-import api from '../../services/api';
+import api, { getImageUrl } from '../../services/api';
 import './Home.css';
 
 const Home = () => {
@@ -259,7 +259,7 @@ const Home = () => {
             <div 
               key={slide._id} 
               className={`hero-slide ${idx === currentSlide ? 'active' : ''}`}
-              style={{ backgroundImage: `url(${slide.imageUrl})` }}
+              style={{ backgroundImage: `url(${getImageUrl(slide.imageUrl)})` }}
             >
               <div className="hero-slide-overlay"></div>
               <div className="hero-slide-content">
@@ -344,7 +344,7 @@ const Home = () => {
                 )}
                 <Link to={`/product/${product._id}`} className="product-image-container">
                   {product.imageUrl ? (
-                    <img src={product.imageUrl} alt={product.name} className="product-image" />
+                    <img src={getImageUrl(product.imageUrl)} alt={product.name} className="product-image" />
                   ) : (
                     getIcon(product.productType)
                   )}
@@ -699,7 +699,7 @@ const Home = () => {
               {blogs.map((post) => (
                 <div key={post._id} className="blog-post-card">
                   <div className="post-image-wrap">
-                    <img src={post.image || 'https://images.unsplash.com/photo-1601524909162-be87252be298?auto=format&fit=crop&w=400&q=80'} alt={post.title} />
+                    <img src={post.image ? getImageUrl(post.image) : 'https://images.unsplash.com/photo-1601524909162-be87252be298?auto=format&fit=crop&w=400&q=80'} alt={post.title} />
                     <span className="post-category-tag">{post.category}</span>
                   </div>
                   <div className="post-info-stack">

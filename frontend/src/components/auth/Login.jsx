@@ -16,7 +16,9 @@ const Login = () => {
       const queryParams = new URLSearchParams(window.location.search);
       const redirect = queryParams.get('redirect');
       if (redirect) {
-        navigate(`/${redirect}`);
+        // Handle redirect correctly whether it starts with a slash or not
+        const path = redirect.startsWith('/') ? redirect : `/${redirect}`;
+        navigate(path);
       } else {
         navigate(user.role === 'admin' ? '/admin' : '/dashboard');
       }
@@ -41,16 +43,8 @@ const Login = () => {
           console.error('Error booking pending appointment:', err);
         }
       }
-
-      const queryParams = new URLSearchParams(window.location.search);
-      const redirect = queryParams.get('redirect');
-      if (redirect) {
-        navigate(`/${redirect}`);
-      } else if (result.user && result.user.role === 'admin') {
-        navigate('/admin');
-      } else {
-        navigate('/dashboard');
-      }
+      // Note: We don't call navigate here. AuthContext's state update (setUser)
+      // will trigger the useEffect above to handle the redirection cleanly without race conditions.
     } else {
       setError(result.error);
     }

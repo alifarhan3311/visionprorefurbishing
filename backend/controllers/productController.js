@@ -7,13 +7,18 @@ exports.createProduct = async (req, res) => {
   try {
     const { name, sku, baseRetailPrice, category, productType, ...dynamicFields } = req.body;
 
+    let imageUrl = dynamicFields.imageUrl || '';
+    if (req.file) {
+      imageUrl = `/uploads/${req.file.filename}`;
+    }
+
     const newProductData = {
       name,
       sku,
       baseRetailPrice,
       category,
       productType,
-      imageUrl: dynamicFields.imageUrl,
+      imageUrl,
       badge: dynamicFields.badge,
       features: dynamicFields.features || []
     };
@@ -140,13 +145,18 @@ exports.updateProduct = async (req, res) => {
 
     const { name, sku, baseRetailPrice, category, productType, ...dynamicFields } = req.body;
 
+    let imageUrl = dynamicFields.imageUrl || product.imageUrl;
+    if (req.file) {
+      imageUrl = `/uploads/${req.file.filename}`;
+    }
+
     const updateData = {
       name,
       sku,
       baseRetailPrice,
       category,
       productType,
-      imageUrl: dynamicFields.imageUrl,
+      imageUrl,
       badge: dynamicFields.badge,
       features: dynamicFields.features || []
     };

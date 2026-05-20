@@ -6,7 +6,7 @@ import {
   FolderTree, Activity, Rocket, Package, ArrowLeft
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import api from '../../../services/api';
+import api, { getImageUrl } from '../../../services/api';
 import '../AdminForms.css';
 
 const TierCategoryManager = ({ tierLevel }) => {
@@ -14,7 +14,9 @@ const TierCategoryManager = ({ tierLevel }) => {
   const [slug, setSlug] = useState('');
   const [parentCategory, setParentCategory] = useState('');
   const [navIconUrl, setNavIconUrl] = useState('');
+  const [navIconFile, setNavIconFile] = useState(null);
   const [promoBannerUrl, setPromoBannerUrl] = useState('');
+  const [promoBannerFile, setPromoBannerFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [existingCategories, setExistingCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,6 +27,25 @@ const TierCategoryManager = ({ tierLevel }) => {
   // Edit State
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
+
+  // For Tier 4 Top Products selection
+  const [categoryProducts, setCategoryProducts] = useState([]);
+  const [selectedTopProducts, setSelectedTopProducts] = useState([]);
+  const [fetchingProducts, setFetchingProducts] = useState(false);
+
+  const fetchCategoryProducts = async (catId) => {
+    setFetchingProducts(true);
+    try {
+      const { data } = await api.get(`/products?category=${catId}`);
+      if (data && data.success) {
+        setCategoryProducts(data.data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching category products:', err);
+    } finally {
+      setFetchingProducts(false);
+    }
+  };
 
   useEffect(() => {
     fetchCategories();
@@ -56,6 +77,16 @@ const TierCategoryManager = ({ tierLevel }) => {
     setParentCategory(category.parentCategory?._id || category.parentCategory || '');
     setNavIconUrl(category.navIconUrl || '');
     setPromoBannerUrl(category.promoBannerUrl || '');
+
+    if (parseInt(tierLevel) === 4) {
+      fetchCategoryProducts(category._id);
+      const topProds = category.topProducts || [];
+      setSelectedTopProducts(topProds.map(id => typeof id === 'object' && id ? id._id : id));
+    } else {
+      setCategoryProducts([]);
+      setSelectedTopProducts([]);
+    }
+
     setIsEditModalOpen(true);
   };
 
@@ -69,8 +100,12 @@ const TierCategoryManager = ({ tierLevel }) => {
     setName(''); 
     setSlug(''); 
     setNavIconUrl(''); 
+    setNavIconFile(null);
     setPromoBannerUrl('');
+    setPromoBannerFile(null);
     setParentCategory('');
+    setCategoryProducts([]);
+    setSelectedTopProducts([]);
   };
 
   const deleteCategory = async (id) => {
@@ -84,23 +119,12 @@ const TierCategoryManager = ({ tierLevel }) => {
     }
   };
 
-  const uploadFileHandler = async (e, setUrl) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const formData = new FormData();
-    formData.append('image', file);
-    setUploading(true);
+  const handleIconChange = (e) => {
+    if (e.target.files[0]) setNavIconFile(e.target.files[0]);
+  };
 
-    try {
-      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-      const { data } = await api.post('/upload', formData, config);
-      setUrl(data.image);
-    } catch (error) {
-      console.error(error);
-      alert('Upload failed');
-    } finally {
-      setUploading(false);
-    }
+  const handleBannerChange = (e) => {
+    if (e.target.files[0]) setPromoBannerFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
@@ -109,21 +133,31 @@ const TierCategoryManager = ({ tierLevel }) => {
     setStatusMsg('Processing taxonomy change...');
     
     try {
-      const payload = {
-        name, 
-        slug,
-        tierLevel: parseInt(tierLevel),
-        parentCategory: tierLevel !== 1 ? parentCategory : null,
-        navIconUrl, 
-        promoBannerUrl
-      };
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('slug', slug);
+      formData.append('tierLevel', parseInt(tierLevel));
+      if (tierLevel !== 1 && parentCategory) {
+        formData.append('parentCategory', parentCategory);
+      }
+      formData.append('navIconUrl', navIconUrl);
+      formData.append('promoBannerUrl', promoBannerUrl);
+      
+      if (navIconFile) formData.append('icon', navIconFile);
+      if (promoBannerFile) formData.append('banner', promoBannerFile);
+
+      if (parseInt(tierLevel) === 4) {
+        formData.append('topProducts', JSON.stringify(selectedTopProducts));
+      }
+
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
 
       if (editingId) {
-        await api.put(`/categories/${editingId}`, payload);
+        await api.put(`/categories/${editingId}`, formData, config);
         setIsEditModalOpen(false);
         setEditingId(null);
       } else {
-        await api.post('/categories', payload);
+        await api.post('/categories', formData, config);
       }
 
       resetForm();
@@ -231,17 +265,17 @@ const TierCategoryManager = ({ tierLevel }) => {
                 <label>Navigation & Hero Graphics</label>
                 <div className="asset-upload-row">
                   <div className="file-box-custom mini">
-                    <input type="file" onChange={(e) => uploadFileHandler(e, setNavIconUrl)} />
+                    <input type="file" onChange={handleIconChange} accept="image/*" />
                     <div className="meta">
                        <ImageIcon size={14} />
-                       <span>{navIconUrl ? "Icon Loaded ✓" : "Upload Icon"}</span>
+                       <span>{navIconFile ? navIconFile.name : (navIconUrl ? "Icon Loaded ✓" : "Upload Icon")}</span>
                     </div>
                   </div>
                   <div className="file-box-custom mini">
-                    <input type="file" onChange={(e) => uploadFileHandler(e, setPromoBannerUrl)} />
+                    <input type="file" onChange={handleBannerChange} accept="image/*" />
                     <div className="meta">
                        <Layout size={14} />
-                       <span>{promoBannerUrl ? "Banner Loaded ✓" : "Upload Banner"}</span>
+                       <span>{promoBannerFile ? promoBannerFile.name : (promoBannerUrl ? "Banner Loaded ✓" : "Upload Banner")}</span>
                     </div>
                   </div>
                 </div>
@@ -365,11 +399,117 @@ const TierCategoryManager = ({ tierLevel }) => {
                   <input type="text" value={slug} onChange={e => setSlug(e.target.value)} required style={{ marginTop: '12px' }} />
                 </div>
 
+                {parseInt(tierLevel) === 4 && (
+                  <div className="inspector-section">
+                    <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span>Featured Top Products (Max 10)</span>
+                      <span style={{ fontSize: '11px', color: '#6366f1', textTransform: 'none', fontWeight: '700' }}>
+                        {selectedTopProducts.length}/10 Selected
+                      </span>
+                    </label>
+                    
+                    {fetchingProducts ? (
+                      <div style={{ fontSize: '12px', color: '#64748b', padding: '10px 0' }}>
+                        Loading category products...
+                      </div>
+                    ) : categoryProducts.length === 0 ? (
+                      <div style={{ fontSize: '12px', color: '#64748b', background: '#f8fafc', padding: '15px', borderRadius: '12px', border: '1px dashed #cbd5e1', textAlign: 'center' }}>
+                        No products linked to this category yet.
+                      </div>
+                    ) : (
+                      <div style={{ 
+                        maxHeight: '220px', 
+                        overflowY: 'auto', 
+                        border: '1px solid #cbd5e1', 
+                        borderRadius: '12px', 
+                        background: '#f8fafc', 
+                        padding: '10px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px'
+                      }}>
+                        {categoryProducts.map(product => {
+                          const isChecked = selectedTopProducts.includes(product._id);
+                          return (
+                            <div 
+                              key={product._id} 
+                              style={{ 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                gap: '10px', 
+                                background: 'white', 
+                                padding: '8px 12px', 
+                                borderRadius: '8px', 
+                                border: isChecked ? '1px solid #3b82f6' : '1px solid #e2e8f0',
+                                cursor: 'pointer',
+                                transition: 'all 0.15s ease'
+                              }}
+                              onClick={() => {
+                                if (isChecked) {
+                                  setSelectedTopProducts(selectedTopProducts.filter(id => id !== product._id));
+                                } else {
+                                  if (selectedTopProducts.length >= 10) {
+                                    alert('You can select a maximum of 10 featured products for a category.');
+                                    return;
+                                  }
+                                  setSelectedTopProducts([...selectedTopProducts, product._id]);
+                                }
+                              }}
+                            >
+                              <input 
+                                type="checkbox" 
+                                checked={isChecked} 
+                                readOnly
+                                style={{ cursor: 'pointer', width: '16px', height: '16px' }}
+                              />
+                              <div style={{ width: '32px', height: '32px', borderRadius: '6px', overflow: 'hidden', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                {product.imageUrl ? (
+                                  <img 
+                                    src={getImageUrl(product.imageUrl)} 
+                                    alt="" 
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                                  />
+                                ) : (
+                                  <Package size={16} style={{ color: '#94a3b8' }} />
+                                )}
+                              </div>
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ fontSize: '13px', fontWeight: '700', color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  {product.name}
+                                </div>
+                                <div style={{ fontSize: '10px', color: '#64748b', fontFamily: 'monospace' }}>
+                                  {product.sku} | ${product.baseRetailPrice}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {parseInt(tierLevel) === 1 && (
                   <div className="inspector-section">
                     <label>Logo & Banner URL Override</label>
-                    <input type="text" placeholder="Icon URL" value={navIconUrl} onChange={e => setNavIconUrl(e.target.value)} style={{ marginBottom: '12px' }} />
-                    <input type="text" placeholder="Banner URL" value={promoBannerUrl} onChange={e => setPromoBannerUrl(e.target.value)} />
+                    <div className="asset-upload-row" style={{ marginBottom: '12px' }}>
+                      <div className="file-box-custom mini">
+                        <input type="file" onChange={handleIconChange} accept="image/*" />
+                        <div className="meta">
+                          <ImageIcon size={14} />
+                          <span>{navIconFile ? navIconFile.name : (navIconUrl ? "Icon Loaded ✓" : "Upload Icon")}</span>
+                        </div>
+                      </div>
+                      <div className="file-box-custom mini">
+                        <input type="file" onChange={handleBannerChange} accept="image/*" />
+                        <div className="meta">
+                          <Layout size={14} />
+                          <span>{promoBannerFile ? promoBannerFile.name : (promoBannerUrl ? "Banner Loaded ✓" : "Upload Banner")}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <input type="text" placeholder="Or Icon URL" value={navIconUrl} onChange={e => setNavIconUrl(e.target.value)} style={{ marginBottom: '12px' }} />
+                    <input type="text" placeholder="Or Banner URL" value={promoBannerUrl} onChange={e => setPromoBannerUrl(e.target.value)} />
                   </div>
                 )}
 

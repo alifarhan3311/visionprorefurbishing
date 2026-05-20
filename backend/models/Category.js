@@ -40,6 +40,11 @@ const categorySchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  topProducts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
+    default: []
+  }],
   status: {
     type: String,
     enum: ['active', 'inactive'],

@@ -1,15 +1,54 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, X } from 'lucide-react';
-import api from '../../services/api';
+import api, { getImageUrl } from '../../services/api';
 import './Header.css';
 
 const MegaMenu = ({ isOpen, onClose }) => {
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState(null);
   const [activeTier2, setActiveTier2] = useState(null);
+  const [hoveredCategory, setHoveredCategory] = useState(null);
   const [loading, setLoading] = useState(true);
   const timeoutRef = useRef(null);
+
+  const handleTier2Hover = (item) => {
+    setActiveTier2(item._id);
+    setHoveredCategory(item);
+  };
+
+  useEffect(() => {
+    setHoveredCategory(null);
+  }, [activeTier2]);
+
+  // Recursively gather top products from leaf descendants (Tier 4)
+  const getDescendantTopProducts = (cat) => {
+    if (!cat) return [];
+    let products = [];
+    
+    if (cat.topProducts && Array.isArray(cat.topProducts)) {
+      products = [...products, ...cat.topProducts];
+    }
+    
+    if (cat.children && Array.isArray(cat.children)) {
+      cat.children.forEach(child => {
+        products = [...products, ...getDescendantTopProducts(child)];
+      });
+    }
+    
+    return products;
+  };
+
+  // De-duplicate products by ID
+  const getUniqueProducts = (products) => {
+    const seen = new Set();
+    return products.filter(p => {
+      if (!p || !p._id) return false;
+      const duplicate = seen.has(p._id.toString());
+      seen.add(p._id.toString());
+      return !duplicate;
+    });
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -50,6 +89,11 @@ const MegaMenu = ({ isOpen, onClose }) => {
   const currentTier2Items = currentTier1?.children || [];
   const currentTier2Data = currentTier2Items.find(c => c._id === activeTier2);
 
+  const targetShowcaseCategory = hoveredCategory || currentTier2Data;
+  const showcaseProducts = targetShowcaseCategory 
+    ? getUniqueProducts(getDescendantTopProducts(targetShowcaseCategory)).slice(0, 10)
+    : [];
+
   return (
     <>
       {/* Mobile Overlay */}
@@ -70,7 +114,19 @@ const MegaMenu = ({ isOpen, onClose }) => {
               className={`mega-menu-item ${activeCategory === category._id ? 'active' : ''}`}
               onMouseEnter={() => handleMouseEnter(category._id)}
             >
-              <Link to={`/category/${category.slug}`}>{category.name}</Link>
+              <Link 
+                to={`/category/${category.slug}`} 
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: 'inherit' }}
+              >
+                {category.navIconUrl && (
+                  <img 
+                    src={getImageUrl(category.navIconUrl)} 
+                    alt="" 
+                    style={{ width: '20px', height: '20px', objectFit: 'contain', borderRadius: '4px' }} 
+                  />
+                )}
+                <span>{category.name}</span>
+              </Link>
             </li>
           ))}
         </ul>
@@ -88,10 +144,19 @@ const MegaMenu = ({ isOpen, onClose }) => {
                 <div 
                   key={item._id} 
                   className={`sidebar-item ${activeTier2 === item._id ? 'active' : ''}`}
-                  onMouseEnter={() => setActiveTier2(item._id)}
+                  onMouseEnter={() => handleTier2Hover(item)}
                 >
                   <div className="sidebar-item-inner">
-                    <span>{item.name}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {item.navIconUrl && (
+                        <img 
+                          src={getImageUrl(item.navIconUrl)} 
+                          alt="" 
+                          style={{ width: '18px', height: '18px', objectFit: 'contain', borderRadius: '3px' }} 
+                        />
+                      )}
+                      <span>{item.name}</span>
+                    </div>
                     <ChevronRight size={14} className="sidebar-arrow" />
                   </div>
                 </div>
@@ -105,9 +170,13 @@ const MegaMenu = ({ isOpen, onClose }) => {
                   <div className="main-content-header">
                     <h3>{currentTier2Data.name} Parts</h3>
                   </div>
-                  <div className="dropdown-columns">
+                  <div className="dropdown-columns" onMouseLeave={() => setHoveredCategory(null)}>
                     {currentTier2Data.children?.map((tier3) => (
-                      <div key={tier3._id} className="dropdown-col">
+                      <div 
+                        key={tier3._id} 
+                        className="dropdown-col"
+                        onMouseEnter={() => setHoveredCategory(tier3)}
+                      >
                         <Link to={`/category/${tier3.slug}`} className="tier3-title">
                           {tier3.name}
                         </Link>
@@ -131,13 +200,66 @@ const MegaMenu = ({ isOpen, onClose }) => {
               )}
             </div>
             
-            {/* Promo Area */}
-            <div className="dropdown-banner">
-              <div className="banner-card">
-                <h4>{currentTier1.name} Accessories</h4>
-                <p>Bulk discounts available on all {currentTier1.name} accessories.</p>
-                <Link to={`/category/${currentTier1.slug}`} className="banner-link">Shop Collection</Link>
-              </div>
+            {/* Showcase / Promo Area */}
+            <div className="dropdown-banner showcase-container">
+              {showcaseProducts.length > 0 ? (
+                <div className="top-products-showcase">
+                  <div className="showcase-header">
+                    <h4>Top {targetShowcaseCategory.name}</h4>
+                    <span className="showcase-subtitle">Featured Items</span>
+                  </div>
+                  <div className="showcase-list">
+                    {showcaseProducts.map(product => (
+                      <Link 
+                        key={product._id} 
+                        to={`/product/${product._id}`} 
+                        className="showcase-item"
+                        onClick={onClose}
+                      >
+                        <div className="showcase-img">
+                          {product.imageUrl ? (
+                            <img src={getImageUrl(product.imageUrl)} alt="" />
+                          ) : (
+                            <div className="showcase-placeholder">📦</div>
+                          )}
+                        </div>
+                        <div className="showcase-details">
+                          <span className="showcase-name">{product.name}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
+                            <span className="showcase-price">${(product.baseRetailPrice || 0).toFixed(2)}</span>
+                            {product.badge && (
+                              <span className="showcase-badge">{product.badge}</span>
+                            )}
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                  <Link 
+                    to={`/category/${targetShowcaseCategory.slug}`} 
+                    className="showcase-more-btn"
+                    onClick={onClose}
+                  >
+                    Show More
+                  </Link>
+                </div>
+              ) : currentTier1.promoBannerUrl ? (
+                <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                  <img 
+                    src={getImageUrl(currentTier1.promoBannerUrl)} 
+                    alt={currentTier1.name} 
+                    style={{ width: '100%', maxHeight: '180px', objectFit: 'cover', borderRadius: '8px', marginBottom: '15px' }} 
+                  />
+                  <h4 style={{ fontSize: '15px', fontWeight: '700', marginBottom: '5px' }}>{currentTier1.name} Accessories</h4>
+                  <Link to={currentTier1.promoBannerLink || `/category/${currentTier1.slug}`} className="banner-link" style={{ marginTop: '5px' }}>Shop Collection</Link>
+                </div>
+              ) : (
+                <div className="banner-card">
+                  <h4>{currentTier1.name} Accessories</h4>
+                  <p>Bulk discounts available on all {currentTier1.name} accessories.</p>
+                  <Link to={`/category/${currentTier1.slug}`} className="banner-link">Shop Collection</Link>
+                </div>
+              )}
             </div>
           </div>
         </div>

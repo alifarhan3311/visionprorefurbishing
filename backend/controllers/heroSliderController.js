@@ -29,7 +29,11 @@ exports.getAdminSlides = async (req, res) => {
 // @access  Private/Admin
 exports.createSlide = async (req, res) => {
   try {
-    const slide = await HeroSlider.create(req.body);
+    const slideData = { ...req.body };
+    if (req.file) {
+      slideData.imageUrl = `/uploads/${req.file.filename}`;
+    }
+    const slide = await HeroSlider.create(slideData);
     res.status(201).json({ success: true, data: slide });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
@@ -41,7 +45,11 @@ exports.createSlide = async (req, res) => {
 // @access  Private/Admin
 exports.updateSlide = async (req, res) => {
   try {
-    const slide = await HeroSlider.findByIdAndUpdate(req.params.id, req.body, {
+    const updateData = { ...req.body };
+    if (req.file) {
+      updateData.imageUrl = `/uploads/${req.file.filename}`;
+    }
+    const slide = await HeroSlider.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
       runValidators: true
     });

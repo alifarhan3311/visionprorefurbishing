@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, Menu } from 'lucide-react';
 import { CartContext } from '../../context/CartContext';
-import api from '../../services/api';
+import api, { getImageUrl } from '../../services/api';
 import './Header.css';
 
 const MainHeader = ({ onMenuToggle }) => {
@@ -132,7 +132,7 @@ const MainHeader = ({ onMenuToggle }) => {
                   className="suggestion-item"
                 >
                   <img 
-                    src={p.imageUrl || 'https://images.unsplash.com/photo-1601524909162-be87252be298?auto=format&fit=crop&w=40&q=80'} 
+                    src={p.imageUrl ? getImageUrl(p.imageUrl) : 'https://images.unsplash.com/photo-1601524909162-be87252be298?auto=format&fit=crop&w=40&q=80'} 
                     alt="" 
                     style={{ width: '36px', height: '36px', borderRadius: '6px', objectFit: 'contain', background: '#f8fafc', border: '1px solid #e2e8f0' }} 
                   />

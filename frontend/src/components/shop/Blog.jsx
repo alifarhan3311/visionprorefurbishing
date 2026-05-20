@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../layout/Header';
 import Footer from '../layout/Footer';
-import api from '../../services/api';
+import api, { getImageUrl } from '../../services/api';
 import './Blog.css';
 
 const Blog = () => {
@@ -42,7 +42,7 @@ const Blog = () => {
           posts.map((post, index) => (
             <div className="blog-card reveal" key={post._id} style={{ transitionDelay: `${index * 150}ms` }}>
               <div className="blog-image-wrapper">
-                <img src={post.image} alt={post.title} />
+                <img src={post.image ? getImageUrl(post.image) : 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=800&auto=format&fit=crop'} alt={post.title} />
                 <span className="blog-category">{post.category}</span>
               </div>
               <div className="blog-content">
