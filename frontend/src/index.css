@@ -1,64 +1,114 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-  --primary-color: #0055A5; 
-  --secondary-color: #f26522; 
+  --primary-color: #4f46e5; /* Indigo */
+  --primary-glow: rgba(79, 70, 229, 0.15);
+  --secondary-color: #f43f5e; /* Rose Accent */
+  --secondary-glow: rgba(244, 63, 94, 0.15);
   --text-dark: #0f172a;
-  --text-light: #64748b;
+  --text-light: #475569;
   --bg-light: #f8fafc;
   --bg-white: #ffffff;
-  --border-color: #e2e8f0;
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.3);
-  --shadow-premium: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --border-color: rgba(226, 232, 240, 0.8);
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-bg-dark: rgba(15, 23, 42, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --glass-border-dark: rgba(255, 255, 255, 0.08);
+  --shadow-premium: 0 20px 40px -15px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(15, 23, 42, 0.02);
+  --shadow-glow: 0 20px 40px -10px rgba(79, 70, 229, 0.15);
 }
 
-/* Glassmorphism Utility */
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 100px;
+  border: 2px solid #f1f5f9;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Custom Selection Highlight */
+::selection {
+  background-color: rgba(79, 70, 229, 0.2);
+  color: #4f46e5;
+}
+
+/* Floating background blobs */
+.bg-blob {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--primary-glow) 0%, rgba(255, 255, 255, 0) 70%);
+  filter: blur(80px);
+  z-index: 0;
+  pointer-events: none;
+  animation: pulse-slow 15s infinite alternate;
+}
+
+.bg-blob.secondary {
+  background: radial-gradient(circle, var(--secondary-glow) 0%, rgba(255, 255, 255, 0) 70%);
+  animation-delay: -5s;
+}
+
+@keyframes pulse-slow {
+  0% { transform: scale(1) translate(0, 0); }
+  50% { transform: scale(1.1) translate(30px, -20px); }
+  100% { transform: scale(0.9) translate(-20px, 30px); }
+}
+
+/* Glassmorphism Styles */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-premium);
 }
 
-/* Scroll Reveal Base */
-.reveal {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+.glass-dark {
+  background: var(--glass-bg-dark);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border-dark);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Text Shimmer Effect */
+/* Shimmer animations */
 .shimmer-text {
-  background: linear-gradient(90deg, #0055A5, #f26522, #0055A5);
-  background-size: 200% auto;
+  background: linear-gradient(90deg, #4f46e5, #f43f5e, #3b82f6, #4f46e5);
+  background-size: 300% auto;
   color: transparent;
   -webkit-background-clip: text;
   background-clip: text;
-  animation: shimmer 4s linear infinite;
+  animation: shimmer 6s linear infinite;
 }
 
 @keyframes shimmer {
-  to { background-position: 200% center; }
+  to { background-position: 300% center; }
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Outfit', sans-serif;
 }
 
 body {
-  background-color: var(--bg-light);
+  background-color: #f8fafc;
   color: var(--text-dark);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 a {
@@ -70,11 +120,10 @@ ul {
   list-style: none;
 }
 
-/* Base Utility Classes */
 .container {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
 }
 
 .flex {
