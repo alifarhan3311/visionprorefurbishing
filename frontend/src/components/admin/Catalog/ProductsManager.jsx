@@ -26,6 +26,7 @@ const ProductsManager = () => {
   const [statusMsg, setStatusMsg] = useState('');
   const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [stockQuantity, setStockQuantity] = useState('10');
+  const [categoryMode, setCategoryMode] = useState('tier4');
 
   useEffect(() => {
     const qParams = new URLSearchParams(location.search);
@@ -122,6 +123,7 @@ const ProductsManager = () => {
     setImageFile(null);
     setStockQuantity((product.stockQuantity || 10).toString());
     setFeaturesText(product.features ? product.features.join('\n') : '');
+    setCategoryMode(product.category?.tierLevel === 3 ? 'tier3' : 'tier4');
     
     if (product.productType === 'preowned') {
       setImei(product.preOwnedDetails?.imei || '');
@@ -154,6 +156,7 @@ const ProductsManager = () => {
     setImageFile(null);
     setStockQuantity((product.stockQuantity || 10).toString());
     setFeaturesText(product.features ? product.features.join('\n') : '');
+    setCategoryMode(product.category?.tierLevel === 3 ? 'tier3' : 'tier4');
     
     if (product.productType === 'preowned') {
       setImei(product.preOwnedDetails?.imei || '');
@@ -199,6 +202,9 @@ const ProductsManager = () => {
       formData.append('badge', badge);
       formData.append('stockQuantity', parseInt(stockQuantity) || 10);
       formData.append('imageUrl', imageUrl);
+      if (currentCategoryObj?.tierLevel === 3) {
+        formData.append('isSubTier', 'false');
+      }
 
       parsedFeatures.forEach((f) => {
         formData.append('features', f);
@@ -254,6 +260,7 @@ const ProductsManager = () => {
     setQualityType('Premium Aftermarket');
     setFeaturesText('');
     setStockQuantity('10');
+    setCategoryMode('tier4');
     setActiveFormTab('basic');
   };
 
@@ -271,8 +278,15 @@ const ProductsManager = () => {
 
   // Warning Checks for categories
   const currentCategoryObj = categories.find(c => c._id === selectedCategory);
-  const isLegacyCategory = currentCategoryObj && currentCategoryObj.tierLevel !== 4;
+  const isLegacyCategory = currentCategoryObj && currentCategoryObj.tierLevel !== 3 && currentCategoryObj.tierLevel !== 4;
   const tier4Categories = categories.filter(c => c.tierLevel === 4);
+  const tier3Categories = categories.filter(c => c.tierLevel === 3);
+
+  const handleCategorySelect = (value) => {
+    setSelectedCategory(value);
+    const category = categories.find(c => c._id === value);
+    setCategoryMode(category?.tierLevel === 3 ? 'tier3' : 'tier4');
+  };
 
   return (
     <div className="catalog-orchestrator animate-fade">
@@ -382,23 +396,52 @@ const ProductsManager = () => {
                 <div className="form-section">
                   <label>Structural Position</label>
                   <div className="form-stack">
-                    <select value={productType} onChange={(e) => setProductType(e.target.value)}>
-                      <option value="parts">Repair Parts</option>
-                      <option value="preowned">Pre-Owned Device</option>
-                      <option value="components">IC Components</option>
-                    </select>
+                    <div className="form-grid-toggle" style={{ display: 'flex', gap: '8px', width: '100%', flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        className={`toggle-btn ${categoryMode === 'tier4' ? 'active' : ''}`}
+                        onClick={() => {
+                          setCategoryMode('tier4');
+                          if (currentCategoryObj?.tierLevel !== 4) setSelectedCategory('');
+                        }}
+                        style={{ flex: 1, minWidth: '140px' }}
+                      >
+                        Tier 4 SKU Model
+                      </button>
+                      <button
+                        type="button"
+                        className={`toggle-btn ${categoryMode === 'tier3' ? 'active' : ''}`}
+                        onClick={() => {
+                          setCategoryMode('tier3');
+                          if (currentCategoryObj?.tierLevel !== 3) setSelectedCategory('');
+                        }}
+                        style={{ flex: 1, minWidth: '140px' }}
+                      >
+                        Tier 3 Direct Product
+                      </button>
+                    </div>
 
-                    <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} required>
-                      <option value="">Select SKU Model (Tier 4 Only)...</option>
-                      {/* Show current category first if it is a legacy one so it renders correctly */}
-                      {isLegacyCategory && (
+                    <select value={selectedCategory} onChange={(e) => handleCategorySelect(e.target.value)} required>
+                      <option value="">{categoryMode === 'tier4' ? 'Select Tier 4 SKU Model...' : 'Select Tier 3 Direct Category...'}</option>
+                      {isLegacyCategory && currentCategoryObj && (
                         <option value={currentCategoryObj._id}>
                           {currentCategoryObj.name} (Tier {currentCategoryObj.tierLevel} - Legacy)
                         </option>
                       )}
-                      {tier4Categories.map(c => (
-                        <option key={c._id} value={c._id}>{c.name}</option>
-                      ))}
+                      {categoryMode === 'tier4' && tier4Categories.length > 0 && (
+                        <optgroup label="Tier 4 SKU Models">
+                          {tier4Categories.map(c => (
+                            <option key={c._id} value={c._id}>{c.name}</option>
+                          ))}
+                        </optgroup>
+                      )}
+                      {categoryMode === 'tier3' && tier3Categories.length > 0 && (
+                        <optgroup label="Tier 3 Direct Product Categories">
+                          {tier3Categories.map(c => (
+                            <option key={c._id} value={c._id}>{c.name}</option>
+                          ))}
+                        </optgroup>
+                      )}
                     </select>
 
                     {isLegacyCategory && (
@@ -723,19 +766,47 @@ const ProductsManager = () => {
                     <div className="inspector-section">
                       <label>Structural Position</label>
                       <div className="form-stack">
-                        <select value={productType} onChange={(e) => setProductType(e.target.value)}>
-                          <option value="parts">Repair Parts</option>
-                          <option value="preowned">Pre-Owned Device</option>
-                          <option value="components">IC Components</option>
-                        </select>
-                        <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} required>
-                          <option value="">Category...</option>
-                          {isLegacyCategory && (
+                        <div className="form-grid-toggle" style={{ display: 'flex', gap: '8px', width: '100%', flexWrap: 'wrap' }}>
+                          <button
+                            type="button"
+                            className={`toggle-btn ${categoryMode === 'tier4' ? 'active' : ''}`}
+                            onClick={() => {
+                              setCategoryMode('tier4');
+                              if (currentCategoryObj?.tierLevel !== 4) setSelectedCategory('');
+                            }}
+                            style={{ flex: 1, minWidth: '140px' }}
+                          >
+                            Tier 4 SKU Model
+                          </button>
+                          <button
+                            type="button"
+                            className={`toggle-btn ${categoryMode === 'tier3' ? 'active' : ''}`}
+                            onClick={() => {
+                              setCategoryMode('tier3');
+                              if (currentCategoryObj?.tierLevel !== 3) setSelectedCategory('');
+                            }}
+                            style={{ flex: 1, minWidth: '140px' }}
+                          >
+                            Tier 3 Direct Product
+                          </button>
+                        </div>
+                        <select value={selectedCategory} onChange={(e) => handleCategorySelect(e.target.value)} required>
+                          <option value="">{categoryMode === 'tier4' ? 'Select Tier 4 SKU Model...' : 'Select Tier 3 Direct Category...'}</option>
+                          {isLegacyCategory && currentCategoryObj && (
                             <option value={currentCategoryObj._id}>
                               {currentCategoryObj.name} (Tier {currentCategoryObj.tierLevel} - Legacy)
                             </option>
                           )}
-                          {tier4Categories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
+                          {categoryMode === 'tier4' && tier4Categories.length > 0 && (
+                            <optgroup label="Tier 4 SKU Models">
+                              {tier4Categories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
+                            </optgroup>
+                          )}
+                          {categoryMode === 'tier3' && tier3Categories.length > 0 && (
+                            <optgroup label="Tier 3 Direct Product Categories">
+                              {tier3Categories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
+                            </optgroup>
+                          )}
                         </select>
                         {isLegacyCategory && (
                           <div style={{ color: '#d97706', fontSize: '11px', fontWeight: '700', marginTop: '4px', background: '#fffbeb', padding: '8px 12px', borderRadius: '8px', border: '1px solid #fef3c7' }}>

@@ -1,14 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  AlertTriangle, CheckCircle, Package, TrendingDown, 
-  Search, Filter, Download, ChevronRight, 
-  AlertCircle, ArrowDown, Activity, Info, Zap
+  AlertTriangle, CheckCircle, Package, 
+  Search, Download, ChevronRight, Plus,
+  AlertCircle, Activity
 } from 'lucide-react';
 import api from '../../../services/api';
 import '../AdminForms.css';
 
 const StockMonitoring = () => {
   const [products, setProducts] = useState([]);
+  const [tier3Categories, setTier3Categories] = useState([]);
+  const [showNewProductModal, setShowNewProductModal] = useState(false);
+  const [newProductData, setNewProductData] = useState({
+    name: '',
+    sku: '',
+    baseRetailPrice: '',
+    category: '',
+    productType: 'parts',
+    imageUrl: '',
+    stockQuantity: ''
+  });
+  const [creatingProduct, setCreatingProduct] = useState(false);
+  const [creationStatus, setCreationStatus] = useState('');
   const [loading, setLoading] = useState(true);
   const [filterLow, setFilterLow] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,6 +30,7 @@ const StockMonitoring = () => {
 
   useEffect(() => {
     fetchProducts();
+    fetchTier3Categories();
   }, []);
 
   const fetchProducts = async () => {
@@ -36,19 +50,85 @@ const StockMonitoring = () => {
     }
   };
 
+  const fetchTier3Categories = async () => {
+    try {
+      const { data } = await api.get('/categories');
+      if (data && data.success) {
+        const categories = Array.isArray(data.data) ? data.data : [];
+        setTier3Categories(categories.filter(category => category.tierLevel === 3));
+      } else {
+        setTier3Categories([]);
+      }
+    } catch (err) {
+      console.error('Error fetching Tier 3 categories:', err);
+      setTier3Categories([]);
+    }
+  };
+
+  const openNewProductModal = () => {
+    setCreationStatus('');
+    setShowNewProductModal(true);
+  };
+
+  const closeNewProductModal = () => {
+    setShowNewProductModal(false);
+    setNewProductData({
+      name: '',
+      sku: '',
+      baseRetailPrice: '',
+      category: '',
+      productType: 'parts',
+      imageUrl: '',
+      stockQuantity: ''
+    });
+  };
+
+  const handleNewProductChange = (field, value) => {
+    setNewProductData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleNewProductSubmit = async (e) => {
+    e.preventDefault();
+    setCreatingProduct(true);
+    setCreationStatus('');
+
+    try {
+      const productPayload = new FormData();
+      productPayload.append('name', newProductData.name);
+      productPayload.append('sku', newProductData.sku);
+      productPayload.append('baseRetailPrice', parseFloat(newProductData.baseRetailPrice) || 0);
+      productPayload.append('category', newProductData.category);
+      productPayload.append('productType', newProductData.productType);
+      productPayload.append('isSubTier', 'false');
+      if (newProductData.imageUrl) productPayload.append('imageUrl', newProductData.imageUrl);
+      if (newProductData.stockQuantity !== '') productPayload.append('stockQuantity', parseInt(newProductData.stockQuantity, 10));
+
+      await api.post('/products', productPayload);
+      setCreationStatus('Product added successfully.');
+      closeNewProductModal();
+      fetchProducts();
+    } catch (err) {
+      console.error('Error creating product:', err);
+      setCreationStatus('Unable to create product. Check required fields and try again.');
+    } finally {
+      setCreatingProduct(false);
+    }
+  };
+
   const filteredProducts = Array.isArray(products) ? products.filter(p => {
     if (!p) return false;
     const matchesSearch = (p.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
                           (p.sku || '').toLowerCase().includes(searchTerm.toLowerCase());
-    const isLow = (p.stockCount || 0) < LOW_STOCK_THRESHOLD;
+    const stockQty = p.stockQuantity || 0;
+    const isLow = stockQty < LOW_STOCK_THRESHOLD;
     return matchesSearch && (!filterLow || isLow);
   }) : [];
 
   const stats = {
     total: products.length,
-    critical: products.filter(p => p && (p.stockCount || 0) < LOW_STOCK_THRESHOLD).length,
-    outOfStock: products.filter(p => p && (p.stockCount || 0) === 0).length,
-    healthy: products.filter(p => p && (p.stockCount || 0) >= LOW_STOCK_THRESHOLD).length
+    critical: products.filter(p => p && (p.stockQuantity || 0) < LOW_STOCK_THRESHOLD).length,
+    outOfStock: products.filter(p => p && (p.stockQuantity || 0) === 0).length,
+    healthy: products.filter(p => p && (p.stockQuantity || 0) >= LOW_STOCK_THRESHOLD).length
   };
 
   return (
@@ -112,6 +192,7 @@ const StockMonitoring = () => {
               <AlertTriangle size={16} /> 
               {filterLow ? "Show All" : "Critical Segments"}
             </button>
+            <button className="action-btn-premium" onClick={openNewProductModal} type="button"><Plus size={16} /> Add Product</button>
             <button className="action-btn-premium"><Download size={16} /> Export Health Audit</button>
           </div>
         </div>
@@ -140,7 +221,7 @@ const StockMonitoring = () => {
                   </td>
                 </tr>
               ) : filteredProducts.map(product => {
-                const stock = product.stockCount || 0;
+                const stock = product.stockQuantity || 0;
                 const isLow = stock < LOW_STOCK_THRESHOLD;
                 const percentage = Math.min((stock / 50) * 100, 100); 
 
@@ -190,6 +271,102 @@ const StockMonitoring = () => {
           </table>
         </div>
       </div>
+
+      {showNewProductModal && (
+        <div className="inspector-overlay" onClick={closeNewProductModal}>
+          <div className="side-modal" onClick={e => e.stopPropagation()}>
+            <div className="inspector-header">
+              <div className="id-tag">ADD NEW PRODUCT</div>
+              <button className="close-btn" type="button" onClick={closeNewProductModal}>&times;</button>
+              <h3>Add Direct Product Under Tier 3</h3>
+            </div>
+            <div className="inspector-body">
+              <form onSubmit={handleNewProductSubmit} className="premium-form">
+                <div className="inspector-section">
+                  <label>Product Name</label>
+                  <input
+                    type="text"
+                    value={newProductData.name}
+                    onChange={e => handleNewProductChange('name', e.target.value)}
+                    placeholder="Product name"
+                    required
+                  />
+                </div>
+                <div className="inspector-section">
+                  <label>SKU</label>
+                  <input
+                    type="text"
+                    value={newProductData.sku}
+                    onChange={e => handleNewProductChange('sku', e.target.value)}
+                    placeholder="Product SKU"
+                    required
+                  />
+                </div>
+                <div className="inspector-section">
+                  <label>Retail Price</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={newProductData.baseRetailPrice}
+                    onChange={e => handleNewProductChange('baseRetailPrice', e.target.value)}
+                    placeholder="Base retail price"
+                    required
+                  />
+                </div>
+                <div className="inspector-section">
+                  <label>Tier 3 Category</label>
+                  <select
+                    value={newProductData.category}
+                    onChange={e => handleNewProductChange('category', e.target.value)}
+                    required
+                  >
+                    <option value="">Select Tier 3 category</option>
+                    {tier3Categories.map(cat => (
+                      <option key={cat._id} value={cat._id}>{cat.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="inspector-section">
+                  <label>Product Type</label>
+                  <select
+                    value={newProductData.productType}
+                    onChange={e => handleNewProductChange('productType', e.target.value)}
+                  >
+                    <option value="parts">Repair Parts</option>
+                    <option value="preowned">Pre-Owned Device</option>
+                    <option value="components">IC Components</option>
+                  </select>
+                </div>
+                <div className="inspector-section">
+                  <label>Stock Quantity</label>
+                  <input
+                    type="number"
+                    value={newProductData.stockQuantity}
+                    onChange={e => handleNewProductChange('stockQuantity', e.target.value)}
+                    placeholder="Initial stock units"
+                    min="0"
+                  />
+                </div>
+                <div className="inspector-section">
+                  <label>Image URL</label>
+                  <input
+                    type="text"
+                    value={newProductData.imageUrl}
+                    onChange={e => handleNewProductChange('imageUrl', e.target.value)}
+                    placeholder="Optional image URL"
+                  />
+                </div>
+                <div className="form-actions">
+                  <button type="submit" className="publish-btn" disabled={creatingProduct}>
+                    <CheckCircle size={18} /> {creatingProduct ? 'Creating...' : 'Create Product'}
+                  </button>
+                  {creationStatus && <div className="status-toast">{creationStatus}</div>}
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style dangerouslySetInnerHTML={{ __html: `
         .stock-orchestrator { padding: 40px; background: #f8fafc; min-height: 100vh; font-family: 'Inter', sans-serif; }

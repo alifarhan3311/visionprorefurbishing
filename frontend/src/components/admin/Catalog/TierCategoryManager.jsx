@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Upload, Layers, Search, Filter, Plus, 
+  Upload, Layers, Search, Filter, 
   ChevronRight, Edit3, Trash2, Layout, 
   GitBranch, Image as ImageIcon, CheckCircle2,
   FolderTree, Activity, Rocket, Package, ArrowLeft
@@ -133,24 +133,23 @@ const TierCategoryManager = ({ tierLevel }) => {
     setStatusMsg('Processing taxonomy change...');
     
     try {
+      const tierNumber = parseInt(tierLevel, 10);
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
       const formData = new FormData();
+
       formData.append('name', name);
       formData.append('slug', slug);
-      formData.append('tierLevel', parseInt(tierLevel));
-      if (tierLevel !== 1 && parentCategory) {
+      formData.append('tierLevel', tierNumber);
+      if (tierNumber !== 1 && parentCategory) {
         formData.append('parentCategory', parentCategory);
       }
       formData.append('navIconUrl', navIconUrl);
       formData.append('promoBannerUrl', promoBannerUrl);
-      
       if (navIconFile) formData.append('icon', navIconFile);
       if (promoBannerFile) formData.append('banner', promoBannerFile);
-
-      if (parseInt(tierLevel) === 4) {
+      if (tierNumber === 4) {
         formData.append('topProducts', JSON.stringify(selectedTopProducts));
       }
-
-      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
 
       if (editingId) {
         await api.put(`/categories/${editingId}`, formData, config);
@@ -166,7 +165,7 @@ const TierCategoryManager = ({ tierLevel }) => {
       setTimeout(() => setStatusMsg(''), 3000);
     } catch (err) {
       console.error(err);
-      setStatusMsg('Error applying configuration. Check if slug is unique.');
+      setStatusMsg('Error applying configuration. Check if slug is unique or required fields are set.');
     } finally {
       setSubmitting(false);
     }
@@ -177,7 +176,7 @@ const TierCategoryManager = ({ tierLevel }) => {
     c && (c.tierLevel || 1) === parseInt(tierLevel)
   ) : [];
 
-  // Filter those based on search term
+  // Filter categories based on search term
   const filteredCategories = currentTierCategories.filter(c => 
     c && (c.name || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -240,6 +239,7 @@ const TierCategoryManager = ({ tierLevel }) => {
               </div>
             )}
 
+
             <div className="form-section">
               <label>Node Identification</label>
               <div className="form-stack">
@@ -260,27 +260,6 @@ const TierCategoryManager = ({ tierLevel }) => {
               </div>
             </div>
 
-            {parseInt(tierLevel) === 1 && (
-              <div className="form-section dynamic-fade">
-                <label>Navigation & Hero Graphics</label>
-                <div className="asset-upload-row">
-                  <div className="file-box-custom mini">
-                    <input type="file" onChange={handleIconChange} accept="image/*" />
-                    <div className="meta">
-                       <ImageIcon size={14} />
-                       <span>{navIconFile ? navIconFile.name : (navIconUrl ? "Icon Loaded ✓" : "Upload Icon")}</span>
-                    </div>
-                  </div>
-                  <div className="file-box-custom mini">
-                    <input type="file" onChange={handleBannerChange} accept="image/*" />
-                    <div className="meta">
-                       <Layout size={14} />
-                       <span>{promoBannerFile ? promoBannerFile.name : (promoBannerUrl ? "Banner Loaded ✓" : "Upload Banner")}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
 
             <div className="form-actions">
               <button type="submit" className="publish-btn" disabled={submitting}>
@@ -297,7 +276,7 @@ const TierCategoryManager = ({ tierLevel }) => {
             <div className="header-left">
               <div className="active-nodes">
                 <FolderTree size={14} />
-                <span>{filteredCategories.length} Nodes in Tier {tierLevel}</span>
+                <span>{filteredCategories.length} Items in Tier {tierLevel}</span>
               </div>
             </div>
             <div className="search-pill">
@@ -333,37 +312,44 @@ const TierCategoryManager = ({ tierLevel }) => {
                       </div>
                     </td>
                   </tr>
-                ) : filteredCategories.map(cat => (
-                  <tr key={cat._id} className="ledger-row">
-                    <td>
-                      <div className="node-cell-premium">
-                        <div className={`tier-marker-premium t${cat.tierLevel}`}>T{cat.tierLevel}</div>
-                        <div className="meta-stack">
-                          <span className="n">{cat.name || 'Unnamed Node'}</span>
-                          <span className="parent-text">
-                            {cat.parentCategory?.name ? `Sub-node of ${cat.parentCategory.name}` : cat.parentCategory ? 'Linked Sub-node' : 'Root-level Segment'}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="slug-tag">/{cat.slug || 'n-a'}</span>
-                    </td>
-                    <td>
-                      <div className="hierarchy-preview">
-                        {Array.from({ length: cat.tierLevel || 1 }).map((_, i) => (
-                          <div key={i} className="dot" />
-                        ))}
-                      </div>
-                    </td>
-                    <td style={{ textAlign: 'right' }}>
-                      <div className="row-actions">
-                        <button className="icon-btn" onClick={() => openEditModal(cat)}><Edit3 size={16} /></button>
-                        <button className="icon-btn delete" onClick={() => deleteCategory(cat._id)}><Trash2 size={16} /></button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                ) : (
+                  <>
+                    {filteredCategories.map(cat => (
+                      <tr key={cat._id} className="ledger-row">
+                        <td>
+                          <div className="node-cell-premium">
+                            <div className={`tier-marker-premium t${cat.tierLevel}`}>T{cat.tierLevel}</div>
+                            <div className="meta-stack">
+                              <span className="n">{cat.name || 'Unnamed Node'}</span>
+                              <span className="parent-text">
+                                {cat.parentCategory?.name ? `Sub-node of ${cat.parentCategory.name}` : cat.parentCategory ? 'Linked Sub-node' : 'Root-level Segment'}
+                              </span>
+                              {cat.tierLevel === 4 && cat.isSubTier === false && (
+                                <span className="badge-inline">Product (skip Tier 4)</span>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <span className="slug-tag">/{cat.slug || 'n-a'}</span>
+                        </td>
+                        <td>
+                          <div className="hierarchy-preview">
+                            {Array.from({ length: cat.tierLevel || 1 }).map((_, i) => (
+                              <div key={i} className="dot" />
+                            ))}
+                          </div>
+                        </td>
+                        <td style={{ textAlign: 'right' }}>
+                          <div className="row-actions">
+                            <button className="icon-btn" onClick={() => openEditModal(cat)}><Edit3 size={16} /></button>
+                            <button className="icon-btn delete" onClick={() => deleteCategory(cat._id)}><Trash2 size={16} /></button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </>
+                )}
               </tbody>
             </table>
           </div>

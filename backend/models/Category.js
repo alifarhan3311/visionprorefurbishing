@@ -17,6 +17,10 @@ const categorySchema = new mongoose.Schema({
     required: true,
     enum: [1, 2, 3, 4], // 1: Main Brand, 2: Device Type, 3: Series, 4: Specific Model
   },
+  isSubTier: {
+    type: Boolean,
+    default: true
+  },
   parentCategory: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category',

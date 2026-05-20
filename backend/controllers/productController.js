@@ -5,22 +5,40 @@ const Product = require('../models/Product');
 // @access  Private/Admin
 exports.createProduct = async (req, res) => {
   try {
-    const { name, sku, baseRetailPrice, category, productType, ...dynamicFields } = req.body;
+    const { name, sku, baseRetailPrice, category: categoryId, productType, ...dynamicFields } = req.body;
+    const isSubTier = req.body.isSubTier !== undefined ? req.body.isSubTier !== 'false' && req.body.isSubTier !== false : true;
+
+    if (req.body.isSubTier !== undefined && !isSubTier) {
+      const Category = require('../models/Category');
+      const parentCategory = await Category.findById(categoryId);
+      if (!parentCategory) {
+        return res.status(400).json({ success: false, error: 'Product category not found.' });
+      }
+      if (parentCategory.tierLevel !== 3) {
+        return res.status(400).json({
+          success: false,
+          error: 'Direct products created from the Tier 4 form must be linked to a Tier 3 category.'
+        });
+      }
+    }
 
     let imageUrl = dynamicFields.imageUrl || '';
     if (req.file) {
       imageUrl = `/uploads/${req.file.filename}`;
     }
 
+    const stockQuantity = dynamicFields.stockQuantity !== undefined ? Number(dynamicFields.stockQuantity) : 10;
     const newProductData = {
       name,
       sku,
       baseRetailPrice,
-      category,
+      category: categoryId,
       productType,
       imageUrl,
       badge: dynamicFields.badge,
-      features: dynamicFields.features || []
+      features: dynamicFields.features || [],
+      stockQuantity: Number.isNaN(stockQuantity) ? 10 : stockQuantity,
+      status: stockQuantity === 0 ? 'out_of_stock' : 'in_stock'
     };
 
     // Handle Dynamic Polymorphic Fields Based on Type

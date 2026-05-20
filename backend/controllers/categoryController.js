@@ -1,12 +1,48 @@
 const Category = require('../models/Category');
 
+const parseBoolean = (value) => {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string') return value.toLowerCase() !== 'false';
+  if (value === undefined || value === null) return true;
+  return Boolean(value);
+};
+
+const validateParentCategory = async (tierLevel, parentCategoryId) => {
+  if (tierLevel <= 1) return null;
+  if (!parentCategoryId) {
+    throw new Error(`Tier ${tierLevel} categories must be assigned a Tier ${tierLevel - 1} parent category.`);
+  }
+
+  const parentCategory = await Category.findById(parentCategoryId);
+  if (!parentCategory) {
+    throw new Error('Parent category not found.');
+  }
+
+  if (parentCategory.tierLevel !== tierLevel - 1) {
+    throw new Error(`Parent category must belong to Tier ${tierLevel - 1}.`);
+  }
+
+  return parentCategory;
+};
+
 // @desc    Create a new category (Admin)
 // @route   POST /api/categories
 // @access  Private/Admin
 exports.createCategory = async (req, res) => {
   try {
     const { name, slug, tierLevel, parentCategory, highlightThumbnail } = req.body;
-    
+    const tierNumber = parseInt(tierLevel, 10);
+    const isSubTier = parseBoolean(req.body.isSubTier);
+
+    if (tierNumber === 4 && !isSubTier) {
+      return res.status(400).json({
+        success: false,
+        error: 'Tier 4 must be a sub-tier; to add a product directly under Tier 3, leave "Is Sub-Tier" unchecked and create a product instead.'
+      });
+    }
+
+    const parentCategoryRecord = await validateParentCategory(tierNumber, parentCategory);
+
     let navIconUrl = req.body.navIconUrl || '';
     let promoBannerUrl = req.body.promoBannerUrl || '';
 
@@ -18,7 +54,7 @@ exports.createCategory = async (req, res) => {
         promoBannerUrl = `/uploads/${req.files.banner[0].filename}`;
       }
     }
-    
+
     let parsedTopProducts = [];
     if (req.body.topProducts) {
       try {
@@ -27,12 +63,13 @@ exports.createCategory = async (req, res) => {
         parsedTopProducts = [];
       }
     }
-    
+
     const category = await Category.create({
       name,
       slug,
-      tierLevel,
-      parentCategory: tierLevel > 1 ? parentCategory : null,
+      tierLevel: tierNumber,
+      isSubTier,
+      parentCategory: tierNumber > 1 ? parentCategoryRecord._id : null,
       navIconUrl,
       promoBannerUrl,
       highlightThumbnail,
@@ -51,7 +88,13 @@ exports.createCategory = async (req, res) => {
 exports.getMegaMenu = async (req, res) => {
   try {
     // 1. Fetch ALL active categories in a single query (Fastest approach)
-    const allCategories = await Category.find({ status: 'active' })
+    const allCategories = await Category.find({
+      status: 'active',
+      $or: [
+        { tierLevel: { $ne: 4 } },
+        { isSubTier: true }
+      ]
+    })
       .populate({
         path: 'topProducts',
         match: { status: 'in_stock' }
@@ -113,6 +156,17 @@ exports.updateCategory = async (req, res) => {
     }
 
     const { name, slug, tierLevel, parentCategory, highlightThumbnail } = req.body;
+    const tierNumber = parseInt(tierLevel, 10);
+    const isSubTier = req.body.isSubTier === undefined ? category.isSubTier !== false : parseBoolean(req.body.isSubTier);
+
+    if (tierNumber === 4 && !isSubTier) {
+      return res.status(400).json({
+        success: false,
+        error: 'Tier 4 must be a sub-tier; to add a product directly under Tier 3, leave "Is Sub-Tier" unchecked and create a product instead.'
+      });
+    }
+
+    const parentCategoryRecord = await validateParentCategory(tierNumber, parentCategory);
 
     let parsedTopProducts = category.topProducts || [];
     if (req.body.topProducts) {
@@ -138,8 +192,9 @@ exports.updateCategory = async (req, res) => {
     category = await Category.findByIdAndUpdate(req.params.id, {
       name,
       slug,
-      tierLevel,
-      parentCategory: tierLevel > 1 ? parentCategory : null,
+      tierLevel: tierNumber,
+      isSubTier,
+      parentCategory: tierNumber > 1 ? parentCategoryRecord._id : null,
       navIconUrl,
       promoBannerUrl,
       highlightThumbnail,
