@@ -45,9 +45,10 @@ exports.createRMA = async (req, res) => {
           <a href="http://localhost:5173/admin/rma" style="background-color: #0055A5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block; box-shadow: 0 4px 10px rgba(0,85,165,0.2);">Review in Admin RMA Console</a>
         </div>
         
-        <div style="text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px; margin-top: 20px;">
-          <p style="margin: 0;">Vision Pro LCD Portal | 7215 Goreway Dr #1c27 | Mississauga, ON L4T 2T9</p>
-        </div>
+         <div style="text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px; margin-top: 20px;">
+           <p style="margin: 0;">Vision Pro LCD Portal | Office: 7215 Goreway Dr #1c27 | Mississauga, ON L4T 2T9</p>
+           <p style="margin: 0;">Warehouse: O2 Lcd Refurbishing | 14 Automatic Rd, U34 | Brampton, ON L6S 5N5</p>
+         </div>
       </div>
     `;
 

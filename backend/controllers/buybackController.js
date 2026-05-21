@@ -45,9 +45,10 @@ exports.createBuyback = async (req, res) => {
             <strong>Next Steps:</strong> Please print your shipping label and send your screens to our facility for physical testing and confirmation.
           </p>
 
-          <div style="text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-            <p style="margin: 0;">Vision Pro LCD Portal | 7215 Goreway Dr #1c27 | Mississauga, ON L4T 2T9</p>
-          </div>
+           <div style="text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+             <p style="margin: 0;">Vision Pro LCD Portal | Office: 7215 Goreway Dr #1c27 | Mississauga, ON L4T 2T9</p>
+             <p style="margin: 0;">Warehouse: O2 Lcd Refurbishing | 14 Automatic Rd, U34 | Brampton, ON L6S 5N5</p>
+           </div>
         </div>
       `;
 

@@ -30,9 +30,11 @@ const generateInvoice = (order, stream) => {
     .fontSize(9)
     .fillColor('#475569')
     .text('Vision Pro LCD', 300, 35, { align: 'right', width: 262 })
-    .text('7215 Goreway Dr #1c27', 300, 47, { align: 'right', width: 262 })
+    .text('Office: 7215 Goreway Dr #1c27', 300, 47, { align: 'right', width: 262 })
     .text('Mississauga, L4T2T9, Ontario', 300, 59, { align: 'right', width: 262 })
-    .text('Visionpro.lcd@gmail.com | (647) 261-5077', 300, 71, { align: 'right', width: 262 });
+    .text('Warehouse: O2 Lcd Refurbishing', 300, 71, { align: 'right', width: 262 })
+    .text('14 Automatic Rd, U34, Brampton, ON L6S 5N5', 300, 83, { align: 'right', width: 262 })
+    .text('Visionpro.lcd@gmail.com | (647) 261-5077', 300, 95, { align: 'right', width: 262 });
 
   // Divider
   generateHr(doc, 90, '#cbd5e1', 1);

@@ -18,31 +18,36 @@ const Contact = () => {
 
       <div className="container contact-grid">
         {/* Contact Info Cards */}
-        <div className="contact-info-section">
-          <div className="info-card reveal">
-            <MapPin className="info-icon" />
-            <h3>Visit Our Office</h3>
-            <p>7215 Goreway Dr #1c27, Mississauga, L4T2T9, Ontario</p>
-          </div>
-          <div className="info-card reveal" style={{ transitionDelay: '100ms' }}>
-            <Phone className="info-icon" />
-            <h3>Call / WhatsApp</h3>
-            <p>
-              <a href="https://wa.me/16472615077" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>(647) 261-5077</a><br/>
-              <a href="https://wa.me/16472615077" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>+1 (647) 261-5077</a>
-            </p>
-          </div>
-          <div className="info-card reveal" style={{ transitionDelay: '200ms' }}>
-            <Mail className="info-icon" />
-            <h3>Email Us</h3>
-            <p><a href="mailto:Visionpro.lcd@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>Visionpro.lcd@gmail.com</a></p>
-          </div>
-          <div className="info-card reveal" style={{ transitionDelay: '300ms' }}>
-            <Clock className="info-icon" />
-            <h3>Working Hours</h3>
-            <p>Mon - Fri: 9:00 AM - 5:00 PM<br/>Sat - Sun: Closed</p>
-          </div>
-        </div>
+       <div className="contact-info-section">
+           <div className="info-card reveal">
+             <MapPin className="info-icon" />
+             <h3>Visit Our Office</h3>
+             <p>7215 Goreway Dr #1c27, Mississauga, L4T2T9, Ontario</p>
+           </div>
+           <div className="info-card reveal" style={{ transitionDelay: '100ms' }}>
+             <MapPin className="info-icon" />
+             <h3>Warehouse Location</h3>
+             <p>O2 Lcd Refurbishing<br/>14 Automatic Rd, U34<br/>Brampton, ON L6S 5N5</p>
+           </div>
+           <div className="info-card reveal" style={{ transitionDelay: '200ms' }}>
+             <Phone className="info-icon" />
+             <h3>Call / WhatsApp</h3>
+             <p>
+               <a href="https://wa.me/16472615077" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>(647) 261-5077</a><br/>
+               <a href="https://wa.me/16472615077" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>+1 (647) 261-5077</a>
+             </p>
+           </div>
+           <div className="info-card reveal" style={{ transitionDelay: '300ms' }}>
+             <Mail className="info-icon" />
+             <h3>Email Us</h3>
+             <p><a href="mailto:Visionpro.lcd@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>Visionpro.lcd@gmail.com</a></p>
+           </div>
+           <div className="info-card reveal" style={{ transitionDelay: '400ms' }}>
+             <Clock className="info-icon" />
+             <h3>Working Hours</h3>
+             <p>Mon - Fri: 9:00 AM - 5:00 PM<br/>Sat - Sun: Closed</p>
+           </div>
+         </div>
 
         {/* Contact Form Section */}
         <div className="contact-form-section reveal">

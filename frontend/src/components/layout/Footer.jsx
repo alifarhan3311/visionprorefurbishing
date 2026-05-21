@@ -53,27 +53,31 @@ const Footer = () => {
         </div>
 
         {/* Contact Info */}
-        <div className="footer-col">
-          <h4 className="footer-title">Contact Us</h4>
-          <div className="footer-contact">
-            <div className="contact-item">
-              <MapPin size={22} className="contact-icon" />
-              <span>7215 Goreway Dr #1c27,<br/>Mississauga, L4T2T9, Ontario</span>
-            </div>
-            <div className="contact-item">
-              <Phone size={18} className="contact-icon" />
-              <a href="https://wa.me/16472615077" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>(647) 261-5077</a>
-            </div>
-            <div className="contact-item">
-              <Mail size={18} className="contact-icon" />
-              <a href="mailto:Visionpro.lcd@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>Visionpro.lcd@gmail.com</a>
-            </div>
-            <div className="contact-item">
-              <Clock size={18} className="contact-icon" />
-              <span>Mon - Fri: 9 AM - 5 PM<br/>Sat - Sun: Closed</span>
-            </div>
-          </div>
-        </div>
+         <div className="footer-col">
+           <h4 className="footer-title">Contact Us</h4>
+           <div className="footer-contact">
+             <div className="contact-item">
+               <MapPin size={22} className="contact-icon" />
+               <span>7215 Goreway Dr #1c27,<br/>Mississauga, L4T2T9, Ontario</span>
+             </div>
+             <div className="contact-item">
+               <MapPin size={22} className="contact-icon" />
+               <span>O2 Lcd Refurbishing<br/>14 Automatic Rd, U34<br/>Brampton, ON L6S 5N5</span>
+             </div>
+             <div className="contact-item">
+               <Phone size={18} className="contact-icon" />
+               <a href="https://wa.me/16472615077" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>(647) 261-5077</a>
+             </div>
+             <div className="contact-item">
+               <Mail size={18} className="contact-icon" />
+               <a href="mailto:Visionpro.lcd@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>Visionpro.lcd@gmail.com</a>
+             </div>
+             <div className="contact-item">
+               <Clock size={18} className="contact-icon" />
+               <span>Mon - Fri: 9 AM - 5 PM<br/>Sat - Sun: Closed</span>
+             </div>
+           </div>
+         </div>
       </div>
       
       <div className="footer-bottom">
