@@ -134,7 +134,7 @@ exports.addOrderItems = async (req, res) => {
             <div style="margin-top: 20px; text-align: right; font-size: 14px;">
               <p style="margin: 5px 0;">Items Subtotal: <strong>$${Number(itemsPrice).toFixed(2)}</strong></p>
               <p style="margin: 5px 0;">Shipping: <strong>$${Number(shippingPrice).toFixed(2)}</strong></p>
-              <p style="margin: 5px 0;">Tax (8%): <strong>$${Number(taxPrice).toFixed(2)}</strong></p>
+              <p style="margin: 5px 0;">Tax (13%): <strong>$${Number(taxPrice).toFixed(2)}</strong></p>
               <h3 style="margin: 10px 0 0 0; color: #1e3a8a; font-size: 18px;">Order Total: $${Number(totalPrice).toFixed(2)}</h3>
             </div>
 

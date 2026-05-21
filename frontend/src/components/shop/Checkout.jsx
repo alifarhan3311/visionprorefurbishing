@@ -46,7 +46,7 @@ const CheckoutContent = () => {
   const [createdOrderId, setCreatedOrderId] = useState('');
 
   const cartTotal = cartItems.reduce((acc, item) => acc + item.qty * item.price, 0);
-  const tax = cartTotal * 0.08;
+  const tax = cartTotal * 0.13;
   const shipping = cartTotal > 500 ? 0 : 25;
   const finalTotal = cartTotal + tax + shipping;
 
@@ -447,7 +447,7 @@ const CheckoutContent = () => {
             <span>${shipping.toFixed(2)}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px' }}>
-            <span>Tax (8%):</span>
+            <span>Tax (13%):</span>
             <span>${tax.toFixed(2)}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', fontSize: '18px', fontWeight: '700', borderTop: '1px solid var(--border-color)', paddingTop: '15px' }}>
