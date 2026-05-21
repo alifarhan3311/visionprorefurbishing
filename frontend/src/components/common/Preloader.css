@@ -17,10 +17,10 @@
 }
 
 .preloader-logo {
-  height: 70px;
-  margin-bottom: 30px;
-  animation: pulse 2s infinite ease-in-out;
-}
+   height: 90px;
+   margin-bottom: 30px;
+   animation: pulse 2s infinite ease-in-out;
+ }
 
 .preloader-bar {
   width: 100%;

@@ -7,11 +7,11 @@
 }
 
 .header-logo-img {
-  height: 60px; /* Highly visible premium scale */
-  width: auto;
-  display: block;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+   height: 80px; /* Increased size for better visibility */
+   width: auto;
+   display: block;
+   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+ }
 
 .header-logo-img:hover {
   transform: scale(1.05);

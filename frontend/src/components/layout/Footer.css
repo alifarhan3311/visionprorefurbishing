@@ -24,11 +24,11 @@
 }
 
 .footer-logo-img {
-  height: 60px;
-  width: auto;
-  opacity: 1;
-  transition: transform 0.3s ease;
-}
+   height: 80px; /* Increased size to match header logo */
+   width: auto;
+   opacity: 1;
+   transition: transform 0.3s ease;
+ }
 
 .footer-logo-img:hover {
   transform: scale(1.05);
