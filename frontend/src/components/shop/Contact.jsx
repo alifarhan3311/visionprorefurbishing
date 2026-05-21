@@ -24,11 +24,11 @@ const Contact = () => {
              <h3>Visit Our Office</h3>
              <p>7215 Goreway Dr #1c27, Mississauga, L4T2T9, Ontario</p>
            </div>
-           <div className="info-card reveal" style={{ transitionDelay: '100ms' }}>
-             <MapPin className="info-icon" />
-             <h3>Warehouse Location</h3>
-             <p>O2 Lcd Refurbishing<br/>14 Automatic Rd, U34<br/>Brampton, ON L6S 5N5</p>
-           </div>
+            <div className="info-card reveal" style={{ transitionDelay: '100ms' }}>
+              <MapPin className="info-icon" />
+              <h3>Warehouse Location</h3>
+              <p>O2 Lcd Refurbishing, 14 Automatic Rd, U34, Brampton, ON L6S 5N5</p>
+            </div>
            <div className="info-card reveal" style={{ transitionDelay: '200ms' }}>
              <Phone className="info-icon" />
              <h3>Call / WhatsApp</h3>

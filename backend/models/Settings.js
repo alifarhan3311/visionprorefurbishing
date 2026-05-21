@@ -6,7 +6,7 @@ const SettingsSchema = new mongoose.Schema({
   currency: { type: String, default: 'CAD' },
   maintenanceMode: { type: Boolean, default: false },
   freeShippingThreshold: { type: Number, default: 500 },
-  taxRate: { type: Number, default: 13 },
+   taxRate: { type: Number, default: 8 },
   footerText: { type: String, default: '© 2024 VisionPro Refurbishing. All Rights Reserved.' },
   apiCache: { type: Boolean, default: true },
   twoFactor: { type: Boolean, default: true },

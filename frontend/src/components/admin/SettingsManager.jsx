@@ -15,7 +15,7 @@ const SettingsManager = () => {
     currency: 'CAD',
     maintenanceMode: false,
     freeShippingThreshold: 500,
-    taxRate: 13,
+     taxRate: 8,
     footerText: '© 2026 Vision Pro LCD. All Rights Reserved.',
     apiCache: true,
     twoFactor: true

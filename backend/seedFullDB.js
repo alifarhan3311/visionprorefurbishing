@@ -177,7 +177,7 @@ const seedFullDB = async () => {
       currency: 'CAD',
       maintenanceMode: false,
       freeShippingThreshold: 500,
-      taxRate: 13,
+       taxRate: 8,
       footerText: '© 2026 VisionPro Refurbishing. Authorized Wholesale Portal.',
       apiCache: true,
       twoFactor: false
