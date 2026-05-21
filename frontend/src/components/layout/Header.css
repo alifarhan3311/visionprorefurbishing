@@ -19,11 +19,11 @@
 
 /* --- Top Bar --- */
 .top-bar {
-  background-color: var(--top-bar-bg);
+  background-color: #0a0f1c;
   border-bottom: 1px solid var(--border-color);
   font-size: 12px;
   padding: 8px 0;
-  color: var(--text-light);
+  color: #94a3b8;
 }
 
 .top-bar-content {
@@ -53,11 +53,11 @@
   position: sticky;
   top: 0;
   z-index: 900;
-  background-color: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background-color: rgba(15, 22, 41, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   padding: 15px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid var(--border-color);
   transition: all 0.3s ease;
 }
 
@@ -81,8 +81,9 @@
   max-width: 700px;
   display: flex;
   border: 2px solid var(--primary-color);
-  border-radius: 4px;
+  border-radius: 12px;
   overflow: hidden;
+  background: var(--bg-card);
 }
 
 .search-category-select {
@@ -150,11 +151,11 @@
 
 /* --- Mega Menu (Tier 1) --- */
 .mega-menu-wrapper {
-  background-color: #ffffff; /* MobileSentrix uses a clean white bar for categories often */
-  color: #333;
+  background-color: var(--bg-primary);
+  color: #f1f5f9;
   position: relative;
-  border-bottom: 2px solid #f1f5f9;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+  border-bottom: 2px solid var(--border-color);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
 }
 
 .mega-menu-list {
@@ -169,7 +170,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #1e293b;
+  color: #cbd5e1;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
@@ -177,7 +178,7 @@
 .mega-menu-item:hover,
 .mega-menu-item.active {
   color: var(--primary-color);
-  background-color: #f8fafc;
+  background-color: var(--bg-elevated);
 }
 
 /* --- Mega Menu Dropdown Panel --- */
@@ -186,10 +187,10 @@
   top: 100%;
   left: 0;
   width: 100%;
-  background-color: #ffffff;
+  background-color: var(--bg-primary);
   color: var(--text-dark);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-  border-top: 1px solid #e2e8f0;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+  border-top: 1px solid var(--border-color);
   display: none;
   z-index: 1000;
   padding: 0;
@@ -210,8 +211,8 @@
 /* --- Sidebar (Tier 2) --- */
 .mega-sidebar {
   width: 240px;
-  background-color: #f8fafc;
-  border-right: 1px solid #e2e8f0;
+  background-color: var(--bg-elevated);
+  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   padding: 20px 0;
@@ -254,7 +255,7 @@
 .mega-main-content {
   flex-grow: 1;
   padding: 40px;
-  background-color: #ffffff;
+  background-color: var(--bg-card);
 }
 
 .dropdown-columns {
@@ -357,7 +358,7 @@
     left: -300px;
     width: 280px;
     height: 100vh;
-    background: white;
+    background: var(--bg-card);
     z-index: 1000;
     transition: left 0.3s ease;
     overflow-y: auto;
@@ -485,7 +486,7 @@
   align-items: center;
   gap: 12px;
   padding: 8px 10px;
-  background: white;
+  background: var(--bg-card);
   border: 1px solid rgba(226, 232, 240, 0.8);
   border-radius: 10px;
   text-decoration: none;

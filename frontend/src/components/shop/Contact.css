@@ -37,7 +37,7 @@
 }
 
 .info-card {
-  background: white;
+  background: var(--bg-card);
   padding: 25px;
   border-radius: 12px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);

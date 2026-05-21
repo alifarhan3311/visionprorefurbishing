@@ -33,7 +33,7 @@
 }
 
 .support-card {
-  background: white;
+  background: var(--bg-card);
   padding: 30px;
   border-radius: 16px;
   box-shadow: var(--shadow-premium);

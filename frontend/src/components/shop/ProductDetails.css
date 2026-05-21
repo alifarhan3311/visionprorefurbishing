@@ -29,8 +29,8 @@
 
 /* Gallery Styling */
 .main-image-container {
-  background-color: white;
-  border: 1px solid #e2e8f0;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 40px;
   position: relative;
@@ -73,7 +73,7 @@
   border-radius: 8px;
   padding: 5px;
   cursor: pointer;
-  background-color: white;
+  background-color: var(--bg-card);
 }
 
 .thumb-item img {
@@ -230,7 +230,7 @@
 
 .qty-selector button {
   width: 40px;
-  background: white;
+  background: var(--bg-card);
   border: none;
   cursor: pointer;
   font-size: 18px;
@@ -286,7 +286,7 @@
 /* Tabs */
 .product-tabs {
   margin-top: 60px;
-  background-color: white;
+  background-color: var(--bg-card);
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   overflow: hidden;
@@ -307,7 +307,7 @@
 }
 
 .tab-item.active {
-  background-color: white;
+  background-color: var(--bg-card);
   color: var(--primary-color);
   border-bottom: 2px solid var(--primary-color);
 }

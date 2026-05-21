@@ -17,7 +17,7 @@
 .admin-container {
   display: flex;
   min-height: 100vh;
-  background-color: var(--bg-primary);
+  background-color: var(--bg-deep);
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
@@ -87,9 +87,9 @@
 /* Topbar: Fixed & Floating blur */
 .glass-topbar {
   height: var(--topbar-height);
-  background: var(--glass-white);
+  background: rgba(15,22,41,0.92);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -121,7 +121,7 @@
   transition: all 0.2s ease;
 }
 .search-pill:focus-within {
-  background: white;
+  background: var(--bg-elevated);
   border-color: #3b82f6;
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.05);
 }
@@ -139,7 +139,7 @@
 }
 
 .search-hint kbd {
-  background: white;
+  background: var(--bg-elevated);
   border: 1px solid #e2e8f0;
   border-radius: 6px;
   box-shadow: 0 2px 0 #cbd5e1;
