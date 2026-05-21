@@ -151,7 +151,7 @@ const LCDBuybackForm = () => {
       <div className="user-card" style={{ marginBottom: '30px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', padding: '15px', backgroundColor: '#f8fafc', borderRadius: '8px' }}>
           <Info size={20} color="var(--primary-color)" />
-          <p style={{ fontSize: '13px', color: '#475569' }}>
+          <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
             Prices are based on current market value and are finalized after our technician's physical inspection.
           </p>
         </div>
@@ -159,7 +159,7 @@ const LCDBuybackForm = () => {
         <div className="table-responsive">
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
           <thead>
-            <tr style={{ textAlign: 'left', borderBottom: '2px solid #f1f5f9' }}>
+            <tr style={{ textAlign: 'left', borderBottom: '2px solid var(--border-color)' }}>
               <th style={{ padding: '12px' }}>Brand</th>
               <th style={{ padding: '12px' }}>Model</th>
               <th style={{ padding: '12px' }}>Condition</th>
@@ -170,12 +170,12 @@ const LCDBuybackForm = () => {
           </thead>
           <tbody>
             {rows.map((row, index) => (
-              <tr key={row.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+              <tr key={row.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                 <td style={{ padding: '10px' }}>
                   <select 
                     value={row.brand} 
                     onChange={(e) => updateRow(index, 'brand', e.target.value)}
-                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #e2e8f0' }}
+                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid var(--border-color)' }}
                   >
                     <option value="">Select Brand</option>
                     {uniqueBrands.map(b => <option key={b} value={b}>{b}</option>)}
@@ -186,7 +186,7 @@ const LCDBuybackForm = () => {
                     value={row.modelId} 
                     onChange={(e) => updateRow(index, 'modelId', e.target.value)}
                     disabled={!row.brand}
-                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #e2e8f0' }}
+                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid var(--border-color)' }}
                   >
                     <option value="">Select Model</option>
                     {pricingData.filter(p => p.brand === row.brand).map(m => (
@@ -199,7 +199,7 @@ const LCDBuybackForm = () => {
                     value={row.condition} 
                     onChange={(e) => updateRow(index, 'condition', e.target.value)}
                     disabled={!row.modelId}
-                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #e2e8f0' }}
+                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid var(--border-color)' }}
                   >
                     <option value="">Select Condition</option>
                     {pricingData.find(p => p._id === row.modelId)?.conditions.map(c => (
@@ -213,7 +213,7 @@ const LCDBuybackForm = () => {
                     value={row.qty} 
                     min="1"
                     onChange={(e) => updateRow(index, 'qty', parseInt(e.target.value))}
-                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #e2e8f0' }}
+                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid var(--border-color)' }}
                   />
                 </td>
                 <td style={{ padding: '10px', fontWeight: 700 }}>
@@ -257,7 +257,7 @@ const LCDBuybackForm = () => {
 
       {/* User's Buyback History Section */}
       <div className="user-card" style={{ marginTop: '40px' }}>
-        <h2 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
           <FileText size={20} color="var(--primary-color)" /> My Buyback History
         </h2>
         {myBuybacks.length === 0 ? (
@@ -268,7 +268,7 @@ const LCDBuybackForm = () => {
           <div className="table-responsive">
             <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
               <thead>
-                <tr style={{ textAlign: 'left', borderBottom: '2px solid #f1f5f9', color: '#475569', fontSize: '13px' }}>
+                <tr style={{ textAlign: 'left', borderBottom: '2px solid var(--border-color)', color: 'var(--text-secondary)', fontSize: '13px' }}>
                   <th style={{ padding: '12px' }}>Date</th>
                   <th style={{ padding: '12px' }}>Ticket ID</th>
                   <th style={{ padding: '12px' }}>Items Details</th>
@@ -278,14 +278,14 @@ const LCDBuybackForm = () => {
               </thead>
               <tbody>
                 {myBuybacks.map((bb) => (
-                  <tr key={bb._id} style={{ borderBottom: '1px solid #f1f5f9', fontSize: '14px' }}>
+                  <tr key={bb._id} style={{ borderBottom: '1px solid var(--border-color)', fontSize: '14px' }}>
                     <td style={{ padding: '12px', color: '#64748b' }}>
                       {new Date(bb.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
-                    <td style={{ padding: '12px', fontWeight: 600, color: '#334155', fontFamily: 'monospace' }}>
+                    <td style={{ padding: '12px', fontWeight: 600, color: 'var(--text-muted)', fontFamily: 'monospace' }}>
                       #{bb._id.toString().slice(-6).toUpperCase()}
                     </td>
-                    <td style={{ padding: '12px', color: '#475569', maxWidth: '300px', whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                    <td style={{ padding: '12px', color: 'var(--text-secondary)', maxWidth: '300px', whiteSpace: 'normal', wordBreak: 'break-word' }}>
                       {bb.screens?.map((s, idx) => (
                         <div key={idx} style={{ fontSize: '12px', margin: '2px 0' }}>
                           <span style={{ fontWeight: 600 }}>{s.brand}</span> {s.model} ({s.condition}) <span style={{ color: '#94a3b8' }}>x{s.qty}</span>
@@ -440,7 +440,7 @@ const LCDBuybackForm = () => {
           font-size: 12px;
           color: #64748b;
           background: #f8fafc;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--border-color);
           padding: 12px 16px;
           border-radius: 12px;
           line-height: 1.5;

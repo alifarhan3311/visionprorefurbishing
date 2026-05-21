@@ -23,7 +23,7 @@ const AddressBook = () => {
             </h3>
             <span style={{ fontSize: '12px', background: '#dbeafe', color: '#1e40af', padding: '4px 8px', borderRadius: '12px', fontWeight: 600 }}>Default</span>
           </div>
-          <div style={{ fontSize: '14px', color: '#334155', lineHeight: '1.6' }}>
+          <div style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: '1.6' }}>
             <strong>My Repair Shop</strong><br />
             John Doe<br />
             123 Tech Lane, Suite 100<br />

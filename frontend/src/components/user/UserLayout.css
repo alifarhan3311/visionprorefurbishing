@@ -19,21 +19,22 @@
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  padding: 30px 0;
+  padding: 32px 0;
   position: sticky;
   top: 0;
+  box-shadow: 4px 0 20px rgba(0,0,0,0.2);
 }
 
 .user-sidebar-profile {
   padding: 0 25px 25px 25px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border-color);
   margin-bottom: 20px;
 }
 
 .user-sidebar-profile h3 {
   font-size: 18px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-primary);
   margin-bottom: 4px;
 }
 
@@ -60,13 +61,14 @@
 .user-nav-item {
   display: flex;
   align-items: center;
-  padding: 14px 25px;
+  padding: 15px 26px;
   color: #94a3b8;
   gap: 15px;
   font-size: 15px;
   font-weight: 500;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.23,1,0.32,1);
   border-left: 4px solid transparent;
+  margin: 1px 0;
 }
 
 .user-nav-item:hover {
@@ -76,7 +78,7 @@
 }
 
 .user-nav-item.active {
-  background-color: rgba(0,212,255,0.08);
+  background-color: rgba(37,99,235,0.1);
   color: var(--primary-color);
   border-left-color: var(--primary-color);
   font-weight: 600;
@@ -85,14 +87,14 @@
 /* --- User Content Area --- */
 .user-content {
   flex-grow: 1;
-  padding: 40px 60px;
+  padding: 48px 70px;
   background-color: var(--bg-deep);
 }
 
 .user-page-title {
   font-size: 28px;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--text-primary);
   margin-bottom: 30px;
   letter-spacing: -0.5px;
 }
@@ -103,7 +105,7 @@
   border-radius: 12px;
   padding: 25px;
   box-shadow: var(--user-card-shadow);
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--border-color);
   transition: transform 0.3s ease;
 }
 

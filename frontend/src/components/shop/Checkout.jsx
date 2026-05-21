@@ -274,7 +274,7 @@ const CheckoutContent = () => {
         
         <div>
           <form id="checkout-address-form" onSubmit={handlePlaceOrderSubmit} className="user-card" style={{ marginBottom: '20px' }}>
-            <h3 style={{ marginBottom: '15px', borderBottom: '1px solid #e2e8f0', paddingBottom: '10px' }}>Shipping Details</h3>
+            <h3 style={{ marginBottom: '15px', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>Shipping Details</h3>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '15px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
                 <input 
@@ -284,7 +284,7 @@ const CheckoutContent = () => {
                   onChange={handleChange} 
                   placeholder="Email Address" 
                   required 
-                  style={{ padding: '10px', border: '1px solid #cbd5e1', borderRadius: '4px' }} 
+                  style={{ padding: '10px', border: '1px solid var(--border-color)', borderRadius: '4px', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)' }} 
                 />
                 <input 
                   type="tel" 
@@ -293,7 +293,7 @@ const CheckoutContent = () => {
                   onChange={handleChange} 
                   placeholder="Contact Phone" 
                   required 
-                  style={{ padding: '10px', border: '1px solid #cbd5e1', borderRadius: '4px' }} 
+                  style={{ padding: '10px', border: '1px solid var(--border-color)', borderRadius: '4px', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)' }} 
                 />
               </div>
               <input 
@@ -303,7 +303,7 @@ const CheckoutContent = () => {
                 onChange={handleChange} 
                 placeholder="Shipping Address" 
                 required 
-                style={{ padding: '10px', border: '1px solid #cbd5e1', borderRadius: '4px' }} 
+                style={{ padding: '10px', border: '1px solid var(--border-color)', borderRadius: '4px', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)' }} 
               />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
                 <input 
@@ -313,7 +313,7 @@ const CheckoutContent = () => {
                   onChange={handleChange} 
                   placeholder="City" 
                   required 
-                  style={{ padding: '10px', border: '1px solid #cbd5e1', borderRadius: '4px' }} 
+                  style={{ padding: '10px', border: '1px solid var(--border-color)', borderRadius: '4px', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)' }} 
                 />
                 <input 
                   type="text" 
@@ -322,7 +322,7 @@ const CheckoutContent = () => {
                   onChange={handleChange} 
                   placeholder="Postal Code" 
                   required 
-                  style={{ padding: '10px', border: '1px solid #cbd5e1', borderRadius: '4px' }} 
+                  style={{ padding: '10px', border: '1px solid var(--border-color)', borderRadius: '4px', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)' }} 
                 />
               </div>
               <input 
@@ -332,11 +332,11 @@ const CheckoutContent = () => {
                 onChange={handleChange} 
                 placeholder="Country" 
                 required 
-                style={{ padding: '10px', border: '1px solid #cbd5e1', borderRadius: '4px' }} 
+                style={{ padding: '10px', border: '1px solid var(--border-color)', borderRadius: '4px', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)' }} 
               />
             </div>
 
-            <h3 style={{ margin: '30px 0 15px 0', borderBottom: '1px solid #e2e8f0', paddingBottom: '10px' }}>Payment Method</h3>
+            <h3 style={{ margin: '30px 0 15px 0', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>Payment Method</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '15px', fontWeight: '500' }}>
                 <input 
@@ -359,8 +359,8 @@ const CheckoutContent = () => {
             </div>
 
             {paymentMethod === 'Credit Card' && (
-              <div style={{ marginTop: '25px', padding: '20px', border: '1px solid #cbd5e1', borderRadius: '8px', backgroundColor: '#f8fafc' }}>
-                <h4 style={{ marginBottom: '15px', color: '#1e293b', fontSize: '15px', fontWeight: '600' }}>Card Details</h4>
+              <div style={{ marginTop: '25px', padding: '20px', border: '1px solid var(--border-color)', borderRadius: '8px', backgroundColor: 'var(--bg-elevated)' }}>
+                <h4 style={{ marginBottom: '15px', color: 'var(--text-primary)', fontSize: '15px', fontWeight: '600' }}>Card Details</h4>
                 {useMockStripe ? (
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '15px' }}>
                     <input 
@@ -370,7 +370,7 @@ const CheckoutContent = () => {
                       onChange={handleMockCardChange} 
                       placeholder="Card Number (e.g. 4242 4242 4242 4242)" 
                       required 
-                      style={{ padding: '12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '15px', width: '100%', boxSizing: 'border-box' }} 
+                      style={{ padding: '12px', border: '1px solid var(--border-color)', borderRadius: '6px', fontSize: '15px', width: '100%', boxSizing: 'border-box', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)' }} 
                     />
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px' }}>
                       <input 
@@ -380,7 +380,7 @@ const CheckoutContent = () => {
                         onChange={handleMockCardChange} 
                         placeholder="MM/YY" 
                         required 
-                        style={{ padding: '12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '15px', width: '100%', boxSizing: 'border-box' }} 
+                        style={{ padding: '12px', border: '1px solid var(--border-color)', borderRadius: '6px', fontSize: '15px', width: '100%', boxSizing: 'border-box', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)' }} 
                       />
                       <input 
                         type="text" 
@@ -389,7 +389,7 @@ const CheckoutContent = () => {
                         onChange={handleMockCardChange} 
                         placeholder="CVC" 
                         required 
-                        style={{ padding: '12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '15px', width: '100%', boxSizing: 'border-box' }} 
+                        style={{ padding: '12px', border: '1px solid var(--border-color)', borderRadius: '6px', fontSize: '15px', width: '100%', boxSizing: 'border-box', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)' }} 
                       />
                       <input 
                         type="text" 
@@ -398,19 +398,19 @@ const CheckoutContent = () => {
                         onChange={handleMockCardChange} 
                         placeholder="ZIP Code" 
                         required 
-                        style={{ padding: '12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '15px', width: '100%', boxSizing: 'border-box' }} 
+                        style={{ padding: '12px', border: '1px solid var(--border-color)', borderRadius: '6px', fontSize: '15px', width: '100%', boxSizing: 'border-box', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)' }} 
                       />
                     </div>
                   </div>
                 ) : (
-                  <div style={{ padding: '12px', border: '1px solid #cbd5e1', borderRadius: '6px', backgroundColor: 'white', boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)' }}>
+                  <div style={{ padding: '12px', border: '1px solid #cbd5e1', borderRadius: '6px', backgroundColor: 'var(--bg-card)', boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)' }}>
                     <CardElement 
                       onChange={handleCardChange}
                       options={{
                         style: {
                           base: {
                             fontSize: '16px',
-                            color: '#0f172a',
+                            color: 'var(--text-primary)',
                             fontFamily: "'Inter', sans-serif",
                             '::placeholder': { color: '#94a3b8' }
                           },
@@ -427,7 +427,7 @@ const CheckoutContent = () => {
         </div>
 
         <div className="user-card" style={{ height: 'fit-content' }}>
-          <h3 style={{ fontSize: '18px', borderBottom: '1px solid #e2e8f0', paddingBottom: '15px', marginBottom: '15px' }}>Order Summary</h3>
+          <h3 style={{ fontSize: '18px', borderBottom: '1px solid var(--border-color)', paddingBottom: '15px', marginBottom: '15px' }}>Order Summary</h3>
           
           <div style={{ marginBottom: '20px', maxHeight: '200px', overflowY: 'auto' }}>
             {cartItems.map((item, index) => (
@@ -438,7 +438,7 @@ const CheckoutContent = () => {
             ))}
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '14px', borderTop: '1px solid #e2e8f0', paddingTop: '15px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '14px', borderTop: '1px solid var(--border-color)', paddingTop: '15px' }}>
             <span>Items:</span>
             <span>${cartTotal.toFixed(2)}</span>
           </div>
@@ -450,7 +450,7 @@ const CheckoutContent = () => {
             <span>Tax (8%):</span>
             <span>${tax.toFixed(2)}</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', fontSize: '18px', fontWeight: '700', borderTop: '1px solid #e2e8f0', paddingTop: '15px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', fontSize: '18px', fontWeight: '700', borderTop: '1px solid var(--border-color)', paddingTop: '15px' }}>
             <span>Total:</span>
             <span>${finalTotal.toFixed(2)}</span>
           </div>
@@ -473,7 +473,7 @@ const CheckoutContent = () => {
           </button>
 
           {isSubmitDisabled && (
-            <div style={{ marginTop: '12px', padding: '10px', borderRadius: '8px', backgroundColor: '#fef2f2', border: '1px solid #fee2e2', fontSize: '13px', color: '#ef4444', textAlign: 'left', lineHeight: '1.4' }}>
+            <div style={{ marginTop: '12px', padding: '10px', borderRadius: '8px', backgroundColor: 'rgba(239, 68, 68, 0.15)', border: '1px solid var(--border-color)', fontSize: '13px', color: '#ef4444', textAlign: 'left', lineHeight: '1.4' }}>
               <strong style={{ display: 'block', marginBottom: '4px' }}>Checkout requirements:</strong>
               {!shippingAddress.email && <div>• Email Address is required</div>}
               {!shippingAddress.phone && <div>• Contact Phone is required</div>}
@@ -491,32 +491,32 @@ const CheckoutContent = () => {
 
       {showSuccessModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
-          <div style={{ background: 'white', padding: '40px', borderRadius: '28px', textAlign: 'center', maxWidth: '480px', width: '90%', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)', animation: 'modalPop 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
-            <div style={{ width: '80px', height: '80px', background: '#ecfdf5', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px auto' }}>
+          <div style={{ background: 'var(--bg-card)', padding: '40px', borderRadius: '28px', textAlign: 'center', maxWidth: '480px', width: '90%', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)', animation: 'modalPop 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+            <div style={{ width: '80px', height: '80px', background: 'rgba(16, 185, 129, 0.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px auto' }}>
               <CheckCircle2 size={44} color="#10b981" />
             </div>
-            <h2 style={{ margin: '0 0 8px 0', color: '#0f172a', fontSize: '26px', fontWeight: '800', fontFamily: "'Inter', sans-serif" }}>Order Confirmed!</h2>
-            <p style={{ color: '#475569', marginBottom: '24px', fontSize: '15px', lineHeight: '1.5' }}>
+            <h2 style={{ margin: '0 0 8px 0', color: 'var(--text-primary)', fontSize: '26px', fontWeight: '800', fontFamily: "'Inter', sans-serif" }}>Order Confirmed!</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', fontSize: '15px', lineHeight: '1.5' }}>
               Your order has been successfully placed. A receipt has been sent to <strong>{shippingAddress.email}</strong>.
             </p>
 
-            <div style={{ background: '#f8fafc', padding: '16px 20px', borderRadius: '16px', marginBottom: '28px', textAlign: 'left', fontSize: '14px' }}>
+            <div style={{ background: 'var(--bg-elevated)', padding: '16px 20px', borderRadius: '16px', marginBottom: '28px', textAlign: 'left', fontSize: '14px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <span style={{ color: '#64748b' }}>Order ID:</span>
-                <span style={{ fontWeight: '600', color: '#0f172a' }}>#{createdOrderId.substring(createdOrderId.length - 12).toUpperCase()}</span>
+                <span style={{ color: 'var(--text-secondary)' }}>Order ID:</span>
+                <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>#{createdOrderId.substring(createdOrderId.length - 12).toUpperCase()}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <span style={{ color: '#64748b' }}>Payment Method:</span>
-                <span style={{ fontWeight: '600', color: '#0f172a' }}>{paymentMethod}</span>
+                <span style={{ color: 'var(--text-secondary)' }}>Payment Method:</span>
+                <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>{paymentMethod}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: '#64748b' }}>Total Charged:</span>
+                <span style={{ color: 'var(--text-secondary)' }}>Total Charged:</span>
                 <span style={{ fontWeight: '700', color: '#10b981' }}>${finalTotal.toFixed(2)}</span>
               </div>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-              <div style={{ width: '100%', height: '6px', background: '#e2e8f0', borderRadius: '3px', overflow: 'hidden', position: 'relative' }}>
+              <div style={{ width: '100%', height: '6px', background: 'var(--border-color)', borderRadius: '3px', overflow: 'hidden', position: 'relative' }}>
                 <div style={{ 
                   height: '100%', 
                   background: '#10b981', 
@@ -526,14 +526,14 @@ const CheckoutContent = () => {
                 }}></div>
               </div>
 
-              <p style={{ color: '#64748b', fontSize: '14px', margin: 0 }}>
-                Redirecting to your orders dashboard in <strong style={{ color: '#0f172a', fontSize: '16px' }}>{countdown}</strong> seconds...
+              <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: 0 }}>
+                Redirecting to your orders dashboard in <strong style={{ color: 'var(--text-primary)', fontSize: '16px' }}>{countdown}</strong> seconds...
               </p>
 
               <button 
                 onClick={() => navigate('/dashboard/orders')}
                 className="admin-btn-primary"
-                style={{ padding: '14px 24px', fontSize: '16px', width: '100%', backgroundColor: '#0f172a', borderRadius: '12px', fontWeight: '600', marginTop: '10px' }}
+                style={{ padding: '14px 24px', fontSize: '16px', width: '100%', backgroundColor: 'var(--primary-color)', borderRadius: '12px', fontWeight: '600', marginTop: '10px', color: '#fff' }}
               >
                 Go to Dashboard Now
               </button>

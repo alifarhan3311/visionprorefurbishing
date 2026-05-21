@@ -1,5 +1,5 @@
 .blog-page {
-  background-color: #f8fafc;
+  background-color: var(--bg-primary);
 }
 
 .blog-hero {
@@ -81,7 +81,7 @@
 .blog-content h3 {
   font-size: 20px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 12px;
   line-height: 1.4;
 }

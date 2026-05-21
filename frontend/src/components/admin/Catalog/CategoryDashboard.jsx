@@ -67,7 +67,7 @@ const CategoryDashboard = () => {
   ];
 
   return (
-    <div className="taxonomy-orchestrator animate-fade" style={{ padding: '40px', background: '#f8fafc', minHeight: '100vh', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+    <div className="taxonomy-orchestrator animate-fade" style={{ padding: '40px', background: 'var(--bg-deep)', minHeight: '100vh', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
       <div className="editorial-header-premium">
         <div className="header-meta">
           <span className="badge-glow">Taxonomy Engine</span>
@@ -181,7 +181,7 @@ const CategoryDashboard = () => {
                         {/* Find Tier 4 under this Tier 3 */}
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginLeft: '15px', marginTop: '6px' }}>
                           {categories.filter(c4 => c4.parentCategory?._id === t3._id || c4.parentCategory === t3._id).map(t4 => (
-                            <div key={t4._id} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#f8fafc', border: '1px solid #e2e8f0', padding: '3px 8px', borderRadius: '6px', fontSize: '11px', color: '#64748b' }}>
+                            <div key={t4._id} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'var(--bg-elevated)', border: '1px solid #e2e8f0', padding: '3px 8px', borderRadius: '6px', fontSize: '11px', color: '#64748b' }}>
                               <span style={{ fontSize: '8px', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '1px 3px', borderRadius: '3px', fontWeight: '800' }}>T4</span>
                               {t4.name}
                             </div>

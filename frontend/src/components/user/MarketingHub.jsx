@@ -81,7 +81,7 @@ const MarketingHub = () => {
               </div>
               <div style={{ padding: '20px', flexGrow: 1 }}>
                 <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--primary-color)', textTransform: 'uppercase', marginBottom: '8px' }}>{asset.category}</div>
-                <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', marginBottom: '10px' }}>{asset.title}</h3>
+                <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '10px' }}>{asset.title}</h3>
                 <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '15px', lineHeigh: '1.4' }}>{asset.description}</p>
                 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '15px', borderTop: '1px solid #f1f5f9' }}>

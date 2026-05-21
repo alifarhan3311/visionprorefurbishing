@@ -8,18 +8,14 @@ const MegaMenu = ({ isOpen, onClose }) => {
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState(null);
   const [activeTier2, setActiveTier2] = useState(null);
-  const [hoveredCategory, setHoveredCategory] = useState(null);
+  const [activeTier3, setActiveTier3] = useState(null);
   const [loading, setLoading] = useState(true);
   const timeoutRef = useRef(null);
 
-  const handleTier2Hover = (item) => {
+  const handleTier2Select = (item) => {
     setActiveTier2(item._id);
-    setHoveredCategory(item);
+    setActiveTier3(item);
   };
-
-  useEffect(() => {
-    setHoveredCategory(null);
-  }, [activeTier2]);
 
   // Recursively gather top products from leaf descendants (Tier 4)
   const getDescendantTopProducts = (cat) => {
@@ -66,13 +62,17 @@ const MegaMenu = ({ isOpen, onClose }) => {
     fetchCategories();
   }, []);
 
-  const handleMouseEnter = (categoryId) => {
-    setActiveCategory(categoryId);
+  const handleCategoryClick = (category, event) => {
+    if (category.children?.length > 0) {
+      event.preventDefault();
+      setActiveCategory(category._id);
+    }
   };
 
   const handleMouseLeave = () => {
     timeoutRef.current = setTimeout(() => {
       setActiveCategory(null);
+      setActiveTier3(null);
     }, 300);
   };
 
@@ -80,8 +80,10 @@ const MegaMenu = ({ isOpen, onClose }) => {
     const currentTier1 = categories.find(c => c._id === activeCategory);
     if (currentTier1 && currentTier1.children?.length > 0) {
       setActiveTier2(currentTier1.children[0]._id);
+      setActiveTier3(currentTier1.children[0]);
     } else {
       setActiveTier2(null);
+      setActiveTier3(null);
     }
   }, [activeCategory, categories]);
 
@@ -89,7 +91,7 @@ const MegaMenu = ({ isOpen, onClose }) => {
   const currentTier2Items = currentTier1?.children || [];
   const currentTier2Data = currentTier2Items.find(c => c._id === activeTier2);
 
-  const targetShowcaseCategory = hoveredCategory || currentTier2Data;
+  const targetShowcaseCategory = activeTier3 || currentTier2Data;
   const showcaseProducts = targetShowcaseCategory 
     ? getUniqueProducts(getDescendantTopProducts(targetShowcaseCategory)).slice(0, 10)
     : [];
@@ -112,10 +114,10 @@ const MegaMenu = ({ isOpen, onClose }) => {
             <li 
               key={category._id}
               className={`mega-menu-item ${activeCategory === category._id ? 'active' : ''}`}
-              onMouseEnter={() => handleMouseEnter(category._id)}
             >
               <Link 
                 to={`/category/${category.slug}`} 
+                onClick={(e) => handleCategoryClick(category, e)}
                 style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: 'inherit' }}
               >
                 {category.navIconUrl && (
@@ -144,7 +146,7 @@ const MegaMenu = ({ isOpen, onClose }) => {
                 <div 
                   key={item._id} 
                   className={`sidebar-item ${activeTier2 === item._id ? 'active' : ''}`}
-                  onMouseEnter={() => handleTier2Hover(item)}
+                  onClick={() => handleTier2Select(item)}
                 >
                   <div className="sidebar-item-inner">
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -170,12 +172,12 @@ const MegaMenu = ({ isOpen, onClose }) => {
                   <div className="main-content-header">
                     <h3>{currentTier2Data.name} Parts</h3>
                   </div>
-                  <div className="dropdown-columns" onMouseLeave={() => setHoveredCategory(null)}>
+                  <div className="dropdown-columns">
                     {currentTier2Data.children?.map((tier3) => (
                       <div 
                         key={tier3._id} 
                         className="dropdown-col"
-                        onMouseEnter={() => setHoveredCategory(tier3)}
+                        onClick={() => setActiveTier3(tier3)}
                       >
                         <Link to={`/category/${tier3.slug}`} className="tier3-title">
                           {tier3.name}

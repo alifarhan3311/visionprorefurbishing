@@ -50,10 +50,10 @@ const Cart = () => {
 
   return (
     <div className="container" style={{ padding: '40px 20px', minHeight: '60vh' }}>
-      <h1 className="user-page-title">Shopping Cart</h1>
+      <h1 className="text-white">Shopping Cart</h1>
       
       {cartItems.length === 0 ? (
-        <div className="user-card" style={{ textAlign: 'center', padding: '40px' }}>
+        <div className="user-card  mt-3" style={{ textAlign: 'center', padding: '40px' }}>
           <h3>Your cart is empty</h3>
           <p style={{ marginTop: '10px', color: '#64748b' }}>Start adding items from our extensive catalog.</p>
           <Link to="/" className="admin-btn-primary" style={{ display: 'inline-block', marginTop: '20px', textDecoration: 'none' }}>Go Back</Link>
@@ -151,16 +151,16 @@ const Cart = () => {
           justify-content: center;
         }
 
-        /* Glassmorphism Alert Card */
+        /* Premium Dark Alert Card */
         .cart-alert-card {
-          background: rgba(255, 255, 255, 0.96);
+          background: var(--bg-card);
           border-radius: 24px;
           padding: 45px 35px;
           max-width: 460px;
           width: 90%;
           text-align: center;
-          border: 1px solid rgba(255, 255, 255, 0.85);
-          box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.3);
+          border: 1px solid var(--border-color);
+          box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.45);
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -176,7 +176,7 @@ const Cart = () => {
           align-items: center;
           justify-content: center;
           margin-bottom: 24px;
-          background-color: #fffbeb;
+          background-color: rgba(201, 162, 39, 0.12);
           color: #f59e0b;
           animation: cartPulseWarning 2.5s infinite;
         }
@@ -189,7 +189,7 @@ const Cart = () => {
         .cart-alert-title {
           font-size: 24px;
           font-weight: 800;
-          color: #0f172a;
+          color: var(--text-primary);
           margin: 0 0 14px 0;
           letter-spacing: -0.025em;
           font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -197,7 +197,7 @@ const Cart = () => {
 
         .cart-alert-message {
           font-size: 15px;
-          color: #475569;
+          color: var(--text-secondary);
           line-height: 1.6;
           margin: 0 0 32px 0;
           font-weight: 500;
@@ -215,11 +215,11 @@ const Cart = () => {
           transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
           box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
           outline: none;
-          background-color: #f59e0b;
+          background-color: var(--gold);
           color: white;
         }
         .cart-alert-close-btn:hover {
-          background-color: #d97706;
+          background-color: #b45309;
           transform: translateY(-2px);
           box-shadow: 0 8px 24px rgba(245, 158, 11, 0.35);
         }

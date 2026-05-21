@@ -116,7 +116,7 @@ const RMAForm = () => {
           <h3 style={{ fontSize: '16px', marginBottom: '15px' }}>Item Found</h3>
           
           <div style={{ padding: '15px', backgroundColor: '#f8fafc', borderRadius: '6px', marginBottom: '20px' }}>
-            <div style={{ fontWeight: 600, color: '#0f172a' }}>iPhone 15 Pro Max - Pre-Owned (Grade A)</div>
+            <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>iPhone 15 Pro Max - Pre-Owned (Grade A)</div>
             <div style={{ fontSize: '13px', color: '#64748b', marginTop: '5px' }}>IMEI: 358920193847291 • Purchased on: Oct 12, 2025</div>
           </div>
 
@@ -255,7 +255,7 @@ const RMAForm = () => {
         .alert-title {
           font-size: 24px;
           font-weight: 800;
-          color: #0f172a;
+          color: var(--text-primary);
           margin: 0 0 12px 0;
           letter-spacing: -0.02em;
           font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -263,7 +263,7 @@ const RMAForm = () => {
 
         .alert-message {
           font-size: 15px;
-          color: #475569;
+          color: var(--text-secondary);
           line-height: 1.6;
           margin: 0 0 32px 0;
           font-weight: 500;

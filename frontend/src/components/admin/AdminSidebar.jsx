@@ -5,7 +5,8 @@ import {
   LayoutDashboard, ShoppingCart, Users, Settings, 
   Wrench, Repeat, Activity, FileText, Megaphone, 
   Box, Layers, ClipboardList, ShieldCheck, 
-  LogOut, ChevronRight, UserCircle, X, Image as ImageIcon, Star
+  LogOut, ChevronRight, UserCircle, X, Image as ImageIcon, Star,
+  Tag, Package, Briefcase, TrendingUp
 } from 'lucide-react';
 import './AdminLayout.css';
 
@@ -52,7 +53,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
         <NavSection title="Inventory & Catalog" />
         <div className="nav-group">
           <NavItem to="/admin/products" icon={Box} label="Product Inventory" />
-          <NavItem to="/admin/categories" icon={Layers} label="Taxonomy Engine" />
+          <NavItem to="/admin/categories" icon={Layers} label="Category Management" />
           <div style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '2px', margin: '2px 0 8px 0' }}>
             <Link to="/admin/categories/tier1" className={`nav-link-item ${isActive('/admin/categories/tier1')}`} style={{ padding: '6px 12px', fontSize: '12px', gap: '10px' }} onClick={() => { if (window.innerWidth <= 1024) onClose(); }}>
               <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--primary-color)' }}></div>
@@ -83,12 +84,12 @@ const AdminSidebar = ({ isOpen, onClose }) => {
           <NavItem to="/admin/orders" icon={ShoppingCart} label="B2B Order Desk" />
           <NavItem to="/admin/customers" icon={Users} label="Dealer Network" />
         </div>
-
+        
         <NavSection title="Support & Service" />
         <div className="nav-group">
-          <NavItem to="/admin/buyback" icon={Repeat} label="LCD Buyback" />
-          <NavItem to="/admin/rma" icon={ShieldCheck} label="RMA Console" />
-          <NavItem to="/admin/appointments" icon={ClipboardList} label="Service Queue" />
+          <NavItem to="/admin/buyback" icon={Package} label="Buyback Tickets" />
+          <NavItem to="/admin/rma" icon={ShieldCheck} label="RMA Tickets" />
+          <NavItem to="/admin/appointments" icon={ClipboardList} label="Service Appointments" />
         </div>
 
         <NavSection title="Marketing & Settings" />

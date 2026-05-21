@@ -84,7 +84,7 @@ const MyOrders = () => {
               </div>
 
               <div className="order-card-footer">
-                <div style={{ fontSize: '14px', color: '#475569' }}>
+                <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
                   {order.orderItems.length} items • Status: {order.isDelivered ? 'Delivered' : 'Processing'}
                 </div>
                 <button 

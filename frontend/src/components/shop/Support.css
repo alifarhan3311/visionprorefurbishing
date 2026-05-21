@@ -1,33 +1,39 @@
 .support-page {
-  background-color: #f8fafc;
+  background-color: var(--bg-primary);
 }
 
 .support-hero {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  color: white;
-  padding: 100px 0;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%);
+  color: var(--text-primary);
+  padding: 100px 0 80px;
   text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 
 .support-hero h1 {
-  font-size: 48px;
+  font-size: clamp(32px, 5vw, 48px);
   font-weight: 800;
   margin-bottom: 15px;
+  color: var(--text-primary);
 }
 
 .support-hero p {
   font-size: 18px;
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .support-sections {
   margin-top: -60px;
   margin-bottom: 100px;
+  padding-bottom: 60px;
+  position: relative;
+  z-index: 1;
 }
 
 .support-cards-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 20px;
   margin-bottom: 60px;
 }
@@ -35,10 +41,10 @@
 .support-card {
   background: var(--bg-card);
   padding: 30px;
-  border-radius: 16px;
+  border-radius: 20px;
   box-shadow: var(--shadow-premium);
   text-align: center;
-  border: 1px solid #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.14);
 }
 
 .support-icon {
@@ -51,14 +57,20 @@
 .support-card h3 {
   font-size: 18px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 10px;
 }
 
 .support-card p {
   font-size: 14px;
-  color: #64748b;
+  color: var(--text-secondary);
   line-height: 1.5;
+}
+
+.faq-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 0 0;
 }
 
 .faq-section h2 {
@@ -66,7 +78,14 @@
   font-weight: 800;
   margin-bottom: 40px;
   text-align: center;
-  color: #0f172a;
+  color: var(--text-primary);
+}
+
+.user-card.glass {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 36px;
+  border-radius: 24px;
 }
 
 .faq-list {
@@ -78,7 +97,7 @@
 .faq-item h4 {
   font-size: 17px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-primary);
   margin-bottom: 10px;
   display: flex;
   align-items: center;
@@ -87,7 +106,7 @@
 
 .faq-item p {
   font-size: 15px;
-  color: #64748b;
+  color: var(--text-secondary);
   line-height: 1.6;
   padding-left: 28px;
 }

@@ -3,8 +3,8 @@
 }
 
 .hero-slider {
-  background: var(--gradient-hero);
-  color: white;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f9ff 40%, #e8eef8 100%);
+  color: var(--text-primary);
   padding: 80px 20px;
   text-align: center;
   position: relative;
@@ -27,7 +27,7 @@
 
 .hero-subtitle {
   font-size: 20px;
-  color: #94a3b8;
+  color: var(--text-secondary);
   margin-bottom: 35px;
   line-height: 1.6;
 }
@@ -47,14 +47,14 @@
 }
 
 .hero-btn:hover {
-  background-color: #0056b3;
+  background-color: #0d3a66;
   transform: translateY(-2px);
 }
 
 .section-title {
   font-size: 26px;
   font-weight: 800;
-  color: #f1f5f9;
+  color: var(--text-primary);
   margin: 50px 0 30px 0;
   padding-bottom: 15px;
   border-bottom: 1px solid var(--border-color);
@@ -70,18 +70,18 @@
 .product-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 18px;
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: var(--transition-slow);
   display: flex;
   flex-direction: column;
   position: relative;
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 8px 25px -8px rgba(0,0,0,0.3);
 }
 
 .product-card:hover {
-  box-shadow: 0 20px 35px -10px rgba(0, 212, 255, 0.25);
-  transform: translateY(-6px);
+  box-shadow: 0 25px 50px -12px rgba(37, 99, 235, 0.18);
+  transform: translateY(-7px);
   border-color: var(--primary-color);
 }
 
@@ -98,22 +98,34 @@
   color: white;
 }
 
-.product-badge.new-arrival { background: var(--gradient-primary); color: #0a0f1c; font-weight: 800; }
-.product-badge.hot-seller { background: var(--gradient-secondary); color: white; font-weight: 800; }
-.product-badge.genuine { background: linear-gradient(135deg, #10b981, #34d399); color: white; font-weight: 800; }
-.product-badge.limited-stock { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #0a0f1c; font-weight: 800; }
+.product-badge.new-arrival { background: var(--gradient-primary); color: white; font-weight: 700; }
+.product-badge.hot-seller { background: var(--gradient-secondary); color: var(--text-primary); font-weight: 700; }
+.product-badge.genuine { background: linear-gradient(135deg, #14b8a6, #0f766e); color: white; font-weight: 700; }
+.product-badge.limited-stock { background: linear-gradient(135deg, #d4af37, #b45309); color: var(--text-primary); font-weight: 700; }
 
 .product-image-container {
-  height: 180px;
-  background-color: #1c253f;
-  border-radius: 12px;
-  margin-bottom: 15px;
+  height: 188px;
+  background-color: var(--bg-elevated);
+  border-radius: var(--radius-md);
+  margin-bottom: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #64748b;
+  color: var(--text-secondary);
   overflow: hidden;
   border: 1px solid var(--border-color);
+  transition: var(--transition);
+  position: relative;
+}
+.product-card:hover .product-image-container {
+  border-color: var(--primary-color);
+  transform: scale(1.015);
+}
+.product-image {
+  transition: var(--transition-slow);
+}
+.product-card:hover .product-image {
+  transform: scale(1.04);
 }
 
 .product-image {
@@ -124,9 +136,9 @@
 
 .product-category {
   font-size: 11px;
-  color: #00d4ff;
+  color: var(--primary-color);
   text-transform: uppercase;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.5px;
   margin-bottom: 6px;
 }
@@ -134,39 +146,41 @@
 .product-name {
   font-size: 15px;
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--text-primary);
   margin-bottom: 12px;
   flex-grow: 1;
   line-height: 1.4;
 }
 
 .product-price {
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 800;
-  color: #00d4ff;
-  margin-bottom: 18px;
+  color: var(--gold);
+  margin-bottom: 20px;
+  letter-spacing: -0.3px;
 }
 
 .add-to-cart-btn {
   background: var(--gradient-primary);
-  color: #0a0f1c;
+  color: white;
   border: none;
-  padding: 12px;
-  border-radius: 10px;
-  font-weight: 800;
+  padding: 13px 16px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--transition);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+  box-shadow: 0 5px 18px rgba(37, 99, 235, 0.28);
+  letter-spacing: 0.3px;
 }
 
 .add-to-cart-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 212, 255, 0.5);
+  transform: translateY(-2.5px);
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.4);
   filter: brightness(1.05);
 }
 
@@ -237,7 +251,7 @@
 .hero-slide-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(10,15,28,0.92) 0%, rgba(18,26,46,0.65) 45%, rgba(10,15,28,0.95) 100%);
+  background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(245,249,255,0.2) 45%, rgba(255,255,255,0.15) 100%);
   z-index: 1;
 }
 
@@ -247,7 +261,7 @@
   max-width: 850px;
   padding: 0 40px;
   text-align: center;
-  color: white;
+  color: var(--text-primary);
   transform: translateY(30px);
   opacity: 0;
   transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease-out;
@@ -281,7 +295,7 @@
 }
 
 .slider-dot.active {
-  background-color: #3b82f6;
+  background-color: var(--secondary-color);
   transform: scale(1.3);
 }
 

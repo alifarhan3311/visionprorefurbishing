@@ -275,7 +275,7 @@ const Home = () => {
           ))
         ) : (
           /* Fallback static slider */
-          <div className="hero-slide active" style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' }}>
+          <div className="hero-slide active" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%)' }}>
             <div className="hero-slide-content" style={{ opacity: 1, transform: 'translateY(0)' }}>
               <h1 className="hero-title shimmer-text">Premium B2B Parts & Devices</h1>
               <p className="hero-subtitle">Wholesale pricing on Apple, Samsung, and more. Register for a B2B account to unlock tier-based bulk discounts.</p>
@@ -322,12 +322,12 @@ const Home = () => {
         </div>
 
         {loading ? (
-          <p style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>Loading products...</p>
+          <p style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>Loading products...</p>
         ) : filteredProducts.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px dashed #cbd5e1' }}>
-            <Box size={48} style={{ color: '#cbd5e1', marginBottom: '15px' }} />
-            <h3 style={{ color: '#475569' }}>No Products Found</h3>
-            <p style={{ color: '#94a3b8' }}>Try refining your search terms.</p>
+          <div style={{ textAlign: 'center', padding: '60px', backgroundColor: 'var(--bg-elevated)', borderRadius: '8px', border: '1px dashed var(--border-color)' }}>
+            <Box size={48} style={{ color: 'var(--border-color)', marginBottom: '15px' }} />
+            <h3 style={{ color: 'var(--text-primary)' }}>No Products Found</h3>
+            <p style={{ color: 'var(--text-secondary)' }}>Try refining your search terms.</p>
           </div>
         ) : (
           <div className="product-grid">
@@ -488,7 +488,7 @@ const Home = () => {
               <h3>Schedule Repair Intake</h3>
               {appointmentSuccess ? (
                 <div className="success-banner">
-                  <Star size={24} style={{ color: '#eab308' }} />
+                  <Star size={24} style={{ color: 'var(--gold)' }} />
                   <h4>Appointment Scheduled!</h4>
                   <p>Your repair intake request has been successfully created. You can track this in your dashboard.</p>
                 </div>
@@ -627,11 +627,11 @@ const Home = () => {
 
           <div className="testimonials-grid">
             {loadingReviews ? (
-              <p style={{ textAlign: 'center', color: '#64748b', gridColumn: '1 / -1' }}>Loading client testimonials...</p>
+              <p style={{ textAlign: 'center', color: 'var(--text-secondary)', gridColumn: '1 / -1' }}>Loading client testimonials...</p>
             ) : reviews.length === 0 ? (
               <>
                 <div className="testimonial-card">
-                  <div className="stars-row"><Star size={16} fill="#eab308" color="#eab308" /><Star size={16} fill="#eab308" color="#eab308" /><Star size={16} fill="#eab308" color="#eab308" /><Star size={16} fill="#eab308" color="#eab308" /><Star size={16} fill="#eab308" color="#eab308" /></div>
+                  <div className="stars-row"><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /></div>
                   <p className="testimonial-text">"Vision Pro LCD has completely changed how we procure parts. Same day shipment to Montreal gets parts in our hands fast, and defect rates are near zero."</p>
                   <div className="testimonial-author">
                     <h4>Marc-Andre L.</h4>
@@ -639,7 +639,7 @@ const Home = () => {
                   </div>
                 </div>
                 <div className="testimonial-card">
-                  <div className="stars-row"><Star size={16} fill="#eab308" color="#eab308" /><Star size={16} fill="#eab308" color="#eab308" /><Star size={16} fill="#eab308" color="#eab308" /><Star size={16} fill="#eab308" color="#eab308" /><Star size={16} fill="#eab308" color="#eab308" /></div>
+                  <div className="stars-row"><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /></div>
                   <p className="testimonial-text">"Outstanding customer service. Their 12-month replacement policy gives us huge peace of mind for high-value preowned devices."</p>
                   <div className="testimonial-author">
                     <h4>Sarah Jenkins</h4>
@@ -647,7 +647,7 @@ const Home = () => {
                   </div>
                 </div>
                 <div className="testimonial-card">
-                  <div className="stars-row"><Star size={16} fill="#eab308" color="#eab308" /><Star size={16} fill="#eab308" color="#eab308" /><Star size={16} fill="#eab308" color="#eab308" /><Star size={16} fill="#eab308" color="#eab308" /><Star size={16} fill="#eab308" color="#eab308" /></div>
+                  <div className="stars-row"><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /></div>
                   <p className="testimonial-text">"Being in the Gold pricing tier saves our business thousands of dollars every month. The team is friendly and RMA validation takes minutes."</p>
                   <div className="testimonial-author">
                     <h4>David K.</h4>
@@ -660,7 +660,7 @@ const Home = () => {
                 <div key={r._id} className="testimonial-card">
                   <div className="stars-row">
                     {[...Array(r.rating || 5)].map((_, idx) => (
-                      <Star key={idx} size={16} fill="#eab308" color="#eab308" />
+                      <Star key={idx} size={16} fill="var(--secondary-color)" color="var(--secondary-color)" />
                     ))}
                   </div>
                   <p className="testimonial-text">"{r.comment}"</p>
@@ -721,7 +721,7 @@ const Home = () => {
       {showReviewModal && (
         <div className="booking-modal-overlay">
           <div className="booking-modal-card" style={{ maxWidth: '500px' }}>
-            <h3 style={{ fontSize: '22px', fontWeight: '800', marginBottom: '8px', color: '#0f172a' }}>Submit B2B Review</h3>
+            <h3 style={{ fontSize: '22px', fontWeight: '800', marginBottom: '8px', color: '#f1f5f9' }}>Submit B2B Review</h3>
             <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '20px' }}>
               Share your business experience. Reviews are reviewed by our team prior to publishing.
             </p>
@@ -755,11 +755,11 @@ const Home = () => {
                       onClick={() => setReviewForm({ ...reviewForm, rating: star })}
                       style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                     >
-                      <Star 
-                        size={28} 
-                        fill={star <= reviewForm.rating ? '#eab308' : 'none'} 
-                        color={star <= reviewForm.rating ? '#eab308' : '#cbd5e1'} 
-                      />
+<Star 
+                         size={28} 
+                         fill={star <= reviewForm.rating ? '#c9a227' : 'none'} 
+                         color={star <= reviewForm.rating ? '#c9a227' : '#64748b'} 
+                       />
                     </button>
                   ))}
                 </div>
@@ -814,108 +814,126 @@ const Home = () => {
 
       {/* Embedded CSS Stylesheet - VIBRANT DARK FULL COLOR */}
       <style dangerouslySetInnerHTML={{ __html: `
-        .search-bar-premium { display: flex; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 10px 16px; width: 340px; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .search-bar-premium:focus-within { border-color: #00d4ff; box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.15); }
-        .search-icon-live { color: #64748b; margin-right: 10px; }
-        .search-bar-premium input { border: none; outline: none; font-size: 14px; font-weight: 600; width: 100%; color: #f1f5f9; background: transparent; }
+        .search-bar-premium { display: flex; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 12px 18px; width: 360px; transition: all 0.25s; box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
+        .search-bar-premium:focus-within { border-color: var(--primary-color); box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.12); }
+        .search-icon-live { color: #64748b; margin-right: 12px; }
+        .search-bar-premium input { border: none; outline: none; font-size: 15px; font-weight: 600; width: 100%; color: #f1f5f9; background: transparent; letter-spacing: 0.2px; }
 
-        .centered-header { text-align: center; margin-bottom: 50px; }
-        .centered-header h2 { font-size: 32px; font-weight: 800; color: #f1f5f9; margin: 10px 0; letter-spacing: -0.5px; }
-        .centered-header p { color: #94a3b8; font-size: 16px; max-width: 600px; margin: 0 auto; }
-        .premium-badge-glow { background: rgba(0,212,255,0.1); color: #00d4ff; padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 700; text-transform: uppercase; border: 1px solid rgba(0,212,255,0.2); }
+        .centered-header { text-align: center; margin-bottom: 60px; }
+        .centered-header h2 { font-size: 34px; font-weight: 800; color: var(--text-primary); margin: 12px 0 8px; letter-spacing: -0.8px; line-height: 1.1; }
+        .centered-header p { color: #94a3b8; font-size: 16px; max-width: 620px; margin: 0 auto; line-height: 1.6; }
 
-        .b2b-advantages-section { padding: 80px 0; background: var(--bg-primary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
-        .advantages-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
-        .advantage-card { background: var(--bg-card); padding: 35px 30px; border-radius: 24px; border: 1px solid var(--border-color); transition: all 0.3s; }
-        .advantage-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 212, 255, 0.15); border-color: #00d4ff; }
-        .advantage-icon-wrapper { width: 56px; height: 56px; border-radius: 16px; background: rgba(0,212,255,0.1); color: #00d4ff; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
-        .advantage-card h3 { font-size: 18px; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
-        .advantage-card p { color: #94a3b8; font-size: 14px; line-height: 1.6; }
+        .premium-badge-glow { background: rgba(23,85,162,0.08); color: var(--secondary-color); padding: 6px 16px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; border: 1px solid rgba(23,85,162,0.18); }
 
-        .pricing-tiers-section { padding: 80px 0; background: var(--bg-deep); }
-        .tiers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-        .tier-card-premium { background: var(--bg-card); padding: 40px 30px; border-radius: 28px; border: 1px solid var(--border-color); position: relative; transition: all 0.3s; }
-        .tier-card-premium.featured-tier { border: 2px solid #00d4ff; transform: scale(1.02); box-shadow: 0 20px 40px -15px rgba(0,212,255,0.25); }
-        .featured-ribbon { position: absolute; top: 15px; right: 20px; background: var(--gradient-primary); color: #0a0f1c; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-        .tier-header-wrap { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .tier-badge { background: rgba(0,212,255,0.1); color: #00d4ff; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; }
-        .tier-badge-gold { background: rgba(251,191,36,0.15); color: #fbbf24; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; }
-        .tier-card-premium h3 { font-size: 22px; font-weight: 800; color: #f1f5f9; }
-        .tier-pricing-discount { font-size: 18px; font-weight: 800; color: #00d4ff; margin: 15px 0 25px 0; }
-        .tier-features { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--border-color); padding-top: 20px; }
-        .tier-features li { font-size: 14px; color: #94a3b8; font-weight: 600; display: flex; align-items: center; }
-        .tier-features li::before { content: "✓"; color: #00d4ff; font-weight: 800; margin-right: 10px; }
+        .b2b-advantages-section { padding: 100px 0; background: var(--gradient-section); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+        .advantages-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 28px; }
+        .advantage-card { background: var(--bg-card); padding: 38px 32px; border-radius: 24px; border: 1px solid var(--border-color); transition: all 0.4s cubic-bezier(0.23,1,0.32,1); }
+        .advantage-card:hover { transform: translateY(-6px); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35); border-color: var(--primary-color); }
+        .advantage-icon-wrapper { width: 60px; height: 60px; border-radius: 18px; background: rgba(201,162,39,0.12); color: var(--gold); display: flex; align-items: center; justify-content: center; margin-bottom: 22px; transition: all 0.3s ease; }
+.advantage-card:hover .advantage-icon-wrapper {
+  background: rgba(201,162,39,0.2);
+  transform: scale(1.05);
+}
+        .advantage-card h3 { font-size: 19px; font-weight: 700; color: var(--text-primary); margin-bottom: 14px; letter-spacing: -0.3px; }
+        .advantage-card p { color: #94a3b8; font-size: 14.5px; line-height: 1.65; }
 
-        .homepage-booking-section { padding: 80px 0; background: linear-gradient(135deg, #0f1629 0%, #121a2e 100%); color: white; border-radius: 40px; margin: 40px 20px; overflow: hidden; border: 1px solid var(--border-color); }
-        .booking-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; padding: 0 40px; }
-        .booking-info-block .premium-badge-glow { background: rgba(0,212,255,0.1); color: #00d4ff; border: 1px solid rgba(0,212,255,0.2); }
-        .booking-info-block h2 { font-size: 38px; font-weight: 800; margin: 20px 0; letter-spacing: -1px; color: white; }
-        .booking-info-block p { color: #94a3b8; font-size: 16px; line-height: 1.6; margin-bottom: 40px; }
-        .booking-features-list { display: flex; flex-direction: column; gap: 30px; }
-        .booking-features-list .feat-item { display: flex; gap: 15px; }
-        .booking-features-list .feat-item svg { color: #00d4ff; flex-shrink: 0; }
-        .booking-features-list .feat-item h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; color: white; }
-        .booking-features-list .feat-item p { font-size: 14px; color: #94a3b8; margin: 0; }
+        .pricing-tiers-section { padding: 100px 0; background: var(--bg-deep); }
+        .tiers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 28px; }
+        .tier-card-premium { background: var(--bg-card); padding: 42px 34px; border-radius: 28px; border: 1px solid var(--border-color); position: relative; transition: all 0.4s; }
+        .tier-card-premium.featured-tier { border: 2px solid var(--gold); box-shadow: 0 25px 55px -12px rgba(201,162,39,0.2); }
+        .featured-ribbon { position: absolute; top: 18px; right: 22px; background: var(--gradient-gold); color: #090e1a; padding: 5px 14px; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+        .tier-header-wrap { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+        .tier-badge { background: rgba(37,99,235,0.1); color: var(--primary-color); padding: 5px 12px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+        .tier-badge-gold { background: rgba(201,162,39,0.12); color: var(--gold); padding: 5px 12px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+        .tier-card-premium h3 { font-size: 23px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.4px; }
+        .tier-pricing-discount { font-size: 19px; font-weight: 800; color: var(--gold); margin: 14px 0 26px; }
+        .tier-features { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 13px; border-top: 1px solid var(--border-color); padding-top: 22px; }
+        .tier-features li { font-size: 14.5px; color: #94a3b8; font-weight: 600; display: flex; align-items: center; }
+        .tier-features li::before { content: "✓"; color: var(--teal); font-weight: 800; margin-right: 11px; }
 
-        .booking-form-card { background: var(--bg-card); padding: 40px; border-radius: 28px; color: #f1f5f9; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid var(--border-color); }
-        .booking-form-card h3 { font-size: 22px; font-weight: 800; margin-bottom: 25px; color: #f1f5f9; }
-        .homepage-form-grid { display: flex; flex-direction: column; gap: 15px; }
-        .form-field-wrapper { display: flex; flex-direction: column; gap: 6px; }
-        .form-field-wrapper label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+        .homepage-booking-section { padding: 90px 0; background: var(--gradient-section); color: #f1f5f9; border-radius: 48px; margin: 50px 20px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 30px 70px -20px rgba(0,0,0,0.5); }
+        .booking-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: center; padding: 0 50px; }
+        .booking-info-block .premium-badge-glow { background: rgba(201,162,39,0.1); color: var(--gold); border: 1px solid rgba(201,162,39,0.2); }
+        .booking-info-block h2 { font-size: 40px; font-weight: 800; margin: 16px 0; letter-spacing: -1.2px; line-height: 1.05; color: var(--text-primary); }
+        .booking-info-block p { color: #94a3b8; font-size: 16px; line-height: 1.65; margin-bottom: 42px; }
+        .booking-features-list { display: flex; flex-direction: column; gap: 32px; }
+        .booking-features-list .feat-item { display: flex; gap: 18px; }
+        .booking-features-list .feat-item svg { color: var(--teal); flex-shrink: 0; margin-top: 2px; transition: transform 0.2s; }
+.booking-features-list .feat-item:hover svg {
+  transform: scale(1.1);
+}
+        .booking-features-list .feat-item h4 { font-size: 16px; font-weight: 700; margin-bottom: 5px; color: var(--text-primary); }
+        .booking-features-list .feat-item p { font-size: 14.5px; color: #94a3b8; margin: 0; line-height: 1.5; }
+
+        .booking-form-card { background: var(--bg-card); padding: 44px; border-radius: 32px; color: var(--text-primary); box-shadow: 0 30px 70px -15px rgba(0,0,0,0.45); border: 1px solid var(--border-color); }
+        .booking-form-card h3 { font-size: 23px; font-weight: 800; margin-bottom: 28px; color: var(--text-primary); }
+        .homepage-form-grid { display: flex; flex-direction: column; gap: 16px; }
+        .form-field-wrapper { display: flex; flex-direction: column; gap: 7px; }
+        .form-field-wrapper label { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.6px; }
         .input-icon-wrap { position: relative; display: flex; align-items: center; }
-        .input-icon-wrap svg { position: absolute; left: 14px; color: #64748b; }
-        .input-icon-wrap input { padding-left: 40px !important; background: var(--bg-elevated); color: #f1f5f9; border: 1px solid var(--border-color); }
-        .homepage-form-grid input, .homepage-form-grid select, .homepage-form-grid textarea { width: 100%; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 12px; outline: none; font-size: 13px; font-weight: 600; font-family: inherit; transition: all 0.2s; background: var(--bg-elevated); color: #f1f5f9; }
-        .homepage-form-grid input:focus, .homepage-form-grid select:focus, .homepage-form-grid textarea:focus { border-color: #00d4ff; box-shadow: 0 0 0 4px rgba(0,212,255,0.15); }
-        .input-group-row { display: flex; gap: 15px; }
+        .input-icon-wrap svg { position: absolute; left: 16px; color: var(--text-secondary); }
+        .input-icon-wrap input { padding-left: 46px !important; background: var(--bg-elevated); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 14px; }
+        .homepage-form-grid input, .homepage-form-grid select, .homepage-form-grid textarea { width: 100%; padding: 14px 18px; border: 1px solid var(--border-color); border-radius: 16px; outline: none; font-size: 14.5px; font-weight: 500; transition: var(--transition); background: var(--bg-elevated); color: var(--text-primary); }
+        .homepage-form-grid input:focus, .homepage-form-grid select:focus, .homepage-form-grid textarea:focus { border-color: var(--secondary-color); box-shadow: 0 0 0 5px rgba(23,85,162,0.13); background: var(--bg-card); }
+        .input-group-row { display: flex; gap: 16px; }
         .input-group-row.double > div { flex: 1; }
-        .guest-warning { display: flex; align-items: center; gap: 8px; color: #fbbf24; background: rgba(251,191,36,0.08); padding: 10px 14px; border-radius: 10px; font-size: 12px; font-weight: 600; border: 1px solid rgba(251,191,36,0.2); }
-        .submit-booking-btn { background: var(--gradient-primary); color: #0a0f1c; border: none; padding: 14px; border-radius: 14px; font-weight: 800; font-size: 14px; cursor: pointer; transition: all 0.2s; }
-        .submit-booking-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,212,255,0.4); }
-        .success-banner { text-align: center; padding: 40px 20px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 20px; color: #10b981; }
+        .guest-warning { display: flex; align-items: center; gap: 9px; color: var(--gold); background: rgba(201,162,39,0.07); padding: 11px 15px; border-radius: 12px; font-size: 12.5px; font-weight: 600; border: 1px solid rgba(201,162,39,0.18); }
+        .submit-booking-btn { background: var(--gradient-primary); color: white; border: none; padding: 15px; border-radius: 14px; font-weight: 700; font-size: 14.5px; cursor: pointer; transition: all 0.2s; letter-spacing: 0.3px; }
+        .submit-booking-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(37,99,235,0.35); }
+        .success-banner { text-align: center; padding: 42px 24px; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); border-radius: 22px; color: #10b981; }
 
-        .faq-accordions-section { padding: 80px 0; background: var(--bg-deep); }
-        .accordion-list { display: flex; flex-direction: column; gap: 15px; }
-        .accordion-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; transition: all 0.2s; }
-        .accordion-card.active { border-color: #00d4ff; background: var(--bg-elevated); box-shadow: 0 10px 20px rgba(0,212,255,0.1); }
-        .accordion-toggle-btn { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 22px 25px; border: none; background: transparent; cursor: pointer; text-align: left; font-size: 15px; font-weight: 700; color: #f1f5f9; transition: all 0.2s; }
-        .accordion-toggle-btn:hover { color: #00d4ff; }
-        .accordion-content-panel { padding: 0 25px; max-height: 0; overflow: hidden; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .accordion-content-panel.open { padding-bottom: 22px; max-height: 200px; }
-        .accordion-content-panel p { color: #94a3b8; font-size: 14px; line-height: 1.6; margin: 0; }
+        .faq-accordions-section { padding: 100px 0; background: var(--bg-deep); }
+        .accordion-list { display: flex; flex-direction: column; gap: 14px; }
+        .accordion-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 18px; overflow: hidden; transition: all 0.25s; }
+        .accordion-card.active { border-color: var(--primary-color); background: var(--bg-elevated); }
+        .accordion-toggle-btn { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 24px 28px; border: none; background: transparent; cursor: pointer; text-align: left; font-size: 15.5px; font-weight: 700; color: var(--text-primary); }
+        .accordion-toggle-btn:hover { color: var(--secondary-color); }
+        .accordion-content-panel { padding: 0 28px; max-height: 0; overflow: hidden; transition: all 0.35s cubic-bezier(0.23,1,0.32,1); }
+        .accordion-content-panel.open { padding-bottom: 24px; max-height: 220px; }
+        .accordion-content-panel p { color: #94a3b8; font-size: 14.5px; line-height: 1.65; margin: 0; }
 
-        .testimonials-section { padding: 80px 0; background: var(--bg-primary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
-        .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-        .testimonial-card { background: var(--bg-card); padding: 35px; border-radius: 24px; border: 1px solid var(--border-color); display: flex; flex-direction: column; transition: all 0.2s; }
-        .testimonial-card:hover { transform: translateY(-2px); box-shadow: 0 15px 30px -8px rgba(0,212,255,0.15); }
-        .stars-row { display: flex; gap: 4px; margin-bottom: 15px; }
-        .testimonial-text { font-size: 14px; color: #cbd5e1; font-weight: 600; line-height: 1.6; flex-grow: 1; font-style: italic; margin-bottom: 20px; }
-        .testimonial-author h4 { font-size: 15px; font-weight: 800; color: #f1f5f9; margin-bottom: 2px; }
-        .testimonial-author span { font-size: 12px; color: #64748b; font-weight: 600; }
+        .testimonials-section { padding: 100px 0; background: var(--gradient-section); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+        .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 28px; }
+        .testimonial-card { background: var(--bg-card); padding: 36px; border-radius: 24px; border: 1px solid var(--border-color); display: flex; flex-direction: column; transition: all 0.3s; }
+        .testimonial-card:hover { transform: translateY(-6px); box-shadow: 0 25px 55px -12px rgba(0,0,0,0.35); border-color: var(--gold); }
+        .stars-row { display: flex; gap: 6px; margin-bottom: 16px; }
+.stars-row svg {
+  fill: var(--secondary-color) !important;
+  color: var(--secondary-color) !important;
+  stroke: var(--secondary-color) !important;
+  filter: drop-shadow(0 1px 2px rgba(23, 85, 162, 0.3));
+  transition: transform 0.2s ease;
+}
+.stars-row svg:hover {
+  transform: scale(1.15);
+}
+        .testimonial-text { font-size: 14.5px; color: var(--text-secondary); font-weight: 600; line-height: 1.65; flex-grow: 1; font-style: italic; margin-bottom: 22px; }
+        .testimonial-author h4 { font-size: 15.5px; font-weight: 800; color: var(--text-primary); margin-bottom: 3px; }
+        .testimonial-author span { font-size: 12.5px; color: #64748b; font-weight: 600; }
 
-        .homepage-blog-section { padding: 80px 0; background: var(--bg-deep); }
-        .blog-posts-slider { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .blog-post-card { background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border-color); overflow: hidden; display: flex; flex-direction: column; transition: all 0.2s; }
-        .blog-post-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0,212,255,0.15); border-color: #00d4ff; }
-        .post-image-wrap { height: 180px; position: relative; overflow: hidden; background: #1c253f; }
-        .post-image-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
-        .blog-post-card:hover .post-image-wrap img { transform: scale(1.05); }
-        .post-category-tag { position: absolute; bottom: 15px; left: 15px; background: rgba(0,212,255,0.9); color: #0a0f1c; padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-        .post-info-stack { padding: 25px; display: flex; flex-direction: column; flex-grow: 1; }
-        .post-date { font-size: 11px; color: #64748b; font-weight: 700; margin-bottom: 8px; }
-        .blog-post-card h3 { font-size: 16px; font-weight: 800; color: #f1f5f9; margin-bottom: 10px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .blog-post-card p { font-size: 13px; color: #94a3b8; line-height: 1.5; margin-bottom: 20px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .post-learn-more { font-size: 13px; font-weight: 700; color: #00d4ff; display: flex; align-items: center; gap: 6px; margin-top: auto; text-decoration: none; }
-        .post-learn-more:hover { color: #7c3aed; }
+        .homepage-blog-section { padding: 100px 0; background: var(--bg-deep); }
+        .blog-posts-slider { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 28px; }
+        .blog-post-card { background: var(--bg-card); border-radius: 22px; border: 1px solid var(--border-color); overflow: hidden; display: flex; flex-direction: column; transition: all 0.3s; }
+        .blog-post-card:hover { transform: translateY(-5px); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35); border-color: var(--primary-color); }
+        .post-image-wrap { height: 192px; position: relative; overflow: hidden; background: #242f45; }
+        .post-image-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s; }
+        .blog-post-card:hover .post-image-wrap img { transform: scale(1.06); }
+        .post-category-tag { position: absolute; bottom: 16px; left: 16px; background: var(--secondary-color); color: white; padding: 5px 12px; border-radius: 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .post-info-stack { padding: 26px; display: flex; flex-direction: column; flex-grow: 1; }
+        .post-date { font-size: 11.5px; color: #64748b; font-weight: 700; margin-bottom: 9px; }
+        .blog-post-card h3 { font-size: 16.5px; font-weight: 800; color: var(--text-primary); margin-bottom: 11px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .blog-post-card p { font-size: 13.5px; color: #94a3b8; line-height: 1.55; margin-bottom: 18px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .post-learn-more { font-size: 13.5px; font-weight: 700; color: var(--secondary-color); display: flex; align-items: center; gap: 6px; margin-top: auto; }
+        .post-learn-more:hover { color: var(--accent); }
 
         @media (max-width: 1024px) {
-          .booking-layout { grid-template-columns: 1fr; gap: 40px; }
+          .booking-layout { grid-template-columns: 1fr; gap: 48px; }
         }
         @media (max-width: 768px) {
-          .homepage-booking-section { margin: 20px 10px; border-radius: 20px; }
-          .booking-layout { padding: 0; }
-          .booking-form-card { padding: 20px; border-radius: 16px; }
-          .input-group-row { flex-direction: column; gap: 15px; }
+          .homepage-booking-section { margin: 30px 12px; border-radius: 24px; }
+          .booking-layout { padding: 0 20px; }
+          .booking-form-card { padding: 26px; border-radius: 20px; }
+          .input-group-row { flex-direction: column; gap: 14px; }
         }
       `}} />
     </div>

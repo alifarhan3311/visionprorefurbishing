@@ -1,34 +1,43 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* ========== VIBRANT DARK PREMIUM THEME - Vision Pro Refurb ========== */
-  --bg-deep: #0a0f1c;
-  --bg-primary: #0f1629;
-  --bg-secondary: #121a2e;
-  --bg-card: #161f33;
-  --bg-elevated: #1c253f;
+  /* ========== LIGHT WHITE THEME ========== */
+  --bg-deep: #ffffff;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fbff;
+  --bg-card: #ffffff;
+  --bg-elevated: #f5f9ff;
 
-  --primary-color: #00d4ff;        /* Electric Cyan - vibrant */
-  --primary-dark: #00a8cc;
-  --secondary-color: #ff4757;      /* Hot Coral */
-  --accent: #7c3aed;               /* Electric Purple */
-  --gold: #fbbf24;                 /* Premium Gold */
+  --primary-color: #2563eb;
+  --primary-dark: #1e40af;
+  --secondary-color: #1755A2;
+  --accent: #4f46e5;
+  --gold: #1755A2;
+  --teal: #0f766e;
 
-  --text-dark: #f1f5f9;
-  --text-light: #94a3b8;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
   --text-muted: #64748b;
 
-  --border-color: rgba(255,255,255,0.08);
-  --border-strong: rgba(255,255,255,0.15);
+  --border-color: #d1d5db;
+  --border-strong: #c0c8d6;
 
-  --glass-bg: rgba(255, 255, 255, 0.06);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --shadow-premium: 0 20px 30px -10px rgba(0,0,0,0.5);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(148, 163, 184, 0.18);
+  --shadow-premium: 0 20px 40px -12px rgba(15, 23, 42, 0.08);
 
-  /* Vibrant gradients */
-  --gradient-primary: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
-  --gradient-secondary: linear-gradient(135deg, #ff4757 0%, #f59e0b 100%);
-  --gradient-hero: linear-gradient(135deg, #0a0f1c 0%, #121a2e 50%, #0f1629 100%);
+  /* Richer luxurious gradients */
+  --gradient-primary: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+  --gradient-gold: linear-gradient(135deg, #1755A2 0%, #0f4a7a 100%);
+  --gradient-hero: linear-gradient(135deg, #ffffff 0%, #f5f9ff 40%, #e8eef8 100%);
+  --gradient-section: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+
+  /* Design tokens */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --transition: 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+  --transition-slow: 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 /* Glassmorphism Utility */
@@ -51,14 +60,14 @@
   transform: translateY(0);
 }
 
-/* Vibrant Text Shimmer Effect */
+/* Elegant Professional Shimmer */
 .shimmer-text {
-  background: linear-gradient(90deg, #00d4ff, #ff4757, #7c3aed, #00d4ff);
+  background: linear-gradient(90deg, var(--primary-color), var(--gold), var(--accent), var(--primary-color));
   background-size: 300% auto;
   color: transparent;
   -webkit-background-clip: text;
   background-clip: text;
-  animation: shimmer 3s linear infinite;
+  animation: shimmer 4s linear infinite;
   font-weight: 800;
 }
 
@@ -75,7 +84,7 @@
 
 body {
   background-color: var(--bg-deep);
-  color: var(--text-dark);
+  color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -88,7 +97,7 @@ body {
   border: 1px solid var(--glass-border);
 }
 
-/* Vibrant Buttons */
+/* Elegant Professional Buttons */
 .btn-vibrant {
   background: var(--gradient-primary);
   color: white;
@@ -98,16 +107,16 @@ body {
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.25);
 }
 .btn-vibrant:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.35);
 }
 
 .btn-hot {
   background: var(--gradient-secondary);
-  color: white;
+  color: #0b111f;
   border: none;
   padding: 12px 24px;
   border-radius: 12px;
@@ -117,7 +126,7 @@ body {
 }
 .btn-hot:hover {
   transform: translateY(-2px);
-  filter: brightness(1.1);
+  filter: brightness(1.05);
 }
 
 a {
@@ -167,7 +176,7 @@ ul {
 .card-vibrant:hover {
   transform: translateY(-6px);
   border-color: var(--primary-color);
-  box-shadow: 0 20px 40px -10px rgba(0, 212, 255, 0.15);
+  box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.15);
 }
 
 .badge-vibrant {
@@ -182,16 +191,16 @@ ul {
   color: white;
 }
 
-/* Colorful category tags */
-.tag-cyan { background: #00d4ff; color: #0a0f1c; font-weight: 800; }
-.tag-coral { background: #ff4757; color: white; font-weight: 800; }
-.tag-purple { background: #7c3aed; color: white; font-weight: 800; }
-.tag-gold { background: #fbbf24; color: #0a0f1c; font-weight: 800; }
+/* Elegant category tags */
+.tag-cyan { background: var(--primary-color); color: white; font-weight: 700; }
+.tag-coral { background: var(--secondary-color); color: #0b111f; font-weight: 700; }
+.tag-purple { background: var(--accent); color: white; font-weight: 700; }
+.tag-gold { background: var(--gold); color: #0b111f; font-weight: 700; }
 
-/* Neon Glow Text */
+/* Subtle elegant glow */
 .neon-cyan {
-  color: #00d4ff;
-  text-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+  color: var(--primary-color);
+  text-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
 }
 
 .product-card-v2 {
@@ -203,6 +212,166 @@ ul {
 }
 .product-card-v2:hover {
   border-color: var(--primary-color);
-  box-shadow: 0 15px 35px -10px rgba(0, 212, 255, 0.2);
+  box-shadow: 0 15px 35px -10px rgba(59, 130, 246, 0.2);
   transform: translateY(-4px);
+}
+
+/* ========== PREMIUM REFINED UTILITIES (Ultra Khubsurat) ========== */
+.section-premium {
+  padding: 100px 0;
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.premium-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 36px 32px;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.3);
+}
+.premium-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--primary-color);
+  box-shadow: 0 30px 60px -15px rgba(37, 99, 235, 0.15);
+}
+
+.premium-btn {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.25);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.premium-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.35);
+}
+
+.premium-btn-gold {
+  background: var(--gradient-gold);
+  color: #0b111f;
+  font-weight: 700;
+}
+
+.premium-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 16px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--primary-color);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+.gold-badge {
+  background: rgba(201, 162, 39, 0.12);
+  color: var(--gold);
+  border-color: rgba(201, 162, 39, 0.25);
+}
+
+/* Refined focus states */
+input:focus, select:focus, textarea:focus, button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  border-color: var(--primary-color);
+}
+
+/* Fix for Lucide icons on dark theme - ensure visibility */
+svg {
+  color: inherit;
+  stroke: currentColor;
+  fill: none;
+}
+
+/* Icon wrappers in dark areas */
+.icon-wrapper, .nav-icon {
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Beautiful subtle divider */
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border-color), transparent);
+  margin: 40px 0;
+}
+
+/* ========== LUXURY PREMIUM FORMS (Maza Level) ========== */
+input, select, textarea {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  padding: 13px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+  background: var(--bg-card);
+}
+
+input::placeholder, textarea::placeholder {
+  color: #64748b;
+  opacity: 0.85;
+}
+
+label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  margin-bottom: 7px;
+  display: block;
+}
+
+/* Premium Select dropdown */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394a3b8' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 42px;
+  cursor: pointer;
+}
+
+/* Checkbox & Radio */
+input[type="checkbox"], input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+/* Form Card Wrapper (for nice forms) */
+.form-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-premium);
 }

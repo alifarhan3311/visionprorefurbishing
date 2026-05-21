@@ -117,7 +117,7 @@ const QuickOrder = () => {
             accept=".csv" 
             onChange={handleFileUpload}
           />
-          <label htmlFor="csvUpload" className="admin-btn-primary" style={{ cursor: 'pointer', backgroundColor: '#f1f5f9', color: '#0f172a', border: '1px solid #cbd5e1' }}>
+          <label htmlFor="csvUpload" className="admin-btn-primary" style={{ cursor: 'pointer', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }}>
             Choose CSV File
           </label>
         </div>
@@ -134,12 +134,12 @@ const QuickOrder = () => {
         <div className="table-responsive">
           <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px', minWidth: '700px' }}>
           <thead>
-            <tr style={{ backgroundColor: '#f8fafc', borderBottom: '2px solid #e2e8f0', textAlign: 'left' }}>
-              <th style={{ padding: '12px', width: '25%' }}>SKU</th>
-              <th style={{ padding: '12px', width: '10%' }}>Qty</th>
-              <th style={{ padding: '12px', width: '40%' }}>Description</th>
-              <th style={{ padding: '12px', width: '15%' }}>Price</th>
-              <th style={{ padding: '12px', width: '10%' }}></th>
+            <tr style={{ backgroundColor: 'var(--bg-elevated)', borderBottom: '2px solid var(--border-color)', textAlign: 'left' }}>
+              <th style={{ padding: '12px', width: '25%', color: 'var(--text-primary)', fontWeight: '600' }}>SKU</th>
+              <th style={{ padding: '12px', width: '10%', color: 'var(--text-primary)', fontWeight: '600' }}>Qty</th>
+              <th style={{ padding: '12px', width: '40%', color: 'var(--text-primary)', fontWeight: '600' }}>Description</th>
+              <th style={{ padding: '12px', width: '15%', color: 'var(--text-primary)', fontWeight: '600' }}>Price</th>
+              <th style={{ padding: '12px', width: '10%', color: 'var(--text-primary)', fontWeight: '600' }}></th>
             </tr>
           </thead>
           <tbody>

@@ -51,7 +51,7 @@ const ForgotPassword = () => {
         </div>
         
         {error && <div className="auth-error">{error}</div>}
-        {message && <div style={{backgroundColor: '#ecfdf5', color: '#047857', padding: '10px', borderRadius: '4px', marginBottom: '15px', fontSize: '13px'}}>{message}</div>}
+        {message && <div style={{backgroundColor: 'rgba(16,185,129,0.1)', color: '#10b981', padding: '12px 16px', borderRadius: 'var(--radius-md)', marginBottom: '16px', fontSize: '13px', border: '1px solid rgba(16,185,129,0.2)'}}>{message}</div>}
         
         {step === 'request_otp' ? (
           <form onSubmit={handleRequestOtp} className="auth-form">
