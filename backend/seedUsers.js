@@ -17,9 +17,8 @@ const seedUsers = async () => {
       email: 'admin@visionpro.com',
       password: 'admin123',
       role: 'admin',
-      isAdmin: true,
-      businessName: 'VisionPro Corporate',
-      isApproved: true
+      isEmailVerified: true,
+      companyName: 'VisionPro Corporate',
     });
 
     // Create B2B Customer
@@ -28,9 +27,8 @@ const seedUsers = async () => {
       email: 'dealer@example.com',
       password: 'b2b123',
       role: 'user',
-      isAdmin: false,
-      businessName: 'Johns Repair Shop',
-      isApproved: true
+      isEmailVerified: true,
+      companyName: 'Johns Repair Shop',
     });
 
     console.log('Users seeded successfully!');

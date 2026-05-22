@@ -27,6 +27,19 @@ exports.createProduct = async (req, res) => {
       imageUrl = `/uploads/${req.file.filename}`;
     }
 
+    // Handle multiple images (image0..image3)
+    const images = [];
+    for (let i = 0; i < 4; i++) {
+      const field = `image${i}`;
+      if (req.files && req.files[field] && req.files[field][0]) {
+        images.push(`/uploads/${req.files[field][0].filename}`);
+      } else if (dynamicFields[`existingImage${i}`]) {
+        images.push(dynamicFields[`existingImage${i}`]);
+      }
+    }
+    // primary imageUrl = first uploaded image or existing
+    if (images.length > 0 && !imageUrl) imageUrl = images[0];
+
     const stockQuantity = dynamicFields.stockQuantity !== undefined ? Number(dynamicFields.stockQuantity) : 10;
     const newProductData = {
       name,
@@ -35,6 +48,7 @@ exports.createProduct = async (req, res) => {
       category: categoryId,
       productType,
       imageUrl,
+      images,
       badge: dynamicFields.badge,
       features: dynamicFields.features || [],
       stockQuantity: Number.isNaN(stockQuantity) ? 10 : stockQuantity,
@@ -98,16 +112,17 @@ exports.getProducts = async (req, res) => {
 
     const products = await Product.find(query).populate('category', 'name slug');
 
-    // Simulate B2B Tier Pricing logic
-    // In production, this reads req.user.tierLevel
-    const mockUserTier = req.headers['x-b2b-tier'] || 'Retail'; 
+    // B2B Tier Pricing based on authenticated user's tier
+    const userTier = req.user?.tier || 'Tier 1';
 
     const modifiedProducts = products.map(product => {
       let finalPrice = product.baseRetailPrice;
       
-      if (mockUserTier === 'Gold') {
+      if (userTier === 'Tier 4') {
+        finalPrice = finalPrice * 0.80; // 20% off
+      } else if (userTier === 'Tier 3') {
         finalPrice = finalPrice * 0.85; // 15% off
-      } else if (mockUserTier === 'Silver') {
+      } else if (userTier === 'Tier 2') {
         finalPrice = finalPrice * 0.90; // 10% off
       }
 
@@ -168,6 +183,20 @@ exports.updateProduct = async (req, res) => {
       imageUrl = `/uploads/${req.file.filename}`;
     }
 
+    // Handle multiple images (image0..image3)
+    const images = [];
+    for (let i = 0; i < 4; i++) {
+      const field = `image${i}`;
+      if (req.files && req.files[field] && req.files[field][0]) {
+        images.push(`/uploads/${req.files[field][0].filename}`);
+      } else if (dynamicFields[`existingImage${i}`]) {
+        images.push(dynamicFields[`existingImage${i}`]);
+      }
+    }
+    // Keep existing images if none uploaded
+    const finalImages = images.length > 0 ? images : (product.images || []);
+    if (finalImages.length > 0 && !imageUrl) imageUrl = finalImages[0];
+
     const updateData = {
       name,
       sku,
@@ -175,6 +204,7 @@ exports.updateProduct = async (req, res) => {
       category,
       productType,
       imageUrl,
+      images: finalImages,
       badge: dynamicFields.badge,
       features: dynamicFields.features || []
     };

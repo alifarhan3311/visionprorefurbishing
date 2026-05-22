@@ -54,6 +54,15 @@ const uploadImage = multer({
   },
 });
 
+// Multiple Product Images Upload (up to 4)
+const uploadProductImages = multer({
+  storage,
+  limits: { fileSize: 5000000 }, // 5MB per file
+  fileFilter: function (req, file, cb) {
+    checkImageType(file, cb);
+  },
+});
+
 // Generic Document Upload
 const uploadDocument = multer({
   storage,
@@ -65,5 +74,6 @@ const uploadDocument = multer({
 
 module.exports = {
   uploadImage,
+  uploadProductImages,
   uploadDocument
 };

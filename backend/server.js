@@ -78,12 +78,9 @@ const authLimiter = rateLimit({
 app.use('/api/v1/auth', authLimiter);
 
 // Database Connection
-mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://alifarhan1531_db_user:azadar3311@cluster0.57zf8ot.mongodb.net/')
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB Connected Successfully'))
   .catch(err => console.error('MongoDB Connection Error:', err));
-
-// Previous Atlas URI kept for reference:
-// mongodb+srv://alifarhan1531_db_user:azadar3311@cluster0.57zf8ot.mongodb.net/
 
 // Mount Routes
 app.use('/api/v1/categories', categoryRoutes);

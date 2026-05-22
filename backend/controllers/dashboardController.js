@@ -13,7 +13,7 @@ exports.getDashboardStats = async (req, res) => {
     const totalUsersCount = await User.countDocuments({ role: 'user' });
     const totalProductsCount = await Product.countDocuments();
     
-    const criticalStockCount = await Product.countDocuments({ stockCount: { $lt: 10 } });
+    const criticalStockCount = await Product.countDocuments({ stockQuantity: { $lt: 10 } });
     
     // Calculate gross revenue
     const orders = await Order.find({ isPaid: true });

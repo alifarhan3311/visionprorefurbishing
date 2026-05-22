@@ -365,10 +365,10 @@ const CategoriesManager = () => {
                   <div className="file-box-custom">
                     <input type="file" onChange={handleIconChange} accept="image/*" />
                     <div className="meta" style={{ textAlign: 'center', marginTop: '10px' }}>
-                      {iconFile ? iconFile.name : (iconUrl ? "Icon Secured ✓" : "Upload new SVG/PNG")}
+                      {navIconFile ? navIconFile.name : (navIconUrl ? "Icon Secured ✓" : "Upload new SVG/PNG")}
                     </div>
                   </div>
-                  <input type="text" value={iconUrl} onChange={e => setIconUrl(e.target.value)} style={{ marginTop: '10px' }} placeholder="Or Remote Icon URL" />
+                  <input type="text" value={navIconUrl} onChange={e => setNavIconUrl(e.target.value)} style={{ marginTop: '10px' }} placeholder="Or Remote Icon URL" />
                 </div>
 
                 <div className="modal-footer-custom">

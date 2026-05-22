@@ -36,6 +36,7 @@ export const AuthProvider = ({ children }) => {
       const res = await api.post('/auth/login', { email, password });
       if (res.data.success) {
         localStorage.setItem('token', res.data.data.token);
+        localStorage.setItem('userRole', res.data.data.role); // role cache karo
         setUser(res.data.data);
         return { success: true, user: res.data.data };
       }

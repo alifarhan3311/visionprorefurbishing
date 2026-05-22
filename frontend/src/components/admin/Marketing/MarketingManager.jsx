@@ -69,7 +69,7 @@ const MarketingManager = () => {
       formData.append('fileType', fileType);
       formData.append('fileSize', fileSize);
       formData.append('fileUrl', fileUrl);
-      if (fileToUpload) formData.append('image', fileToUpload);
+      if (fileToUpload) formData.append('file', fileToUpload);
 
       const config = { headers: { 'Content-Type': 'multipart/form-data' } };
 

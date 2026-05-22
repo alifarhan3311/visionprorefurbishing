@@ -43,8 +43,15 @@ const Login = () => {
           console.error('Error booking pending appointment:', err);
         }
       }
-      // Note: We don't call navigate here. AuthContext's state update (setUser)
-      // will trigger the useEffect above to handle the redirection cleanly without race conditions.
+      // Redirect based on role directly from result (no race condition)
+      const queryParams = new URLSearchParams(window.location.search);
+      const redirect = queryParams.get('redirect');
+      if (redirect) {
+        const path = redirect.startsWith('/') ? redirect : `/${redirect}`;
+        navigate(path);
+      } else {
+        navigate(result.user.role === 'admin' ? '/admin' : '/dashboard');
+      }
     } else {
       setError(result.error);
     }

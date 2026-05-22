@@ -112,6 +112,7 @@ const seedFullDB = async () => {
 
     // 5. Seed RMA
     await RMA.create({
+      user: dealer._id,
       userId: dealer._id.toString(),
       searchMethod: 'Order ID',
       searchValue: 'ORD-894231',

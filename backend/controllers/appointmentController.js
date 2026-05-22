@@ -5,7 +5,8 @@ exports.createAppointment = async (req, res) => {
   try {
     const appointment = new Appointment({
       ...req.body,
-      userId: req.user._id // Assuming authenticated user
+      user: req.user._id,
+      userId: req.user._id
     });
     await appointment.save();
 

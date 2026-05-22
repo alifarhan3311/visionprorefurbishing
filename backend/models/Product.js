@@ -48,7 +48,8 @@ const productSchema = new mongoose.Schema({
     enum: ['in_stock', 'out_of_stock', 'discontinued'],
     default: 'in_stock'
   },
-  imageUrl: { type: String, default: '' },
+  imageUrl: { type: String, default: '' },   // primary image (backward compat)
+  images: { type: [String], default: [] },   // up to 4 images gallery
   badge: { 
     type: String, 
     enum: ['', 'New Arrival', 'Hot Seller', 'Genuine', 'Limited Stock'],
