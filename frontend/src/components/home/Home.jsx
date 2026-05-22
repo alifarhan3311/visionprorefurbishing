@@ -3,7 +3,7 @@ import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import { 
   ShoppingCart, Smartphone, ArrowRight, Cpu, Box, 
   Search, Shield, Truck, RefreshCw, Calendar, Clock, 
-  Mail, Phone, User, ChevronDown, ChevronUp, Zap, 
+  Mail, Phone, User, Zap, 
   Award, Users, BookOpen, Star, AlertCircle
 } from 'lucide-react';
 import Header from '../layout/Header';
@@ -588,134 +588,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* NEW SECTION 4: Interactive FAQ Accordions */}
-      <section className="faq-accordions-section">
-        <div className="container" style={{ maxWidth: '800px' }}>
-          <div className="centered-header">
-            <span className="premium-badge-glow">FAQ</span>
-            <h2>Frequently Asked Questions</h2>
-            <p>Quick answers regarding parts quality, shipping protocols, and repair bookings.</p>
-          </div>
 
-          <div className="accordion-list">
-            {faqData.map((faq, index) => {
-              const isOpen = openFaq === index;
-              return (
-                <div key={index} className={`accordion-card ${isOpen ? 'active' : ''}`}>
-                  <button onClick={() => toggleFaq(index)} className="accordion-toggle-btn">
-                    <span>{faq.q}</span>
-                    {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                  </button>
-                  <div className={`accordion-content-panel ${isOpen ? 'open' : ''}`}>
-                    <p>{faq.a}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* NEW SECTION 5: Customer Testimonials */}
-      <section className="testimonials-section">
-        <div className="container">
-          <div className="centered-header">
-            <span className="premium-badge-glow">Feedback</span>
-            <h2>What B2B Clients Are Saying</h2>
-            <p>Serving mobile repair shops and enterprise networks across North America.</p>
-          </div>
-
-          <div className="testimonials-grid">
-            {loadingReviews ? (
-              <p style={{ textAlign: 'center', color: 'var(--text-secondary)', gridColumn: '1 / -1' }}>Loading client testimonials...</p>
-            ) : reviews.length === 0 ? (
-              <>
-                <div className="testimonial-card">
-                  <div className="stars-row"><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /></div>
-                  <p className="testimonial-text">"Vision Pro LCD has completely changed how we procure parts. Same day shipment to Montreal gets parts in our hands fast, and defect rates are near zero."</p>
-                  <div className="testimonial-author">
-                    <h4>Marc-Andre L.</h4>
-                    <span>Mobile Tech Depot</span>
-                  </div>
-                </div>
-                <div className="testimonial-card">
-                  <div className="stars-row"><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /></div>
-                  <p className="testimonial-text">"Outstanding customer service. Their 12-month replacement policy gives us huge peace of mind for high-value preowned devices."</p>
-                  <div className="testimonial-author">
-                    <h4>Sarah Jenkins</h4>
-                    <span>iFix Smart Labs</span>
-                  </div>
-                </div>
-                <div className="testimonial-card">
-                  <div className="stars-row"><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /><Star size={16} fill="var(--secondary-color)" color="var(--secondary-color)" /></div>
-                  <p className="testimonial-text">"Being in the Gold pricing tier saves our business thousands of dollars every month. The team is friendly and RMA validation takes minutes."</p>
-                  <div className="testimonial-author">
-                    <h4>David K.</h4>
-                    <span>Apex Cell Repairs</span>
-                  </div>
-                </div>
-              </>
-            ) : (
-              reviews.map(r => (
-                <div key={r._id} className="testimonial-card">
-                  <div className="stars-row">
-                    {[...Array(r.rating || 5)].map((_, idx) => (
-                      <Star key={idx} size={16} fill="var(--secondary-color)" color="var(--secondary-color)" />
-                    ))}
-                  </div>
-                  <p className="testimonial-text">"{r.comment}"</p>
-                  <div className="testimonial-author">
-                    <h4>{r.fullName}</h4>
-                    {r.company && <span>{r.company}</span>}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-
-          <div style={{ textAlign: 'center', marginTop: '40px' }}>
-            <button className="submit-booking-btn" onClick={() => setShowReviewModal(true)} style={{ display: 'inline-block', width: 'auto', padding: '12px 30px' }}>
-              Submit a B2B Partner Review
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* NEW SECTION 6: Blog Insights Grid / Carousel */}
-      <section className="homepage-blog-section">
-        <div className="container">
-          <div className="centered-header">
-            <span className="premium-badge-glow">Insights</span>
-            <h2>Industry News & Technical Insights</h2>
-            <p>Get diagnostic advice, hardware tutorials, and pricing reports from our engineering division.</p>
-          </div>
-
-          {loadingBlogs ? (
-            <p style={{ textAlign: 'center', color: '#64748b' }}>Syncing articles...</p>
-          ) : blogs.length === 0 ? (
-            <p style={{ textAlign: 'center', color: '#94a3b8' }}>No blog articles published.</p>
-          ) : (
-            <div className="blog-posts-slider">
-              {blogs.map((post) => (
-                <div key={post._id} className="blog-post-card">
-                  <div className="post-image-wrap">
-                    <img src={post.image ? getImageUrl(post.image) : 'https://images.unsplash.com/photo-1601524909162-be87252be298?auto=format&fit=crop&w=400&q=80'} alt={post.title} />
-                    <span className="post-category-tag">{post.category}</span>
-                  </div>
-                  <div className="post-info-stack">
-                    <span className="post-date">{new Date(post.createdAt).toLocaleDateString()}</span>
-                    <h3>{post.title}</h3>
-                    <p>{post.excerpt}</p>
-                    <Link to="/blog" className="post-learn-more">
-                      Read Article <ArrowRight size={14} />
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
 
       {/* Review Intake Modal */}
       {showReviewModal && (

@@ -1,52 +1,156 @@
+/* ===== PRELOADER ===== */
 .preloader {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: var(--bg-deep);
+  background: linear-gradient(160deg, #0a1628 0%, #0f2347 50%, #1a3a6b 100%);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
+  overflow: hidden;
 }
 
+/* Background glow blob */
+.preloader-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 65%);
+  animation: glowPulse 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Content wrapper */
 .preloader-content {
   text-align: center;
-  width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Logo container with ring */
+.preloader-logo-wrap {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.preloader-logo-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: #60a5fa;
+  border-right-color: rgba(96, 165, 250, 0.3);
+  animation: spinRing 1.8s linear infinite;
+}
+
+.preloader-logo-wrap::after {
+  content: '';
+  position: absolute;
+  inset: -16px;
+  border-radius: 50%;
+  border: 1px solid rgba(96, 165, 250, 0.12);
+  animation: spinRing 3s linear infinite reverse;
 }
 
 .preloader-logo {
-   height: 90px;
-   margin-bottom: 30px;
-   animation: pulse 2s infinite ease-in-out;
- }
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  animation: logoFloat 2.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 24px rgba(96, 165, 250, 0.35));
+}
 
+/* Brand name */
+.preloader-brand {
+  font-size: 32px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.8px;
+  margin-bottom: 8px;
+  animation: fadeSlideUp 0.6s ease forwards;
+  opacity: 0;
+  animation-delay: 0.3s;
+}
+
+.preloader-brand span {
+  color: #60a5fa;
+}
+
+/* Tagline */
+.preloader-tagline {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 36px;
+  animation: fadeSlideUp 0.6s ease forwards;
+  opacity: 0;
+  animation-delay: 0.5s;
+}
+
+/* Progress bar */
 .preloader-bar {
-  width: 100%;
+  width: 220px;
   height: 3px;
-  background-color: #f1f5f9;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   overflow: hidden;
-  position: relative;
+  animation: fadeSlideUp 0.6s ease forwards;
+  opacity: 0;
+  animation-delay: 0.6s;
 }
 
 .preloader-progress {
-  position: absolute;
-  top: 0;
-  left: 0;
   height: 100%;
   width: 0;
-  background: var(--gradient-primary);
-  animation: load 2s forwards ease-in-out;
+  background: linear-gradient(90deg, #2563eb, #60a5fa, #2563eb);
+  background-size: 200% auto;
+  border-radius: 10px;
+  animation: load 2.5s forwards ease-in-out, shimmerBar 1.5s linear infinite;
 }
 
+/* ===== KEYFRAMES ===== */
 @keyframes load {
-  0% { width: 0; }
+  0%   { width: 0; }
   100% { width: 100%; }
 }
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.05); opacity: 0.8; }
+@keyframes shimmerBar {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes spinRing {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { transform: scale(1);    opacity: 0.6; }
+  50%       { transform: scale(1.15); opacity: 1;   }
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }

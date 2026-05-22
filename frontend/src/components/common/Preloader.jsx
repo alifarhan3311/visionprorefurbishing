@@ -7,7 +7,7 @@ const Preloader = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 2500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -15,8 +15,15 @@ const Preloader = () => {
 
   return (
     <div className="preloader">
+      <div className="preloader-glow"></div>
       <div className="preloader-content">
-        <img src="/assets/visionpro-logo.png" alt="visionprorefurbishing" className="preloader-logo" />
+        <div className="preloader-logo-wrap">
+          <img src="/assets/preloader.png" alt="Vision Pro LCD" className="preloader-logo" />
+        </div>
+        <div className="preloader-brand">
+          Vision Pro <span>LCD</span>
+        </div>
+        <p className="preloader-tagline">Premium B2B Parts & Refurbishment</p>
         <div className="preloader-bar">
           <div className="preloader-progress"></div>
         </div>

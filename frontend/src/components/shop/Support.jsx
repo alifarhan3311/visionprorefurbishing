@@ -44,7 +44,7 @@ const Support = () => {
           <div className="support-card reveal" style={{ transitionDelay: '300ms' }}>
             <MessageCircle className="support-icon" />
             <h3>Contact Support</h3>
-            <p>Our experts are available Mon-Fri, 9am - 5pm EST.</p>
+            <p>Our experts are available Mon - Fri: 10am - 9pm, Sat: 10am - 9pm, Sun: 12pm - 6pm.</p>
           </div>
         </div>
 
