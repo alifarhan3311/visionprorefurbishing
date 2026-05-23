@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Shield, Truck, RefreshCw, Star, ChevronRight, Check } from 'lucide-react';
+import { ShoppingCart, Shield, Truck, RefreshCw, ChevronRight, Check, AlertTriangle, Package } from 'lucide-react';
 import Header from '../layout/Header';
 import { CartContext } from '../../context/CartContext';
 import { AuthContext } from '../../context/AuthContext';
@@ -14,10 +14,16 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('specs');
   const [activeImage, setActiveImage] = useState(0);
+  const [stockAlert, setStockAlert] = useState(false);
   const { addToCart } = useContext(CartContext);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const isAdmin = user?.role === 'admin';
+
+  // Scroll to top on mount / product change — also handled globally by ScrollToTop in App.jsx
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [id]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -37,6 +43,9 @@ const ProductDetails = () => {
 
   if (loading) return <div className="product-details-loading">Loading Premium Catalog...</div>;
   if (!product) return <div className="product-details-error">Product not found</div>;
+
+  const stockQty = product.stockQuantity ?? 0;
+  const isOutOfStock = stockQty === 0;
 
   // Build gallery: use images array if available, fallback to imageUrl
   const galleryImages = (product.images && product.images.length > 0)
@@ -99,9 +108,15 @@ const ProductDetails = () => {
           {/* Right: Info & Actions */}
           <div className="product-info-panel">
             <div className="badge-container">
-              <div className="stock-badge">
-                <Check size={14} /> In Stock & Ready to Ship
-              </div>
+              {isOutOfStock ? (
+                <div className="out-of-stock-badge">
+                  <AlertTriangle size={14} /> Out of Stock
+                </div>
+              ) : (
+                <div className="stock-badge">
+                  <Check size={14} /> In Stock &amp; Ready to Ship
+                </div>
+              )}
               {product.badge && (
                 <div className={`promo-badge ${product.badge.toLowerCase().replace(' ', '-')}`}>
                   {product.badge}
@@ -160,27 +175,85 @@ const ProductDetails = () => {
             </div>
 
             <div className="purchase-controls">
-              <div className="qty-selector">
-                <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
-                <input type="number" value={quantity} readOnly />
-                <button onClick={() => setQuantity(quantity + 1)}>+</button>
-              </div>
-              {isAdmin ? (
-                <div style={{ padding: '12px 20px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '10px', color: '#ef4444', fontSize: '14px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  Admin accounts cannot place orders
+              {isOutOfStock ? (
+                /* ── Out of Stock state ── */
+                <div className="out-of-stock-block">
+                  <AlertTriangle size={20} />
+                  <div>
+                    <strong>Out of Stock</strong>
+                    <span>This item is currently unavailable. Check back soon.</span>
+                  </div>
                 </div>
               ) : (
-                <button 
-                  className="add-to-cart-premium"
-                  onClick={() => {
-                    addToCart(product, quantity);
-                    navigate('/cart');
-                  }}
-                >
-                  <ShoppingCart size={20} /> Add to Cart
-                </button>
+                <>
+                  {/* Quantity Selector */}
+                  <div className="qty-wrapper">
+                    <span className="qty-label">Qty</span>
+                    <div className="qty-selector">
+                      <button
+                        className="qty-btn"
+                        onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                        disabled={quantity <= 1}
+                      >−</button>
+                      <span className="qty-value">{quantity}</span>
+                      <button
+                        className="qty-btn"
+                        onClick={() => {
+                          if (quantity >= stockQty) {
+                            setStockAlert(true);
+                            return;
+                          }
+                          setQuantity(q => q + 1);
+                        }}
+                        disabled={quantity >= stockQty}
+                      >+</button>
+                    </div>
+                    <span className="qty-stock-info">
+                      <Package size={13} />
+                      {stockQty} in stock
+                    </span>
+                  </div>
+
+                  {isAdmin ? (
+                    <div className="admin-order-block">
+                      Admin accounts cannot place orders
+                    </div>
+                  ) : (
+                    <button
+                      className="add-to-cart-premium"
+                      onClick={() => {
+                        if (quantity > stockQty) {
+                          setStockAlert(true);
+                          return;
+                        }
+                        addToCart(product, quantity);
+                        navigate('/cart');
+                      }}
+                    >
+                      <ShoppingCart size={20} /> Add to Cart
+                    </button>
+                  )}
+                </>
               )}
             </div>
+
+            {/* Stock limit alert */}
+            {stockAlert && (
+              <div className="pd-stock-alert" onClick={() => setStockAlert(false)}>
+                <div className="pd-stock-alert-card" onClick={e => e.stopPropagation()}>
+                  <div className="pd-alert-icon-wrap">
+                    <AlertTriangle size={36} />
+                  </div>
+                  <h3>Stock Limit Reached</h3>
+                  <p>Only <strong>{stockQty} units</strong> available for <strong>{product.name}</strong>. Please adjust your quantity.</p>
+                  <button onClick={() => {
+                    setStockAlert(false);
+                    setQuantity(stockQty);
+                  }}>Set Max Quantity</button>
+                  <button className="dismiss" onClick={() => setStockAlert(false)}>Dismiss</button>
+                </div>
+              </div>
+            )}
 
             <div className="trust-badges">
               <div className="trust-item"><Shield size={18} /> <span>Lifetime Warranty</span></div>

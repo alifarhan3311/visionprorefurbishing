@@ -1,5 +1,5 @@
-import React from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import AdminLayout from './components/admin/AdminLayout';
@@ -43,6 +43,15 @@ import Preloader from './components/common/Preloader';
 import Home from './components/home/Home';
 import './index.css';
 
+// Scroll to top on every route change — placed outside App so it's stable
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [pathname]);
+  return null;
+};
+
 
 
 function App() {
@@ -74,6 +83,7 @@ function App() {
   return (
     <>
       <Preloader />
+      <ScrollToTop />
       <Routes>
       {/* Public Routes */}
       <Route path="/" element={<><Home /><Footer /></>} />

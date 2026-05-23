@@ -342,9 +342,13 @@ const Home = () => {
                     {product.badge}
                   </div>
                 )}
+                {/* Out of stock overlay on image */}
+                {(product.stockQuantity === 0) && (
+                  <div className="card-out-of-stock-ribbon">Out of Stock</div>
+                )}
                 <Link to={`/product/${product._id}`} className="product-image-container">
                   {product.imageUrl ? (
-                    <img src={getImageUrl(product.imageUrl)} alt={product.name} className="product-image" />
+                    <img src={getImageUrl(product.imageUrl)} alt={product.name} className="product-image" style={{ opacity: product.stockQuantity === 0 ? 0.45 : 1 }} />
                   ) : (
                     getIcon(product.productType)
                   )}
@@ -352,9 +356,15 @@ const Home = () => {
                 <div className="product-category">{product.productType}</div>
                 <Link to={`/product/${product._id}`} className="product-name">{product.name}</Link>
                 <div className="product-price">${product.retailPrice}</div>
+
+                {/* Button logic: admin → view only | out of stock → disabled | normal → add to cart */}
                 {user?.role === 'admin' ? (
                   <button className="add-to-cart-btn" disabled style={{ opacity: 0.45, cursor: 'not-allowed' }}>
                     Admin View Only
+                  </button>
+                ) : product.stockQuantity === 0 ? (
+                  <button className="add-to-cart-btn out-of-stock-btn" disabled>
+                    Out of Stock
                   </button>
                 ) : (
                   <button
@@ -697,6 +707,30 @@ const Home = () => {
         .search-bar-premium:focus-within { border-color: var(--primary-color); box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.12); }
         .search-icon-live { color: #64748b; margin-right: 12px; }
         .search-bar-premium input { border: none; outline: none; font-size: 15px; font-weight: 600; width: 100%; color: #f1f5f9; background: transparent; letter-spacing: 0.2px; }
+
+        /* Out of stock card styles */
+        .card-out-of-stock-ribbon {
+          position: absolute;
+          top: 14px;
+          left: 0;
+          background: #ef4444;
+          color: white;
+          font-size: 10px;
+          font-weight: 800;
+          padding: 4px 12px 4px 10px;
+          border-radius: 0 20px 20px 0;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          z-index: 3;
+          box-shadow: 0 2px 8px rgba(239,68,68,0.35);
+        }
+        .add-to-cart-btn.out-of-stock-btn {
+          background: #1e293b !important;
+          color: #64748b !important;
+          cursor: not-allowed !important;
+          border: 1.5px solid #334155 !important;
+          opacity: 1 !important;
+        }
 
         .centered-header { text-align: center; margin-bottom: 60px; }
         .centered-header h2 { font-size: 34px; font-weight: 800; color: var(--text-primary); margin: 12px 0 8px; letter-spacing: -0.8px; line-height: 1.1; }
