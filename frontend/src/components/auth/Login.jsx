@@ -1,8 +1,12 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import api from '../../services/api';
 import './Auth.css'; // Will create basic styles
+
+const getRedirectPath = (role) => {
+  return role === 'admin' ? '/admin' : '/dashboard';
+};
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -11,24 +15,21 @@ const Login = () => {
   const { login, user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (user) {
-      const queryParams = new URLSearchParams(window.location.search);
-      const redirect = queryParams.get('redirect');
-      if (redirect) {
-        // Handle redirect correctly whether it starts with a slash or not
-        const path = redirect.startsWith('/') ? redirect : `/${redirect}`;
-        navigate(path);
-      } else {
-        navigate(user.role === 'admin' ? '/admin' : '/dashboard');
-      }
-    }
-  }, [user, navigate]);
+  // If already logged in (e.g. navigated back to /login), redirect immediately
+  if (user) {
+    const queryParams = new URLSearchParams(window.location.search);
+    const redirect = queryParams.get('redirect');
+    const path = redirect
+      ? (redirect.startsWith('/') ? redirect : `/${redirect}`)
+      : getRedirectPath(user.role);
+    navigate(path, { replace: true });
+    return null;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    
+
     const result = await login(email, password);
     if (result.success) {
       // Process pending booking if present
@@ -43,15 +44,13 @@ const Login = () => {
           console.error('Error booking pending appointment:', err);
         }
       }
-      // Redirect based on role directly from result (no race condition)
+      // Navigate based on role from the login result — no useEffect, no race condition
       const queryParams = new URLSearchParams(window.location.search);
       const redirect = queryParams.get('redirect');
-      if (redirect) {
-        const path = redirect.startsWith('/') ? redirect : `/${redirect}`;
-        navigate(path);
-      } else {
-        navigate(result.user.role === 'admin' ? '/admin' : '/dashboard');
-      }
+      const path = redirect
+        ? (redirect.startsWith('/') ? redirect : `/${redirect}`)
+        : getRedirectPath(result.user.role);
+      navigate(path, { replace: true });
     } else {
       setError(result.error);
     }

@@ -352,15 +352,21 @@ const Home = () => {
                 <div className="product-category">{product.productType}</div>
                 <Link to={`/product/${product._id}`} className="product-name">{product.name}</Link>
                 <div className="product-price">${product.retailPrice}</div>
-                <button
-                  className="add-to-cart-btn"
-                  onClick={() => {
-                    addToCart(product, 1);
-                    navigate('/cart'); // redirect to cart instantly
-                  }}
-                >
-                  <ShoppingCart size={16} /> Add to Cart
-                </button>
+                {user?.role === 'admin' ? (
+                  <button className="add-to-cart-btn" disabled style={{ opacity: 0.45, cursor: 'not-allowed' }}>
+                    Admin View Only
+                  </button>
+                ) : (
+                  <button
+                    className="add-to-cart-btn"
+                    onClick={() => {
+                      addToCart(product, 1);
+                      navigate('/cart');
+                    }}
+                  >
+                    <ShoppingCart size={16} /> Add to Cart
+                  </button>
+                )}
               </div>
             ))}
           </div>

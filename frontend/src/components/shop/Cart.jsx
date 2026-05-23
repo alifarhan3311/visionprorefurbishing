@@ -28,6 +28,12 @@ const Cart = () => {
   const cartTotal = cartItems.reduce((acc, item) => acc + (item.qty || 0) * (item.price || 0), 0).toFixed(2);
 
   const checkoutHandler = () => {
+    // Block admin from checking out
+    if (user?.role === 'admin') {
+      showAlert('Admin Account', 'Admin accounts cannot place orders. Please use a customer account to checkout.');
+      return;
+    }
+
     // 1. Validate available stock quantities
     for (const item of cartItems) {
       const stock = item.stockQuantity !== undefined ? item.stockQuantity : 10;

@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Shield, Truck, RefreshCw, Star, ChevronRight, Check } from 'lucide-react';
 import Header from '../layout/Header';
 import { CartContext } from '../../context/CartContext';
+import { AuthContext } from '../../context/AuthContext';
 import api, { getImageUrl } from '../../services/api';
 import './ProductDetails.css';
 
@@ -12,8 +13,11 @@ const ProductDetails = () => {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('specs');
+  const [activeImage, setActiveImage] = useState(0);
   const { addToCart } = useContext(CartContext);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const isAdmin = user?.role === 'admin';
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -34,6 +38,14 @@ const ProductDetails = () => {
   if (loading) return <div className="product-details-loading">Loading Premium Catalog...</div>;
   if (!product) return <div className="product-details-error">Product not found</div>;
 
+  // Build gallery: use images array if available, fallback to imageUrl
+  const galleryImages = (product.images && product.images.length > 0)
+    ? product.images
+    : product.imageUrl
+      ? [product.imageUrl]
+      : [];
+  const mainImage = galleryImages[activeImage] || galleryImages[0] || null;
+
   return (
     <div className="product-details-page">
       <Header />
@@ -50,17 +62,38 @@ const ProductDetails = () => {
           {/* Left: Images & Zoom Area */}
           <div className="product-gallery">
             <div className="main-image-container">
-              <img src={product.imageUrl ? getImageUrl(product.imageUrl) : '/placeholder-product.png'} alt={product.name} className="main-product-image" />
-              <div className="zoom-hint">Hover to Zoom</div>
+              <img
+                src={mainImage ? getImageUrl(mainImage) : '/placeholder-product.png'}
+                alt={product.name}
+                className="main-product-image"
+              />
+              {galleryImages.length > 1 && (
+                <>
+                  <button
+                    className="gallery-nav prev"
+                    onClick={() => setActiveImage(i => (i - 1 + galleryImages.length) % galleryImages.length)}
+                  >&#8249;</button>
+                  <button
+                    className="gallery-nav next"
+                    onClick={() => setActiveImage(i => (i + 1) % galleryImages.length)}
+                  >&#8250;</button>
+                </>
+              )}
             </div>
-            {/* Thumbnails Placeholder */}
-            <div className="thumbnail-strip">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="thumb-item">
-                  <img src={product.imageUrl ? getImageUrl(product.imageUrl) : '/placeholder-product.png'} alt="thumb" />
-                </div>
-              ))}
-            </div>
+            {/* Thumbnails — real images from product.images */}
+            {galleryImages.length > 1 && (
+              <div className="thumbnail-strip">
+                {galleryImages.map((img, i) => (
+                  <div
+                    key={i}
+                    className={`thumb-item ${activeImage === i ? 'active' : ''}`}
+                    onClick={() => setActiveImage(i)}
+                  >
+                    <img src={getImageUrl(img)} alt={`${product.name} view ${i + 1}`} />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Right: Info & Actions */}
@@ -132,15 +165,21 @@ const ProductDetails = () => {
                 <input type="number" value={quantity} readOnly />
                 <button onClick={() => setQuantity(quantity + 1)}>+</button>
               </div>
-              <button 
-                className="add-to-cart-premium"
-                onClick={() => {
-                  addToCart(product, quantity);
-                  navigate('/cart');
-                }}
-              >
-                <ShoppingCart size={20} /> Add to Cart
-              </button>
+              {isAdmin ? (
+                <div style={{ padding: '12px 20px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '10px', color: '#ef4444', fontSize: '14px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  Admin accounts cannot place orders
+                </div>
+              ) : (
+                <button 
+                  className="add-to-cart-premium"
+                  onClick={() => {
+                    addToCart(product, quantity);
+                    navigate('/cart');
+                  }}
+                >
+                  <ShoppingCart size={20} /> Add to Cart
+                </button>
+              )}
             </div>
 
             <div className="trust-badges">

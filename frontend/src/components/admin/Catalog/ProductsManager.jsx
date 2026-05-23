@@ -43,7 +43,6 @@ const ProductsManager = () => {
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [imageUrl, setImageUrl] = useState('');
-  const [imageFile, setImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -128,11 +127,10 @@ const ProductsManager = () => {
     setSelectedCategory(product.category?._id || product.category || '');
     setBadge(product.badge || '');
     setImageUrl(product.imageUrl || '');
-    setImageFile(null);
     setStockQuantity((product.stockQuantity || 10).toString());
     setFeaturesText(product.features ? product.features.join('\n') : '');
     setCategoryMode(product.category?.tierLevel === 3 ? 'tier3' : 'tier4');
-    
+
     if (product.productType === 'preowned') {
       setImei(product.preOwnedDetails?.imei || '');
       setGrade(product.preOwnedDetails?.grade || 'Grade A');
@@ -161,7 +159,6 @@ const ProductsManager = () => {
     setSelectedCategory(product.category?._id || product.category || '');
     setBadge(product.badge || '');
     setImageUrl(product.imageUrl || '');
-    setImageFile(null);
     setStockQuantity((product.stockQuantity || 10).toString());
     setFeaturesText(product.features ? product.features.join('\n') : '');
     setCategoryMode(product.category?.tierLevel === 3 ? 'tier3' : 'tier4');
@@ -193,7 +190,7 @@ const ProductsManager = () => {
   };
 
   const handleImageChange = (e) => {
-    if (e.target.files[0]) setImageFile(e.target.files[0]);
+    if (e.target.files[0]) setImageUrl(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
@@ -220,7 +217,7 @@ const ProductsManager = () => {
         formData.append('isSubTier', 'false');
       }
 
-      // Append 4 image slots
+      // Append 4 image slots (image0..image3 — matches multer fields config)
       imageSlots.forEach((slot, i) => {
         if (slot.file) {
           formData.append(`image${i}`, slot.file);
@@ -242,8 +239,6 @@ const ProductsManager = () => {
       } else if (productType === 'parts') {
         formData.append('qualityType', qualityType);
       }
-
-      if (imageFile) formData.append('image', imageFile);
 
       const config = { headers: { 'Content-Type': 'multipart/form-data' } };
 
@@ -274,7 +269,6 @@ const ProductsManager = () => {
     setImei(''); 
     setBatteryHealth(''); 
     setImageUrl('');
-    setImageFile(null);
     setImageSlots([
       { file: null, existing: '' },
       { file: null, existing: '' },
@@ -580,11 +574,12 @@ const ProductsManager = () => {
                         ? URL.createObjectURL(slot.file)
                         : slot.existing ? getImageUrl(slot.existing) : null;
                       return (
-                        <div key={i} className={`image-slot ${preview ? 'has-image' : ''}`}>
+                        <div key={i} className={`image-slot ${preview ? 'has-image' : ''} ${i === 0 ? 'primary-slot' : ''}`}>
                           <input
                             type="file"
                             accept="image/*"
-                            style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', zIndex: 2 }}
+                            id={`add-img-slot-${i}`}
+                            style={{ display: 'none' }}
                             onChange={e => {
                               if (e.target.files[0]) {
                                 const updated = [...imageSlots];
@@ -595,33 +590,38 @@ const ProductsManager = () => {
                             }}
                           />
                           {preview ? (
-                            <>
+                            <div className="slot-filled">
                               <img src={preview} alt={`slot-${i}`} className="slot-preview-img" />
-                              <button
-                                type="button"
-                                className="slot-remove-btn"
-                                onClick={e => {
-                                  e.stopPropagation();
-                                  const updated = [...imageSlots];
-                                  updated[i] = { file: null, existing: '' };
-                                  setImageSlots(updated);
-                                  if (i === 0) setImageUrl('');
-                                }}
-                              >✕</button>
-                              {i === 0 && <span className="slot-primary-badge">Primary</span>}
-                            </>
-                          ) : (
-                            <div className="slot-empty-state">
-                              <ImageIcon size={22} color="#94a3b8" />
-                              <span>{i === 0 ? 'Main Image' : `Image ${i + 1}`}</span>
+                              <div className="slot-overlay">
+                                <label htmlFor={`add-img-slot-${i}`} className="slot-action-btn replace-btn" style={{ cursor: 'pointer' }}>Replace</label>
+                                <button
+                                  type="button"
+                                  className="slot-action-btn remove-btn"
+                                  onClick={() => {
+                                    const updated = [...imageSlots];
+                                    updated[i] = { file: null, existing: '' };
+                                    setImageSlots(updated);
+                                    if (i === 0) setImageUrl('');
+                                  }}
+                                >Remove</button>
+                              </div>
+                              {i === 0 && <span className="slot-primary-badge">⭐ Primary</span>}
                             </div>
+                          ) : (
+                            <label htmlFor={`add-img-slot-${i}`} className="slot-empty-state" style={{ cursor: 'pointer' }}>
+                              <div className="slot-upload-icon">
+                                <ImageIcon size={26} color="#3b82f6" />
+                              </div>
+                              <span className="slot-label">{i === 0 ? 'Main Image' : `Image ${i + 1}`}</span>
+                              <span className="slot-hint">Click to upload</span>
+                            </label>
                           )}
                         </div>
                       );
                     })}
                   </div>
-                  <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '10px', fontWeight: '600' }}>
-                    First slot = primary image shown in listings. Max 5MB per image.
+                  <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '12px', fontWeight: '600' }}>
+                    Slot 1 = primary listing image. Max 5MB per image. JPG, PNG, WEBP supported.
                   </p>
                 </div>
 
@@ -980,11 +980,12 @@ const ProductsManager = () => {
                             ? URL.createObjectURL(slot.file)
                             : slot.existing ? getImageUrl(slot.existing) : null;
                           return (
-                            <div key={i} className={`image-slot ${preview ? 'has-image' : ''}`}>
+                            <div key={i} className={`image-slot ${preview ? 'has-image' : ''} ${i === 0 ? 'primary-slot' : ''}`}>
                               <input
                                 type="file"
                                 accept="image/*"
-                                style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', zIndex: 2 }}
+                                id={`edit-img-slot-${i}`}
+                                style={{ display: 'none' }}
                                 onChange={e => {
                                   if (e.target.files[0]) {
                                     const updated = [...imageSlots];
@@ -994,32 +995,37 @@ const ProductsManager = () => {
                                 }}
                               />
                               {preview ? (
-                                <>
+                                <div className="slot-filled">
                                   <img src={preview} alt={`slot-${i}`} className="slot-preview-img" />
-                                  <button
-                                    type="button"
-                                    className="slot-remove-btn"
-                                    onClick={e => {
-                                      e.stopPropagation();
-                                      const updated = [...imageSlots];
-                                      updated[i] = { file: null, existing: '' };
-                                      setImageSlots(updated);
-                                    }}
-                                  >✕</button>
-                                  {i === 0 && <span className="slot-primary-badge">Primary</span>}
-                                </>
-                              ) : (
-                                <div className="slot-empty-state">
-                                  <ImageIcon size={22} color="#94a3b8" />
-                                  <span>{i === 0 ? 'Main Image' : `Image ${i + 1}`}</span>
+                                  <div className="slot-overlay">
+                                    <label htmlFor={`edit-img-slot-${i}`} className="slot-action-btn replace-btn" style={{ cursor: 'pointer' }}>Replace</label>
+                                    <button
+                                      type="button"
+                                      className="slot-action-btn remove-btn"
+                                      onClick={() => {
+                                        const updated = [...imageSlots];
+                                        updated[i] = { file: null, existing: '' };
+                                        setImageSlots(updated);
+                                      }}
+                                    >Remove</button>
+                                  </div>
+                                  {i === 0 && <span className="slot-primary-badge">⭐ Primary</span>}
                                 </div>
+                              ) : (
+                                <label htmlFor={`edit-img-slot-${i}`} className="slot-empty-state" style={{ cursor: 'pointer' }}>
+                                  <div className="slot-upload-icon">
+                                    <ImageIcon size={26} color="#3b82f6" />
+                                  </div>
+                                  <span className="slot-label">{i === 0 ? 'Main Image' : `Image ${i + 1}`}</span>
+                                  <span className="slot-hint">Click to upload</span>
+                                </label>
                               )}
                             </div>
                           );
                         })}
                       </div>
-                      <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '10px', fontWeight: '600' }}>
-                        First slot = primary image. Click any slot to replace.
+                      <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '12px', fontWeight: '600' }}>
+                        Slot 1 = primary listing image. Click any slot to replace. Max 5MB per image.
                       </p>
                     </div>
 
@@ -1202,6 +1208,133 @@ const ProductsManager = () => {
 
         .animate-fade { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ── Image Slots Grid ── */
+        .image-slots-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+        .image-slot {
+          position: relative;
+          border-radius: 16px;
+          border: 2px dashed var(--border-color);
+          background: var(--bg-elevated);
+          aspect-ratio: 1 / 1;
+          overflow: hidden;
+          transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .image-slot:hover {
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 4px rgba(59,130,246,0.12);
+        }
+        .image-slot.primary-slot {
+          border-color: #3b82f6;
+          border-style: solid;
+        }
+        .image-slot.has-image {
+          border-style: solid;
+          border-color: var(--border-color);
+        }
+
+        /* Empty state */
+        .slot-empty-state {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+          width: 100%;
+          gap: 8px;
+          padding: 12px;
+          text-align: center;
+        }
+        .slot-upload-icon {
+          width: 48px;
+          height: 48px;
+          border-radius: 12px;
+          background: rgba(59,130,246,0.1);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .slot-label {
+          font-size: 12px;
+          font-weight: 700;
+          color: var(--text-primary);
+        }
+        .slot-hint {
+          font-size: 10px;
+          font-weight: 600;
+          color: #64748b;
+        }
+
+        /* Filled state */
+        .slot-filled {
+          position: relative;
+          width: 100%;
+          height: 100%;
+        }
+        .slot-preview-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+        .slot-overlay {
+          position: absolute;
+          inset: 0;
+          background: rgba(15,23,42,0.65);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+        .image-slot:hover .slot-overlay {
+          opacity: 1;
+        }
+        .slot-action-btn {
+          padding: 7px 18px;
+          border-radius: 10px;
+          font-size: 12px;
+          font-weight: 700;
+          border: none;
+          cursor: pointer;
+          transition: all 0.15s;
+          display: inline-block;
+          text-align: center;
+        }
+        .replace-btn {
+          background: #3b82f6;
+          color: white;
+        }
+        .replace-btn:hover {
+          background: #2563eb;
+        }
+        .remove-btn {
+          background: #ef4444;
+          color: white;
+        }
+        .remove-btn:hover {
+          background: #dc2626;
+        }
+        .slot-primary-badge {
+          position: absolute;
+          top: 8px;
+          left: 8px;
+          background: #1e40af;
+          color: #93c5fd;
+          font-size: 9px;
+          font-weight: 800;
+          padding: 3px 8px;
+          border-radius: 6px;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          pointer-events: none;
+        }
  
         @media (max-width: 1400px) {
           .layout-grid { grid-template-columns: 1fr; }
