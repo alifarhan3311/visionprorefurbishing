@@ -751,7 +751,7 @@ const ProductsManager = () => {
                     })}
                   </div>
                   <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '12px', fontWeight: '600' }}>
-                    Slot 1 = primary listing image. Max 5MB per image. JPG, PNG, WEBP supported.
+                    Slot 1 = primary listing image. Max 10MB per image. JPG, PNG, WEBP supported.
                   </p>
                 </div>
 
@@ -824,11 +824,11 @@ const ProductsManager = () => {
             <table className="inventory-table">
               <thead>
                 <tr>
-                  <th style={{ width: '40%' }}>PRODUCT IDENTITY</th>
-                  <th style={{ width: '25%' }}>IDENTIFIER</th>
-                  <th style={{ width: '15%' }}>STOCK</th>
-                  <th style={{ width: '10%' }}>VALUATION</th>
-                  <th style={{ textAlign: 'right', width: '10%' }}>ENGAGE</th>
+                  <th>PRODUCT IDENTITY</th>
+                  <th>IDENTIFIER</th>
+                  <th style={{ whiteSpace: 'nowrap' }}>STOCK</th>
+                  <th style={{ whiteSpace: 'nowrap' }}>VALUATION</th>
+                  <th style={{ textAlign: 'right', whiteSpace: 'nowrap', width: '120px' }}>ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
@@ -874,7 +874,7 @@ const ProductsManager = () => {
                       <td>
                         <div className="price-tag">${(product.baseRetailPrice || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
                       </td>
-                      <td style={{ textAlign: 'right' }}>
+                      <td style={{ textAlign: 'right', whiteSpace: 'nowrap', width: '120px' }}>
                         <div className="row-actions">
                           <button className="icon-btn edit" onClick={() => handleDuplicateProduct(product)} title="Duplicate SKU"><Copy size={16} /></button>
                           <button className="icon-btn edit" onClick={() => openEditModal(product)} title="Edit SKU"><Edit3 size={16} /></button>
@@ -1243,7 +1243,7 @@ const ProductsManager = () => {
                         })}
                       </div>
                       <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '12px', fontWeight: '600' }}>
-                        Slot 1 = primary listing image. Click any slot to replace. Max 5MB per image.
+                        Slot 1 = primary listing image. Click any slot to replace. Max 10MB per image.
                       </p>
                     </div>
 
@@ -1319,12 +1319,12 @@ const ProductsManager = () => {
         .search-pill:focus-within { border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15); }
         .search-pill input { border: none; outline: none; font-size: 13px; width: 100%; font-weight: 600; background: transparent; color: var(--text-primary); }
  
-        .table-container { width: 100%; overflow-x: auto; }
-        .inventory-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        .inventory-table th { padding: 20px 30px; text-align: left; font-size: 10px; font-weight: 800; color: var(--text-primary); text-transform: uppercase; letter-spacing: 1px; background: var(--bg-elevated); white-space: nowrap; }
+        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .inventory-table { width: 100%; min-width: 780px; border-collapse: collapse; table-layout: auto; }
+        .inventory-table th { padding: 16px 20px; text-align: left; font-size: 10px; font-weight: 800; color: var(--text-primary); text-transform: uppercase; letter-spacing: 1px; background: var(--bg-elevated); white-space: nowrap; }
         .ledger-row { border-bottom: 1px solid var(--border-color); transition: all 0.2s; }
         .ledger-row:hover { background: var(--bg-elevated); }
-        .ledger-row td { padding: 20px 30px; vertical-align: middle; }
+        .ledger-row td { padding: 16px 20px; vertical-align: middle; }
         
         .product-cell { display: flex; align-items: center; gap: 15px; }
         .prod-img { width: 52px; height: 52px; border-radius: 14px; background: var(--bg-elevated); overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); border: 1px solid var(--border-color); flex-shrink: 0; }
@@ -1341,8 +1341,8 @@ const ProductsManager = () => {
         .status-pill.parts { background: #065f46; color: #d1fae5; }
         
         .price-tag { font-weight: 800; font-size: 15px; color: #c9a227; white-space: nowrap; }
-        .row-actions { display: flex; gap: 6px; justify-content: flex-end; }
-        .icon-btn { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; background: var(--bg-elevated); color: #94a3b8; }
+        .row-actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: nowrap; white-space: nowrap; }
+        .icon-btn { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; background: var(--bg-elevated); color: #94a3b8; flex-shrink: 0; }
         .icon-btn:hover { background: #0f172a; color: white; border-color: var(--text-primary); transform: translateY(-2px); }
         .icon-btn.delete:hover { background: #ef4444; border-color: #ef4444; }
  

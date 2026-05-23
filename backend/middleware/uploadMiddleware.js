@@ -48,7 +48,7 @@ function checkDocumentType(file, cb) {
 // Generic Image Upload (Single file)
 const uploadImage = multer({
   storage,
-  limits: { fileSize: 5000000 }, // 5MB max
+  limits: { fileSize: 10000000 }, // 10MB max
   fileFilter: function (req, file, cb) {
     checkImageType(file, cb);
   },
@@ -57,7 +57,7 @@ const uploadImage = multer({
 // Multiple Product Images Upload (up to 4)
 const uploadProductImages = multer({
   storage,
-  limits: { fileSize: 5000000 }, // 5MB per file
+  limits: { fileSize: 10000000 }, // 10MB per file
   fileFilter: function (req, file, cb) {
     checkImageType(file, cb);
   },

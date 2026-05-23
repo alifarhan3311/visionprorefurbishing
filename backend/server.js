@@ -57,7 +57,13 @@ app.use(xss());
 // 6. Prevent HTTP Parameter Pollution
 app.use(hpp({
   whitelist: [
-    'price', 'category', 'qty', 'rating' // Allow array of these parameters if needed
+    'price', 'category', 'qty', 'rating',
+    'features', 'compatibility',
+    'bulkTier_minQty_0', 'bulkTier_discount_0',
+    'bulkTier_minQty_1', 'bulkTier_discount_1',
+    'bulkTier_minQty_2', 'bulkTier_discount_2',
+    'bulkTier_minQty_3', 'bulkTier_discount_3',
+    'bulkTier_minQty_4', 'bulkTier_discount_4',
   ]
 }));
 
@@ -100,6 +106,23 @@ app.use('/api/v1/settings', require('./routes/settingsRoutes'));
 app.use('/api/v1/reviews', require('./routes/reviewRoutes'));
 
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+
+// Multer error handler for file upload failures
+app.use((err, req, res, next) => {
+  if (err && err.name === 'MulterError') {
+    const message = err.code === 'LIMIT_FILE_SIZE'
+      ? 'File too large. Please upload a smaller file.'
+      : err.message || 'File upload error.';
+    return res.status(400).json({ success: false, message });
+  }
+
+  if (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, message: 'Internal server error.' });
+  }
+
+  next();
+});
 
 // Basic Route
 app.get('/', (req, res) => {
