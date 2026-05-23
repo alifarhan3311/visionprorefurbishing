@@ -20,6 +20,7 @@ const ProductsManager = () => {
   const [name, setName] = useState('');
   const [sku, setSku] = useState('');
   const [baseRetailPrice, setBaseRetailPrice] = useState('');
+  const [retailerPrice, setRetailerPrice] = useState('');
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [badge, setBadge] = useState('');
@@ -128,6 +129,7 @@ const ProductsManager = () => {
     setSku(`${prefix}-${randomNum}-DUP`);
     
     setBaseRetailPrice(product.baseRetailPrice || '');
+    setRetailerPrice(product.retailerPrice || '');
     setSelectedCategory(product.category?._id || product.category || '');
     setBadge(product.badge || '');
     setImageUrl(product.imageUrl || '');
@@ -169,6 +171,7 @@ const ProductsManager = () => {
     setName(product.name || '');
     setSku(product.sku || '');
     setBaseRetailPrice(product.baseRetailPrice || '');
+    setRetailerPrice(product.retailerPrice || '');
     setSelectedCategory(product.category?._id || product.category || '');
     setBadge(product.badge || '');
     setImageUrl(product.imageUrl || '');
@@ -230,6 +233,7 @@ const ProductsManager = () => {
       formData.append('name', name);
       formData.append('sku', sku);
       formData.append('baseRetailPrice', parseFloat(baseRetailPrice) || 0);
+      if (retailerPrice !== undefined) formData.append('retailerPrice', parseFloat(retailerPrice) || 0);
       formData.append('category', selectedCategory);
       formData.append('productType', productType);
       formData.append('badge', badge);
@@ -305,6 +309,7 @@ const ProductsManager = () => {
     setName(''); 
     setSku(''); 
     setBaseRetailPrice('');
+    setRetailerPrice('');
     setImei(''); 
     setBatteryHealth(''); 
     setImageUrl('');
@@ -536,8 +541,12 @@ const ProductsManager = () => {
                   <div className="form-stack">
                     <div className="input-with-icon">
                       <DollarSign size={14} />
-                      <input type="number" step="0.01" value={baseRetailPrice} onChange={e => setBaseRetailPrice(e.target.value)} placeholder="Price ($ CAD)" required />
+                      <input type="number" step="0.01" value={baseRetailPrice} onChange={e => setBaseRetailPrice(e.target.value)} placeholder="User Price ($ CAD)" required />
                     </div>
+                      <div className="input-with-icon" style={{ marginLeft: '8px' }}>
+                        <DollarSign size={14} />
+                        <input type="number" step="0.01" value={retailerPrice} onChange={e => setRetailerPrice(e.target.value)} placeholder="Retailer Price (optional)" />
+                      </div>
                     <input type="number" value={stockQuantity} onChange={e => setStockQuantity(e.target.value)} placeholder="Available Stock Count" required />
                   </div>
                 </div>
@@ -872,7 +881,12 @@ const ProductsManager = () => {
                         </span>
                       </td>
                       <td>
-                        <div className="price-tag">${(product.baseRetailPrice || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                        <div className="price-tag">
+                          <div>User: ${(product.baseRetailPrice || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                          {product.retailerPrice !== undefined && product.retailerPrice !== null && (
+                            <div style={{ fontSize: '12px', color: '#10b981' }}>Retailer: ${Number(product.retailerPrice).toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                          )}
+                        </div>
                       </td>
                       <td style={{ textAlign: 'right', whiteSpace: 'nowrap', width: '120px' }}>
                         <div className="row-actions">
@@ -1030,7 +1044,11 @@ const ProductsManager = () => {
                       <div className="form-stack">
                         <div className="input-with-icon">
                           <DollarSign size={14} />
-                          <input type="number" step="0.01" value={baseRetailPrice} onChange={e => setBaseRetailPrice(e.target.value)} placeholder="Price" required />
+                          <input type="number" step="0.01" value={baseRetailPrice} onChange={e => setBaseRetailPrice(e.target.value)} placeholder="User Price" required />
+                        </div>
+                        <div className="input-with-icon" style={{ marginLeft: '8px' }}>
+                          <DollarSign size={14} />
+                          <input type="number" step="0.01" value={retailerPrice} onChange={e => setRetailerPrice(e.target.value)} placeholder="Retailer Price (opt)" />
                         </div>
                         <input type="number" value={stockQuantity} onChange={e => setStockQuantity(e.target.value)} placeholder="Available Stock" required />
                       </div>

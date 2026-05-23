@@ -27,3 +27,18 @@ exports.admin = (req, res, next) => {
     res.status(403).json({ success: false, error: 'Not authorized as an admin' });
   }
 };
+
+// Optional auth: if a valid Bearer token is present, attach user to req, otherwise continue silently
+exports.optional = async (req, res, next) => {
+  try {
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      const token = req.headers.authorization.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'mobilesentrix_super_secret_key');
+      req.user = await User.findById(decoded.id).select('-password');
+    }
+  } catch (err) {
+    // ignore token errors and proceed without user
+    req.user = undefined;
+  }
+  next();
+};

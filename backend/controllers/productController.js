@@ -22,7 +22,7 @@ function parseBulkTiers(fields) {
 // @access  Private/Admin
 exports.createProduct = async (req, res) => {
   try {
-    const { name, sku, baseRetailPrice, category: categoryId, productType, ...dynamicFields } = req.body;
+    const { name, sku, baseRetailPrice, retailerPrice, category: categoryId, productType, ...dynamicFields } = req.body;
     const isSubTier = req.body.isSubTier !== undefined ? req.body.isSubTier !== 'false' && req.body.isSubTier !== false : true;
 
     if (req.body.isSubTier !== undefined && !isSubTier) {
@@ -69,6 +69,7 @@ exports.createProduct = async (req, res) => {
       name,
       sku,
       baseRetailPrice,
+      retailerPrice: retailerPrice !== undefined ? Number(retailerPrice) : undefined,
       category: categoryId,
       productType,
       imageUrl,
@@ -144,19 +145,26 @@ exports.getProducts = async (req, res) => {
 
     const modifiedProducts = products.map(product => {
       let finalPrice = product.baseRetailPrice;
-      
-      if (userTier === 'Tier 4') {
-        finalPrice = finalPrice * 0.80; // 20% off
-      } else if (userTier === 'Tier 3') {
-        finalPrice = finalPrice * 0.85; // 15% off
-      } else if (userTier === 'Tier 2') {
-        finalPrice = finalPrice * 0.90; // 10% off
+
+      // If authenticated user is a retailer and an explicit retailerPrice is set, use it
+      const userRole = req.user?.role || 'user';
+      if (userRole === 'retailer' && product.retailerPrice !== undefined && product.retailerPrice !== null) {
+        finalPrice = Number(product.retailerPrice);
+      } else {
+        // Fallback to tier-based discounts for other users
+        if (userTier === 'Tier 4') {
+          finalPrice = finalPrice * 0.80; // 20% off
+        } else if (userTier === 'Tier 3') {
+          finalPrice = finalPrice * 0.85; // 15% off
+        } else if (userTier === 'Tier 2') {
+          finalPrice = finalPrice * 0.90; // 10% off
+        }
       }
 
       return {
         ...product._doc,
-        b2bPrice: finalPrice.toFixed(2),
-        retailPrice: product.baseRetailPrice.toFixed(2)
+        b2bPrice: Number(finalPrice).toFixed(2),
+        retailPrice: Number(product.baseRetailPrice).toFixed(2)
       };
     });
 
@@ -203,7 +211,7 @@ exports.updateProduct = async (req, res) => {
       return res.status(404).json({ success: false, error: 'Product not found' });
     }
 
-    const { name, sku, baseRetailPrice, category, productType, ...dynamicFields } = req.body;
+    const { name, sku, baseRetailPrice, retailerPrice, category, productType, ...dynamicFields } = req.body;
 
     let imageUrl = dynamicFields.imageUrl || product.imageUrl;
     if (req.file) {
@@ -228,6 +236,7 @@ exports.updateProduct = async (req, res) => {
       name,
       sku,
       baseRetailPrice,
+      retailerPrice: retailerPrice !== undefined ? Number(retailerPrice) : product.retailerPrice,
       category,
       productType,
       imageUrl,

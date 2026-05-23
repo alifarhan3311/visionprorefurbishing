@@ -4,6 +4,8 @@ const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
   sku: { type: String, required: true, unique: true },
   baseRetailPrice: { type: Number, required: true },
+  // Optional explicit retailer price (admins can set a fixed B2B price)
+  retailerPrice: { type: Number },
   
   category: { 
     type: mongoose.Schema.Types.ObjectId, 

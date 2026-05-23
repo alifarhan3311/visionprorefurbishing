@@ -8,7 +8,9 @@ const Signup = () => {
     name: '',
     companyName: '',
     email: '',
-    password: ''
+    password: '',
+    role: 'user',
+    houseAddress: ''
   });
   const [step, setStep] = useState('register'); // 'register' | 'otp'
   const [registeredEmail, setRegisteredEmail] = useState('');
@@ -91,6 +93,27 @@ const Signup = () => {
                 required 
               />
             </div>
+
+            <div className="form-group">
+              <label>Account Type</label>
+              <select name="role" value={formData.role} onChange={handleChange}>
+                <option value="user">User</option>
+                <option value="retailer">Retailer</option>
+              </select>
+            </div>
+
+            {formData.role === 'retailer' && (
+              <div className="form-group">
+                <label>House Address</label>
+                <input
+                  type="text"
+                  name="houseAddress"
+                  value={formData.houseAddress}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            )}
             
             <div className="form-group">
               <label>Email Address</label>

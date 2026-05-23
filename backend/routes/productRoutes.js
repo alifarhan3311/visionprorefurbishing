@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { createProduct, getProducts, validateSKUs, updateProduct, deleteProduct } = require('../controllers/productController');
-const { protect, admin } = require('../middleware/authMiddleware');
+const { protect, admin, optional } = require('../middleware/authMiddleware');
 const { uploadProductImages } = require('../middleware/uploadMiddleware');
 
 // field config: image0..image3 (4 slots)
@@ -12,8 +12,8 @@ const productImageFields = [
   { name: 'image3', maxCount: 1 },
 ];
 
-// Public Routes
-router.get('/', getProducts);
+// Public Routes (optional auth to allow role-aware pricing)
+router.get('/', optional, getProducts);
 router.post('/validate-skus', validateSKUs);
 
 // Admin Routes

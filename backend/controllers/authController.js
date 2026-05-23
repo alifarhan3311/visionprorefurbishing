@@ -12,7 +12,7 @@ const generateToken = (id) => {
 
 exports.registerUser = async (req, res) => {
   try {
-    const { name, email, password, companyName } = req.body;
+    const { name, email, password, companyName, role, houseAddress } = req.body;
     
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -29,12 +29,16 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ success: false, error: 'User already exists' });
     }
 
+    const allowedRoles = ['user', 'admin', 'retailer'];
+    const userRole = allowedRoles.includes(role) ? role : 'user';
+
     const user = await User.create({
       name,
       email,
       password,
       companyName,
-      role: 'user',
+      role: userRole,
+      houseAddress,
       isEmailVerified: false
     });
 
