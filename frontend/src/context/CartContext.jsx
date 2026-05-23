@@ -1,11 +1,25 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { CheckCircle2, X } from 'lucide-react';
+import { CheckCircle2, X, Tag } from 'lucide-react';
 
 export const CartContext = createContext();
 
+// Helper: given qty and bulkPricingTiers, return the best applicable discount %
+export const getBulkDiscount = (qty, bulkPricingTiers) => {
+  if (!bulkPricingTiers || bulkPricingTiers.length === 0) return 0;
+  const sorted = [...bulkPricingTiers].sort((a, b) => b.minQty - a.minQty);
+  const match = sorted.find(t => qty >= t.minQty);
+  return match ? match.discountPercent : 0;
+};
+
+// Helper: get effective unit price after bulk discount
+export const getEffectivePrice = (basePrice, qty, bulkPricingTiers) => {
+  const disc = getBulkDiscount(qty, bulkPricingTiers);
+  return basePrice * (1 - disc / 100);
+};
+
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
-  const [toast, setToast] = useState({ show: false, message: '' });
+  const [toast, setToast] = useState({ show: false, message: '', discount: 0 });
 
   useEffect(() => {
     const savedCart = localStorage.getItem('cartItems');
@@ -22,30 +36,37 @@ export const CartProvider = ({ children }) => {
   const addToCart = (product, qty) => {
     const existItem = cartItems.find(x => x.product === product._id);
     let newCartItems;
+    const basePrice = product.retailPrice || product.baseRetailPrice || 0;
+    const tiers = product.bulkPricingTiers || [];
 
     if (existItem) {
-      newCartItems = cartItems.map(x => 
-        x.product === product._id ? { ...x, qty: x.qty + parseInt(qty) } : x
+      const newQty = existItem.qty + parseInt(qty);
+      const disc = getBulkDiscount(newQty, tiers);
+      newCartItems = cartItems.map(x =>
+        x.product === product._id
+          ? { ...x, qty: newQty, bulkPricingTiers: tiers, discountPercent: disc }
+          : x
       );
     } else {
+      const disc = getBulkDiscount(parseInt(qty), tiers);
       newCartItems = [...cartItems, {
         product: product._id,
         name: product.name,
         image: product.imageUrl || '',
-        price: product.retailPrice || product.baseRetailPrice || 0,
+        price: basePrice,
         qty: parseInt(qty),
-        stockQuantity: product.stockQuantity !== undefined ? product.stockQuantity : 10
+        stockQuantity: product.stockQuantity !== undefined ? product.stockQuantity : 10,
+        bulkPricingTiers: tiers,
+        discountPercent: disc
       }];
     }
-    
+
     setCartItems(newCartItems);
     localStorage.setItem('cartItems', JSON.stringify(newCartItems));
-    
-    // Show modern toast
-    setToast({ show: true, message: `${product.name} added to cart` });
-    setTimeout(() => {
-      setToast({ show: false, message: '' });
-    }, 3000);
+
+    const disc = getBulkDiscount(parseInt(qty), tiers);
+    setToast({ show: true, message: `${product.name} added to cart`, discount: disc });
+    setTimeout(() => setToast({ show: false, message: '', discount: 0 }), 3500);
   };
 
   const removeFromCart = (id) => {
@@ -55,9 +76,11 @@ export const CartProvider = ({ children }) => {
   };
 
   const updateCartQty = (id, qty) => {
-    const newCart = cartItems.map(x => 
-      x.product === id ? { ...x, qty: parseInt(qty) } : x
-    );
+    const newCart = cartItems.map(x => {
+      if (x.product !== id) return x;
+      const disc = getBulkDiscount(qty, x.bulkPricingTiers || []);
+      return { ...x, qty: parseInt(qty), discountPercent: disc };
+    });
     setCartItems(newCart);
     localStorage.setItem('cartItems', JSON.stringify(newCart));
   };
@@ -68,9 +91,9 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateCartQty, clearCart }}>
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateCartQty, clearCart, getBulkDiscount, getEffectivePrice }}>
       {children}
-      
+
       {/* Modern Toast Notification */}
       {toast.show && (
         <div style={{
@@ -89,15 +112,24 @@ export const CartProvider = ({ children }) => {
           animation: 'toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
           fontFamily: "'Inter', sans-serif",
           fontWeight: 600,
-          fontSize: '14px'
+          fontSize: '14px',
+          maxWidth: '360px'
         }}>
           <CheckCircle2 size={20} color="#10b981" />
-          {toast.message}
-          <button 
-            onClick={() => setToast({ show: false, message: '' })}
-            style={{ 
-              background: 'none', border: 'none', color: '#94a3b8', 
-              cursor: 'pointer', marginLeft: '10px', display: 'flex' 
+          <div style={{ flex: 1 }}>
+            <div>{toast.message}</div>
+            {toast.discount > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px', color: '#10b981', fontSize: '12px', fontWeight: '700' }}>
+                <Tag size={12} />
+                {toast.discount}% bulk discount applied!
+              </div>
+            )}
+          </div>
+          <button
+            onClick={() => setToast({ show: false, message: '', discount: 0 })}
+            style={{
+              background: 'none', border: 'none', color: '#94a3b8',
+              cursor: 'pointer', marginLeft: '10px', display: 'flex'
             }}
           >
             <X size={16} />

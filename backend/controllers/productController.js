@@ -1,5 +1,22 @@
 const Product = require('../models/Product');
 
+// Helper: parse bulk pricing tiers from formData
+// Frontend sends bulkTier_minQty_0, bulkTier_discount_0, bulkTier_minQty_1, etc.
+function parseBulkTiers(fields) {
+  const tiers = [];
+  let i = 0;
+  while (fields[`bulkTier_minQty_${i}`] !== undefined) {
+    const minQty = parseInt(fields[`bulkTier_minQty_${i}`]);
+    const discountPercent = parseFloat(fields[`bulkTier_discount_${i}`]);
+    if (!isNaN(minQty) && !isNaN(discountPercent) && minQty > 0 && discountPercent >= 0) {
+      tiers.push({ minQty, discountPercent });
+    }
+    i++;
+  }
+  // Sort by minQty ascending
+  return tiers.sort((a, b) => a.minQty - b.minQty);
+}
+
 // @desc    Create a new product (Polymorphic Handler)
 // @route   POST /api/v1/products
 // @access  Private/Admin
@@ -41,6 +58,13 @@ exports.createProduct = async (req, res) => {
     if (images.length > 0 && !imageUrl) imageUrl = images[0];
 
     const stockQuantity = dynamicFields.stockQuantity !== undefined ? Number(dynamicFields.stockQuantity) : 10;
+
+    // Parse compatibility — can come as comma-separated string or array
+    const compatibilityRaw = dynamicFields.compatibility || [];
+    const compatibility = Array.isArray(compatibilityRaw)
+      ? compatibilityRaw.flatMap(c => c.split(',').map(s => s.trim()).filter(Boolean))
+      : String(compatibilityRaw).split(',').map(s => s.trim()).filter(Boolean);
+
     const newProductData = {
       name,
       sku,
@@ -51,6 +75,9 @@ exports.createProduct = async (req, res) => {
       images,
       badge: dynamicFields.badge,
       features: dynamicFields.features || [],
+      warrantyPeriod: dynamicFields.warrantyPeriod || '',
+      compatibility,
+      bulkPricingTiers: parseBulkTiers(dynamicFields),
       stockQuantity: Number.isNaN(stockQuantity) ? 10 : stockQuantity,
       status: stockQuantity === 0 ? 'out_of_stock' : 'in_stock'
     };
@@ -206,8 +233,24 @@ exports.updateProduct = async (req, res) => {
       imageUrl,
       images: finalImages,
       badge: dynamicFields.badge,
-      features: dynamicFields.features || []
+      features: dynamicFields.features || [],
+      warrantyPeriod: dynamicFields.warrantyPeriod || '',
+      compatibility: (() => {
+        const raw = dynamicFields.compatibility || [];
+        return Array.isArray(raw)
+          ? raw.flatMap(c => c.split(',').map(s => s.trim()).filter(Boolean))
+          : String(raw).split(',').map(s => s.trim()).filter(Boolean);
+      })(),
+      bulkPricingTiers: parseBulkTiers(dynamicFields),
+      stockQuantity: dynamicFields.stockQuantity !== undefined ? Number(dynamicFields.stockQuantity) : undefined,
+      status: Number(dynamicFields.stockQuantity) === 0 ? 'out_of_stock' : 'in_stock'
     };
+
+    // Remove undefined stockQuantity so existing value isn't overwritten accidentally
+    if (updateData.stockQuantity === undefined || Number.isNaN(updateData.stockQuantity)) {
+      delete updateData.stockQuantity;
+      delete updateData.status;
+    }
 
     // Handle Dynamic Polymorphic Fields
     if (productType === 'preowned') {

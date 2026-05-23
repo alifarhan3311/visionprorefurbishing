@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
+import { getBulkDiscount, getEffectivePrice } from '../../context/CartContext';
 import { AuthContext } from '../../context/AuthContext';
 import api from '../../services/api';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Tag } from 'lucide-react';
 import '../user/UserLayout.css';
 
 // Replace with your Stripe publishable key
@@ -45,9 +46,14 @@ const CheckoutContent = () => {
   const [countdown, setCountdown] = useState(10);
   const [createdOrderId, setCreatedOrderId] = useState('');
 
-  const cartTotal = cartItems.reduce((acc, item) => acc + item.qty * item.price, 0);
-   const tax = cartTotal * 0.08;
-  const shipping = cartTotal > 500 ? 0 : 25;
+  const cartSubtotal  = cartItems.reduce((acc, item) => acc + item.qty * item.price, 0);
+  const totalDiscount = cartItems.reduce((acc, item) => {
+    const disc = getBulkDiscount(item.qty, item.bulkPricingTiers || []);
+    return acc + (item.qty * item.price * disc / 100);
+  }, 0);
+  const cartTotal  = cartSubtotal - totalDiscount;
+  const tax        = cartTotal * 0.08;
+  const shipping   = cartTotal > 500 ? 0 : 25;
   const finalTotal = cartTotal + tax + shipping;
 
   // Prefill email and phone from auth context if available
@@ -148,7 +154,7 @@ const CheckoutContent = () => {
         orderItems: cartItems.map(item => ({
           name: item.name,
           qty: item.qty,
-          price: item.price,
+          price: getEffectivePrice(item.price, item.qty, item.bulkPricingTiers || []),
           product: item.product || item._id,
           image: item.image
         })),
@@ -429,31 +435,56 @@ const CheckoutContent = () => {
         <div className="user-card" style={{ height: 'fit-content' }}>
           <h3 style={{ fontSize: '18px', borderBottom: '1px solid var(--border-color)', paddingBottom: '15px', marginBottom: '15px' }}>Order Summary</h3>
           
-          <div style={{ marginBottom: '20px', maxHeight: '200px', overflowY: 'auto' }}>
-            {cartItems.map((item, index) => (
-              <div key={index} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '14px' }}>
-                <span style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', paddingRight: '10px' }}>{item.qty}x {item.name}</span>
-                <span>${(item.qty * item.price).toFixed(2)}</span>
-              </div>
-            ))}
+          <div style={{ marginBottom: '20px', maxHeight: '220px', overflowY: 'auto' }}>
+            {cartItems.map((item, index) => {
+              const disc      = getBulkDiscount(item.qty, item.bulkPricingTiers || []);
+              const effPrice  = getEffectivePrice(item.price, item.qty, item.bulkPricingTiers || []);
+              const lineTotal = effPrice * item.qty;
+              return (
+                <div key={index} style={{ marginBottom: '12px', fontSize: '14px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', paddingRight: '10px' }}>
+                      {item.qty}× {item.name}
+                    </span>
+                    <span style={{ fontWeight: '600' }}>${lineTotal.toFixed(2)}</span>
+                  </div>
+                  {disc > 0 && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#10b981', fontSize: '11px', fontWeight: '700', marginTop: '2px' }}>
+                      <Tag size={10} /> {disc}% bulk discount applied
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '14px', borderTop: '1px solid var(--border-color)', paddingTop: '15px' }}>
             <span>Items:</span>
-            <span>${cartTotal.toFixed(2)}</span>
+            <span>${cartSubtotal.toFixed(2)}</span>
           </div>
+          {totalDiscount > 0.001 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '14px', color: '#10b981', fontWeight: '700' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><Tag size={13} /> Bulk Discount:</span>
+              <span>−${totalDiscount.toFixed(2)}</span>
+            </div>
+          )}
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '14px' }}>
             <span>Shipping:</span>
-            <span>${shipping.toFixed(2)}</span>
+            <span>{shipping === 0 ? <span style={{ color: '#10b981', fontWeight: '700' }}>FREE</span> : `$${shipping.toFixed(2)}`}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px' }}>
             <span>Tax (8%):</span>
             <span>${tax.toFixed(2)}</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', fontSize: '18px', fontWeight: '700', borderTop: '1px solid var(--border-color)', paddingTop: '15px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', fontSize: '20px', fontWeight: '800', borderTop: '1px solid var(--border-color)', paddingTop: '15px' }}>
             <span>Total:</span>
             <span>${finalTotal.toFixed(2)}</span>
           </div>
+          {totalDiscount > 0.001 && (
+            <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: '12px', padding: '10px 14px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#10b981', fontWeight: '700' }}>
+              <Tag size={14} /> You're saving ${totalDiscount.toFixed(2)} with bulk pricing!
+            </div>
+          )}
           
           <button 
             type="submit" 

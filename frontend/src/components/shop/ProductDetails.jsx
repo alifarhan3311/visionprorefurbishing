@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Shield, Truck, RefreshCw, ChevronRight, Check, AlertTriangle, Package } from 'lucide-react';
+import { ShoppingCart, Shield, Truck, RefreshCw, ChevronRight, Check, AlertTriangle, Package, Tag } from 'lucide-react';
 import Header from '../layout/Header';
 import { CartContext } from '../../context/CartContext';
 import { AuthContext } from '../../context/AuthContext';
+import { getBulkDiscount, getEffectivePrice } from '../../context/CartContext';
 import api, { getImageUrl } from '../../services/api';
 import './ProductDetails.css';
 
@@ -126,57 +127,116 @@ const ProductDetails = () => {
             <h1 className="product-title">{product.name}</h1>
             <div className="sku-label">SKU: {product.sku}</div>
 
-            <div className="price-section">
-              <div className="price-row">
-                <span className="current-price">${product.retailPrice}</span>
-                <span className="price-label">Retail Price</span>
-              </div>
-              <div className="b2b-highlight">
-                <span className="b2b-price">${product.b2bPrice}</span>
-                <span className="b2b-badge">GOLD TIER PRICE</span>
-              </div>
-            </div>
+            {/* ── Price Section with live bulk discount ── */}
+            {(() => {
+              const tiers = product.bulkPricingTiers || [];
+              const disc = getBulkDiscount(quantity, tiers);
+              const basePrice = parseFloat(product.retailPrice || product.baseRetailPrice || 0);
+              const effPrice = getEffectivePrice(basePrice, quantity, tiers);
+              const saving = (basePrice - effPrice) * quantity;
+              const sortedTiers = tiers.slice().sort((a, b) => a.minQty - b.minQty);
+              const nextTier = sortedTiers.find(t => t.minQty > quantity);
 
-            {product.features && product.features.length > 0 && (
-              <div className="product-features-bullets" style={{ margin: '20px 0', padding: '15px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                <h4 style={{ margin: '0 0 10px 0', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.5px' }}>Highlights</h4>
-                <ul style={{ margin: 0, paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {product.features.map((feature, index) => (
-                    <li key={index} style={{ fontSize: '13px', fontWeight: '600', color: '#334155', lineHeight: '1.4' }}>{feature}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+              return (
+                <>
+                  <div className="price-section">
+                    <div className="price-row">
+                      {disc > 0 ? (
+                        <>
+                          <span className="current-price" style={{ textDecoration: 'line-through', color: '#94a3b8', fontSize: '20px' }}>
+                            ${basePrice.toFixed(2)}
+                          </span>
+                          <span className="current-price" style={{ color: '#10b981', marginLeft: '10px' }}>
+                            ${effPrice.toFixed(2)}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="current-price">${basePrice.toFixed(2)}</span>
+                      )}
+                      <span className="price-label">per unit</span>
+                    </div>
 
-            {/* Tiered Pricing Table */}
-            <div className="tiered-pricing">
-              <h3>Bulk Savings</h3>
-              <table className="tier-table">
-                <thead>
-                  <tr>
-                    <th>Quantity</th>
-                    <th>Price Each</th>
-                    <th>You Save</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>10+ units</td>
-                    <td>${(product.baseRetailPrice * 0.9).toFixed(2)}</td>
-                    <td className="save-green">10% Off</td>
-                  </tr>
-                  <tr>
-                    <td>50+ units</td>
-                    <td>${(product.baseRetailPrice * 0.8).toFixed(2)}</td>
-                    <td className="save-green">20% Off</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                    {disc > 0 && (
+                      <div style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '7px',
+                        background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)',
+                        borderRadius: '20px', padding: '6px 14px', marginTop: '8px',
+                        color: '#10b981', fontSize: '13px', fontWeight: '800'
+                      }}>
+                        <Tag size={13} />
+                        {disc}% bulk discount — saving ${saving.toFixed(2)} on {quantity} units
+                      </div>
+                    )}
+
+                    {nextTier && (
+                      <div style={{
+                        marginTop: '8px', fontSize: '12px', color: '#f59e0b', fontWeight: '700',
+                        display: 'flex', alignItems: 'center', gap: '5px'
+                      }}>
+                        🔥 Add {nextTier.minQty - quantity} more unit{nextTier.minQty - quantity > 1 ? 's' : ''} to unlock {nextTier.discountPercent}% off
+                      </div>
+                    )}
+
+                    <div className="b2b-highlight" style={{ marginTop: '10px' }}>
+                      <span className="b2b-price">${product.b2bPrice}</span>
+                      <span className="b2b-badge">GOLD TIER PRICE</span>
+                    </div>
+                  </div>
+
+                  {product.features && product.features.length > 0 && (
+                    <div className="product-features-bullets" style={{ margin: '20px 0', padding: '15px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                      <h4 style={{ margin: '0 0 10px 0', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.5px' }}>Highlights</h4>
+                      <ul style={{ margin: 0, paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {product.features.map((feature, index) => (
+                          <li key={index} style={{ fontSize: '13px', fontWeight: '600', color: '#334155', lineHeight: '1.4' }}>{feature}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Bulk Pricing Tiers Table — active row highlighted */}
+                  {sortedTiers.length > 0 && (
+                    <div className="tiered-pricing">
+                      <h3>Bulk Savings</h3>
+                      <table className="tier-table">
+                        <thead>
+                          <tr>
+                            <th>Quantity</th>
+                            <th>Price Each</th>
+                            <th>You Save</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* Base row */}
+                          <tr style={{ background: disc === 0 ? 'rgba(59,130,246,0.07)' : 'transparent' }}>
+                            <td>1+ units {disc === 0 && <span style={{ fontSize: '10px', background: '#3b82f6', color: '#fff', borderRadius: '8px', padding: '1px 6px', marginLeft: '4px' }}>current</span>}</td>
+                            <td>${basePrice.toFixed(2)}</td>
+                            <td style={{ color: '#94a3b8' }}>—</td>
+                          </tr>
+                          {sortedTiers.map((tier, idx) => {
+                            const tierPrice = (basePrice * (1 - tier.discountPercent / 100)).toFixed(2);
+                            const isActive = disc === tier.discountPercent && disc > 0;
+                            return (
+                              <tr key={idx} style={{ background: isActive ? 'rgba(16,185,129,0.08)' : 'transparent', fontWeight: isActive ? '700' : '400' }}>
+                                <td>
+                                  {tier.minQty}+ units
+                                  {isActive && <span style={{ fontSize: '10px', background: '#10b981', color: '#fff', borderRadius: '8px', padding: '1px 6px', marginLeft: '4px' }}>active</span>}
+                                </td>
+                                <td style={{ color: isActive ? '#10b981' : 'inherit' }}>${tierPrice}</td>
+                                <td className="save-green">{tier.discountPercent}% Off</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
 
             <div className="purchase-controls">
               {isOutOfStock ? (
-                /* ── Out of Stock state ── */
                 <div className="out-of-stock-block">
                   <AlertTriangle size={20} />
                   <div>
@@ -186,7 +246,6 @@ const ProductDetails = () => {
                 </div>
               ) : (
                 <>
-                  {/* Quantity Selector */}
                   <div className="qty-wrapper">
                     <span className="qty-label">Qty</span>
                     <div className="qty-selector">
@@ -199,10 +258,7 @@ const ProductDetails = () => {
                       <button
                         className="qty-btn"
                         onClick={() => {
-                          if (quantity >= stockQty) {
-                            setStockAlert(true);
-                            return;
-                          }
+                          if (quantity >= stockQty) { setStockAlert(true); return; }
                           setQuantity(q => q + 1);
                         }}
                         disabled={quantity >= stockQty}
@@ -215,17 +271,12 @@ const ProductDetails = () => {
                   </div>
 
                   {isAdmin ? (
-                    <div className="admin-order-block">
-                      Admin accounts cannot place orders
-                    </div>
+                    <div className="admin-order-block">Admin accounts cannot place orders</div>
                   ) : (
                     <button
                       className="add-to-cart-premium"
                       onClick={() => {
-                        if (quantity > stockQty) {
-                          setStockAlert(true);
-                          return;
-                        }
+                        if (quantity > stockQty) { setStockAlert(true); return; }
                         addToCart(product, quantity);
                         navigate('/cart');
                       }}
@@ -305,7 +356,7 @@ const ProductDetails = () => {
             {activeTab === 'warranty' && (
               <div className="tab-text-content">
                 <h3>Standard Warranty Policy</h3>
-                <p>This product comes with a <strong>{product.partDetails?.warrantyPeriod || 'Lifetime'} Warranty</strong> covering manufacturing defects and functional failures under normal use.</p>
+                <p>This product comes with a <strong>{product.warrantyPeriod || product.partDetails?.warrantyPeriod || 'Lifetime'} Warranty</strong> covering manufacturing defects and functional failures under normal use.</p>
                 <ul style={{ marginTop: '15px', paddingLeft: '20px', lineHeight: '1.6' }}>
                   <li>All parts must be tested prior to installation.</li>
                   <li>Physical damage, water damage, or modified parts are not covered.</li>
@@ -324,7 +375,7 @@ const ProductDetails = () => {
                     ))}
                   </ul>
                 ) : (
-                  <p>Compatible with standard models associated with {product.name}.</p>
+                  <p style={{ color: '#64748b' }}>No compatibility information added for this product yet.</p>
                 )}
               </div>
             )}

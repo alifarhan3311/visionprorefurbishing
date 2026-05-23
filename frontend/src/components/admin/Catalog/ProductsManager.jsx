@@ -40,6 +40,10 @@ const ProductsManager = () => {
   const [batteryHealth, setBatteryHealth] = useState('');
   const [moq, setMoq] = useState('1');
   const [qualityType, setQualityType] = useState('Premium Aftermarket');
+  const [warrantyPeriod, setWarrantyPeriod] = useState('');
+  const [compatibilityText, setCompatibilityText] = useState('');
+  // Bulk pricing tiers: [{minQty, discountPercent}]
+  const [bulkTiers, setBulkTiers] = useState([{ minQty: '', discountPercent: '' }, { minQty: '', discountPercent: '' }]);
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [imageUrl, setImageUrl] = useState('');
@@ -129,6 +133,8 @@ const ProductsManager = () => {
     setImageUrl(product.imageUrl || '');
     setStockQuantity((product.stockQuantity || 10).toString());
     setFeaturesText(product.features ? product.features.join('\n') : '');
+    setWarrantyPeriod(product.warrantyPeriod || '');
+    setCompatibilityText(product.compatibility ? product.compatibility.join('\n') : '');
     setCategoryMode(product.category?.tierLevel === 3 ? 'tier3' : 'tier4');
 
     if (product.productType === 'preowned') {
@@ -141,6 +147,13 @@ const ProductsManager = () => {
       setQualityType(product.partDetails?.qualityType || 'Premium Aftermarket');
     }
     
+    // Bulk pricing tiers
+    if (product.bulkPricingTiers && product.bulkPricingTiers.length > 0) {
+      setBulkTiers(product.bulkPricingTiers.map(t => ({ minQty: t.minQty, discountPercent: t.discountPercent })));
+    } else {
+      setBulkTiers([{ minQty: '', discountPercent: '' }, { minQty: '', discountPercent: '' }]);
+    }
+
     // Set to new mode (null editingId)
     setEditingId(null);
     setStatusMsg('Product duplicated! Please review & publish.');
@@ -161,6 +174,8 @@ const ProductsManager = () => {
     setImageUrl(product.imageUrl || '');
     setStockQuantity((product.stockQuantity || 10).toString());
     setFeaturesText(product.features ? product.features.join('\n') : '');
+    setWarrantyPeriod(product.warrantyPeriod || '');
+    setCompatibilityText(product.compatibility ? product.compatibility.join('\n') : '');
     setCategoryMode(product.category?.tierLevel === 3 ? 'tier3' : 'tier4');
 
     // Populate image slots from existing images array
@@ -177,6 +192,13 @@ const ProductsManager = () => {
       setMoq(product.componentDetails?.minimumOrderQuantity || '1');
     } else if (product.productType === 'parts') {
       setQualityType(product.partDetails?.qualityType || 'Premium Aftermarket');
+    }
+
+    // Populate bulk pricing tiers
+    if (product.bulkPricingTiers && product.bulkPricingTiers.length > 0) {
+      setBulkTiers(product.bulkPricingTiers.map(t => ({ minQty: t.minQty, discountPercent: t.discountPercent })));
+    } else {
+      setBulkTiers([{ minQty: '', discountPercent: '' }, { minQty: '', discountPercent: '' }]);
     }
     
     setIsEditModalOpen(true);
@@ -213,6 +235,13 @@ const ProductsManager = () => {
       formData.append('badge', badge);
       formData.append('stockQuantity', parseInt(stockQuantity) || 10);
       formData.append('imageUrl', imageUrl);
+      formData.append('warrantyPeriod', warrantyPeriod || '');
+      // Compatibility — one entry per line
+      const parsedCompatibility = compatibilityText
+        .split('\n')
+        .map(c => c.trim())
+        .filter(Boolean);
+      parsedCompatibility.forEach(c => formData.append('compatibility', c));
       if (currentCategoryObj?.tierLevel === 3) {
         formData.append('isSubTier', 'false');
       }
@@ -228,6 +257,16 @@ const ProductsManager = () => {
 
       parsedFeatures.forEach((f) => {
         formData.append('features', f);
+      });
+
+      // Bulk pricing tiers — send as bulkTier_minQty_0, bulkTier_discount_0, etc.
+      bulkTiers.forEach((tier, i) => {
+        const qty = parseInt(tier.minQty);
+        const disc = parseFloat(tier.discountPercent);
+        if (!isNaN(qty) && qty > 0 && !isNaN(disc) && disc >= 0) {
+          formData.append(`bulkTier_minQty_${i}`, qty);
+          formData.append(`bulkTier_discount_${i}`, disc);
+        }
       });
 
       if (productType === 'preowned') {
@@ -282,9 +321,12 @@ const ProductsManager = () => {
     setMoq('1');
     setQualityType('Premium Aftermarket');
     setFeaturesText('');
+    setWarrantyPeriod('');
+    setCompatibilityText('');
     setStockQuantity('10');
     setCategoryMode('tier4');
     setActiveFormTab('basic');
+    setBulkTiers([{ minQty: '', discountPercent: '' }, { minQty: '', discountPercent: '' }]);
   };
 
   const filteredProducts = Array.isArray(products) ? products.filter(p => 
@@ -559,6 +601,94 @@ const ProductsManager = () => {
                       resize: 'vertical'
                     }}
                   />
+                </div>
+
+                <div className="form-section">
+                  <label>Warranty Period</label>
+                  <select value={warrantyPeriod} onChange={e => setWarrantyPeriod(e.target.value)}>
+                    <option value="">No Warranty</option>
+                    <option value="30 Days">30 Days</option>
+                    <option value="90 Days">90 Days</option>
+                    <option value="6 Months">6 Months</option>
+                    <option value="1 Year">1 Year</option>
+                    <option value="Lifetime">Lifetime</option>
+                  </select>
+                </div>
+
+                <div className="form-section">
+                  <label>Compatible Models (One per line)</label>
+                  <textarea
+                    value={compatibilityText}
+                    onChange={e => setCompatibilityText(e.target.value)}
+                    placeholder="iPhone 14 Pro&#10;iPhone 14 Pro Max&#10;iPhone 13 Pro"
+                    rows="5"
+                    style={{
+                      width: '100%',
+                      padding: '14px 18px',
+                      borderRadius: '16px',
+                      border: '1px solid #e2e8f0',
+                      background: 'var(--bg-elevated)',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      color: '#0f172a',
+                      fontFamily: 'inherit',
+                      outline: 'none',
+                      resize: 'vertical'
+                    }}
+                  />
+                </div>
+
+                {/* Bulk Order Pricing Tiers */}
+                <div className="form-section">
+                  <label>Bulk Order Pricing</label>
+                  <p style={{ fontSize: '12px', color: '#64748b', fontWeight: '600', margin: '0 0 14px 0' }}>
+                    Set quantity thresholds — customers ordering at or above that qty get the discount automatically.
+                  </p>
+                  {bulkTiers.map((tier, i) => (
+                    <div key={i} style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '10px' }}>
+                      <div style={{ flex: 1 }}>
+                        <input
+                          type="number"
+                          min="1"
+                          value={tier.minQty}
+                          onChange={e => {
+                            const updated = [...bulkTiers];
+                            updated[i] = { ...updated[i], minQty: e.target.value };
+                            setBulkTiers(updated);
+                          }}
+                          placeholder={`Min Qty (e.g. ${i === 0 ? 10 : 50})`}
+                        />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          step="0.5"
+                          value={tier.discountPercent}
+                          onChange={e => {
+                            const updated = [...bulkTiers];
+                            updated[i] = { ...updated[i], discountPercent: e.target.value };
+                            setBulkTiers(updated);
+                          }}
+                          placeholder="Discount %"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setBulkTiers(bulkTiers.filter((_, idx) => idx !== i))}
+                        style={{ background: '#fee2e2', color: '#ef4444', border: 'none', borderRadius: '10px', padding: '10px 14px', fontWeight: '800', cursor: 'pointer', fontSize: '16px', lineHeight: 1 }}
+                        title="Remove tier"
+                      >×</button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setBulkTiers([...bulkTiers, { minQty: '', discountPercent: '' }])}
+                    style={{ background: '#eff6ff', color: '#3b82f6', border: '1px dashed #93c5fd', borderRadius: '12px', padding: '10px 18px', fontWeight: '700', fontSize: '13px', cursor: 'pointer', width: '100%', marginTop: '4px' }}
+                  >
+                    + Add Tier
+                  </button>
                 </div>
               </div>
             )}
@@ -950,7 +1080,7 @@ const ProductsManager = () => {
                         value={featuresText} 
                         onChange={e => setFeaturesText(e.target.value)} 
                         placeholder="Feature bullets..."
-                        rows="6"
+                        rows="5"
                         style={{
                           width: '100%',
                           padding: '14px 18px',
@@ -965,6 +1095,94 @@ const ProductsManager = () => {
                           resize: 'vertical'
                         }}
                       />
+                    </div>
+
+                    <div className="inspector-section">
+                      <label>Warranty Period</label>
+                      <select value={warrantyPeriod} onChange={e => setWarrantyPeriod(e.target.value)}>
+                        <option value="">No Warranty</option>
+                        <option value="30 Days">30 Days</option>
+                        <option value="90 Days">90 Days</option>
+                        <option value="6 Months">6 Months</option>
+                        <option value="1 Year">1 Year</option>
+                        <option value="Lifetime">Lifetime</option>
+                      </select>
+                    </div>
+
+                    <div className="inspector-section">
+                      <label>Compatible Models (One per line)</label>
+                      <textarea
+                        value={compatibilityText}
+                        onChange={e => setCompatibilityText(e.target.value)}
+                        placeholder="iPhone 14 Pro&#10;iPhone 14 Pro Max&#10;iPhone 13 Pro"
+                        rows="5"
+                        style={{
+                          width: '100%',
+                          padding: '14px 18px',
+                          borderRadius: '16px',
+                          border: '1px solid #e2e8f0',
+                          background: 'var(--bg-elevated)',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          color: '#0f172a',
+                          fontFamily: 'inherit',
+                          outline: 'none',
+                          resize: 'vertical'
+                        }}
+                      />
+                    </div>
+
+                    {/* Bulk Order Pricing Tiers */}
+                    <div className="inspector-section">
+                      <label>Bulk Order Pricing</label>
+                      <p style={{ fontSize: '12px', color: '#64748b', fontWeight: '600', margin: '0 0 14px 0' }}>
+                        Set quantity thresholds — customers ordering at or above that qty get the discount automatically.
+                      </p>
+                      {bulkTiers.map((tier, i) => (
+                        <div key={i} style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '10px' }}>
+                          <div style={{ flex: 1 }}>
+                            <input
+                              type="number"
+                              min="1"
+                              value={tier.minQty}
+                              onChange={e => {
+                                const updated = [...bulkTiers];
+                                updated[i] = { ...updated[i], minQty: e.target.value };
+                                setBulkTiers(updated);
+                              }}
+                              placeholder={`Min Qty (e.g. ${i === 0 ? 10 : 50})`}
+                            />
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <input
+                              type="number"
+                              min="0"
+                              max="100"
+                              step="0.5"
+                              value={tier.discountPercent}
+                              onChange={e => {
+                                const updated = [...bulkTiers];
+                                updated[i] = { ...updated[i], discountPercent: e.target.value };
+                                setBulkTiers(updated);
+                              }}
+                              placeholder="Discount %"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setBulkTiers(bulkTiers.filter((_, idx) => idx !== i))}
+                            style={{ background: '#fee2e2', color: '#ef4444', border: 'none', borderRadius: '10px', padding: '10px 14px', fontWeight: '800', cursor: 'pointer', fontSize: '16px', lineHeight: 1 }}
+                            title="Remove tier"
+                          >×</button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => setBulkTiers([...bulkTiers, { minQty: '', discountPercent: '' }])}
+                        style={{ background: '#eff6ff', color: '#3b82f6', border: '1px dashed #93c5fd', borderRadius: '12px', padding: '10px 18px', fontWeight: '700', fontSize: '13px', cursor: 'pointer', width: '100%', marginTop: '4px' }}
+                      >
+                        + Add Tier
+                      </button>
                     </div>
                   </div>
                 )}
@@ -1079,9 +1297,10 @@ const ProductsManager = () => {
         
         .premium-form .form-section { margin-bottom: 25px; }
         .premium-form label { display: block; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.1em; }
-        .premium-form input, .premium-form select { width: 100%; padding: 14px 18px; border-radius: 16px; border: 1px solid var(--border-color); background: var(--bg-elevated); font-size: 14px; font-weight: 700; outline: none; transition: all 0.2s; color: var(--text-primary); }
+        .premium-form input, .premium-form select { width: 100%; padding: 14px 18px; border-radius: 16px; border: 1px solid var(--border-color); background: var(--bg-elevated); font-size: 14px; font-weight: 700; outline: none; transition: all 0.2s; color: var(--text-primary); box-sizing: border-box; }
         .premium-form input:focus, .premium-form select:focus { border-color: var(--primary-color); background: var(--bg-card); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15); }
         .form-stack { display: flex; flex-direction: column; gap: 12px; }
+        .inspector-section input, .inspector-section select, .inspector-section textarea { box-sizing: border-box; max-width: 100%; }
         
         .file-box-custom { border: 2px dashed #e2e8f0; border-radius: 16px; padding: 25px; text-align: center; position: relative; transition: all 0.2s; cursor: pointer; }
         .file-box-custom:hover { border-color: #3b82f6; background: #1e40af; }
@@ -1133,7 +1352,7 @@ const ProductsManager = () => {
  
         /* Inspector Panel */
         .inspector-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); z-index: 2000; display: flex; justify-content: flex-end; }
-        .side-modal { width: 480px; height: 100%; background: var(--bg-card); box-shadow: -20px 0 60px rgba(0,0,0,0.4); animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; position: relative; }
+        .side-modal { width: 480px; max-width: 100vw; height: 100%; background: var(--bg-card); box-shadow: -20px 0 60px rgba(0,0,0,0.4); animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
         
         .inspector-header { padding: 40px; border-bottom: 1px solid var(--border-color); }
@@ -1141,7 +1360,7 @@ const ProductsManager = () => {
         .inspector-header h3 { margin: 15px 0 0; font-size: 22px; font-weight: 800; color: var(--text-primary); }
         .close-btn { position: absolute; right: 30px; top: 35px; background: none; border: none; font-size: 32px; color: #94a3b8; cursor: pointer; line-height: 1; }
         
-        .inspector-body { padding: 40px; flex: 1; overflow-y: auto; }
+        .inspector-body { padding: 40px; flex: 1; overflow-y: auto; overflow-x: hidden; box-sizing: border-box; }
         .inspector-section { margin-bottom: 30px; }
         .inspector-section label { display: block; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 15px; }
         .mt-3 { margin-top: 15px; }

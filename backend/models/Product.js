@@ -41,6 +41,19 @@ const productSchema = new mongoose.Schema({
     warrantyPeriod: { type: String }
   },
 
+  // Warranty & Compatibility (all product types)
+  warrantyPeriod: { type: String, default: '' },
+  compatibility: { type: [String], default: [] },
+
+  // Admin-configurable bulk pricing tiers
+  bulkPricingTiers: {
+    type: [{
+      minQty: { type: Number, required: true },
+      discountPercent: { type: Number, required: true, min: 0, max: 100 }
+    }],
+    default: []
+  },
+
   stockQuantity: { type: Number, default: 10 },
 
   status: {
