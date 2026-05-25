@@ -24,17 +24,33 @@
   font-size: 12px;
   padding: 8px 0;
   color: var(--text-secondary);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.top-bar::-webkit-scrollbar {
+  height: 3px;
+}
+.top-bar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.top-bar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
 }
 
 .top-bar-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  min-width: max-content;
+  width: 100%;
 }
 
 .top-bar-links {
   display: flex;
   gap: 20px;
+  flex-shrink: 0;
 }
 
 .top-bar-links a {
@@ -42,10 +58,25 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  white-space: nowrap;
 }
 
 .top-bar-links a:hover {
   color: var(--primary-color);
+}
+
+.top-bar-admin-link {
+  color: #6366f1 !important;
+  font-weight: 700 !important;
+  background: rgba(99, 102, 241, 0.08);
+  padding: 3px 10px !important;
+  border-radius: 20px;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+.top-bar-admin-link:hover {
+  background: rgba(99, 102, 241, 0.15) !important;
+  color: #4f46e5 !important;
 }
 
 /* --- Main Header --- */
@@ -164,10 +195,30 @@
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
+/* Scroll container sits inside wrapper so dropdown can still escape */
+.mega-menu-container {
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+.mega-menu-container::-webkit-scrollbar {
+  height: 3px;
+}
+.mega-menu-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+.mega-menu-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
 .mega-menu-list {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  min-width: max-content;
 }
 
 .mega-menu-item {
@@ -334,6 +385,17 @@
 .mobile-only { display: none; }
 .mobile-menu-toggle { display: none; background: none; border: none; cursor: pointer; color: var(--text-primary); }
 
+/* Force-hide mobile-only elements on larger screens to avoid accidental display */
+@media (min-width: 993px) {
+  .mobile-only,
+  .mobile-quick-links,
+  .mobile-quick-link,
+  .mobile-menu-header,
+  .mobile-account-section {
+    display: none !important;
+  }
+}
+
 @media (max-width: 992px) {
   .top-bar { display: none; }
   
@@ -376,7 +438,7 @@
     box-shadow: 10px 0 30px rgba(0,0,0,0.1);
   }
 
-  .mega-menu-container { padding: 0 !important; width: 100%; }
+  .mega-menu-container { padding: 0 !important; width: 100%; overflow-x: visible; }
   
   .mobile-menu-header {
     display: flex;
@@ -586,3 +648,140 @@
   transform: translateY(-1px);
 }
 
+
+
+/* --- Mobile Account Section (inside drawer) --- */
+.mobile-account-section {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-elevated);
+}
+
+.mobile-account-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--text-primary);
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+}
+
+.mobile-account-link:hover {
+  border-color: var(--primary-color);
+  background: rgba(37, 99, 235, 0.04);
+}
+
+.mobile-account-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color), #6366f1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.mobile-account-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.mobile-account-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobile-account-role {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 1px;
+}
+
+.mobile-account-arrow {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+/* --- Mobile Quick Links (inside drawer) --- */
+.mobile-quick-links {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  padding: 12px 14px;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.mobile-quick-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 4px;
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.2s ease;
+  line-height: 1.2;
+}
+
+.mobile-quick-link svg {
+  color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+.mobile-quick-link:hover {
+  background: rgba(37, 99, 235, 0.06);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+/* --- Mobile Section Label --- */
+.mobile-section-label {
+  padding: 10px 20px 6px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+}
+
+/* Ensure desktop mega nav is hidden on small phones and the drawer is used instead.
+   Drawer should only be visible when `.mobile-open` is applied. */
+@media (max-width: 768px) {
+  .mega-menu-wrapper {
+    display: none;
+  }
+
+  .mega-menu-wrapper.mobile-open {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 1000;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+  }
+}
+
+/* Desktop quick links row (visible on larger screens, hidden on mobile) */
+/* Desktop quick links removed — quick links remain only in mobile drawer */

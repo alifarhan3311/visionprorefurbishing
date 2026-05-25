@@ -5,6 +5,11 @@ export const CartContext = createContext();
 
 // Helper: given qty and bulkPricingTiers, return the best applicable discount %
 export const getBulkDiscount = (qty, bulkPricingTiers) => {
+  // Only retailers should receive bulk discounts
+  if (typeof window !== 'undefined') {
+    const userRole = localStorage.getItem('userRole');
+    if (userRole !== 'retailer') return 0;
+  }
   if (!bulkPricingTiers || bulkPricingTiers.length === 0) return 0;
   const sorted = [...bulkPricingTiers].sort((a, b) => b.minQty - a.minQty);
   const match = sorted.find(t => qty >= t.minQty);
@@ -26,7 +31,13 @@ export const CartProvider = ({ children }) => {
     if (savedCart && savedCart !== "undefined" && savedCart !== "null") {
       try {
         const parsed = JSON.parse(savedCart);
-        setCartItems(Array.isArray(parsed) ? parsed : []);
+        const items = Array.isArray(parsed) ? parsed : [];
+        // Recalculate discountPercent based on current user role and tiers
+        const normalized = items.map(it => ({
+          ...it,
+          discountPercent: getBulkDiscount(it.qty, it.bulkPricingTiers || [])
+        }));
+        setCartItems(normalized);
       } catch (e) {
         setCartItems([]);
       }

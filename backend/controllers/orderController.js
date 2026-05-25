@@ -61,8 +61,8 @@ exports.addOrderItems = async (req, res) => {
         taxPrice,
         shippingPrice,
         totalPrice,
-        isPaid: paymentMethod === 'Credit Card' ? true : (isPaid || false),
-        paidAt: paymentMethod === 'Credit Card' ? Date.now() : paidAt
+        isPaid: ['Credit Card', 'Clover'].includes(paymentMethod) ? true : (isPaid || false),
+        paidAt: ['Credit Card', 'Clover'].includes(paymentMethod) ? Date.now() : paidAt
       });
 
       const createdOrder = await order.save();

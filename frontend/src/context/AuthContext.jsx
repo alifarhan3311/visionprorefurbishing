@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }) => {
           });
           if (res.data.success) {
             setUser(res.data.data);
+            localStorage.setItem('userRole', res.data.data.role || 'user');
           }
         } catch (error) {
           console.error("Token verification failed", error);
@@ -69,6 +70,7 @@ export const AuthProvider = ({ children }) => {
       if (res.data.success) {
         localStorage.setItem('token', res.data.data.token);
         setUser(res.data.data);
+        localStorage.setItem('userRole', res.data.data.role || 'user');
         return { success: true };
       }
     } catch (error) {
@@ -81,6 +83,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
     setUser(null);
     window.location.href = '/login';
   };

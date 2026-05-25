@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, X } from 'lucide-react';
+import { ChevronRight, X, User, ShieldCheck, Activity, FileText, Info, Zap, Megaphone } from 'lucide-react';
 import api, { getImageUrl } from '../../services/api';
+import { AuthContext } from '../../context/AuthContext';
 import './Header.css';
 
 const MegaMenu = ({ isOpen, onClose }) => {
@@ -11,6 +12,8 @@ const MegaMenu = ({ isOpen, onClose }) => {
   const [activeTier3, setActiveTier3] = useState(null);
   const [loading, setLoading] = useState(true);
   const timeoutRef = useRef(null);
+  const { user } = useContext(AuthContext);
+  const isAdmin = user?.role === 'admin';
 
   const handleTier2Select = (item) => {
     setActiveTier2(item._id);
@@ -109,6 +112,64 @@ const MegaMenu = ({ isOpen, onClose }) => {
               <X size={24} />
             </button>
           </div>
+
+          {/* Mobile Account Section */}
+          <div className="mobile-account-section mobile-only">
+            {user ? (
+              <Link
+                to={isAdmin ? '/admin' : '/dashboard'}
+                className="mobile-account-link"
+                onClick={onClose}
+              >
+                <div className="mobile-account-avatar">
+                  {isAdmin ? <ShieldCheck size={18} /> : <User size={18} />}
+                </div>
+                <div className="mobile-account-info">
+                  <span className="mobile-account-name">{user.name || user.email}</span>
+                  <span className="mobile-account-role">{isAdmin ? 'Admin Panel' : 'My Dashboard'}</span>
+                </div>
+                <ChevronRight size={16} className="mobile-account-arrow" />
+              </Link>
+            ) : (
+              <Link to="/login" className="mobile-account-link" onClick={onClose}>
+                <div className="mobile-account-avatar">
+                  <User size={18} />
+                </div>
+                <div className="mobile-account-info">
+                  <span className="mobile-account-name">Sign In</span>
+                  <span className="mobile-account-role">Login or Register</span>
+                </div>
+                <ChevronRight size={16} className="mobile-account-arrow" />
+              </Link>
+            )}
+          </div>
+
+          {/* Mobile Quick Links */}
+          <div className="mobile-quick-links mobile-only">
+            <Link to="/dashboard/buyback" className="mobile-quick-link" onClick={onClose}>
+              <Activity size={15} />
+              <span>LCD Buyback</span>
+            </Link>
+            <Link to="/quick-order" className="mobile-quick-link" onClick={onClose}>
+              <Zap size={15} />
+              <span>Quick Order</span>
+            </Link>
+            <Link to="/dashboard/marketing" className="mobile-quick-link" onClick={onClose}>
+              <Megaphone size={15} />
+              <span>Marketing</span>
+            </Link>
+            <Link to="/blog" className="mobile-quick-link" onClick={onClose}>
+              <FileText size={15} />
+              <span>Blog</span>
+            </Link>
+            <Link to="/support" className="mobile-quick-link" onClick={onClose}>
+              <Info size={15} />
+              <span>Support</span>
+            </Link>
+          </div>
+
+          {/* Categories label */}
+          <div className="mobile-section-label mobile-only">Categories</div>
           <ul className="mega-menu-list">
             {categories.map(category => (
             <li 

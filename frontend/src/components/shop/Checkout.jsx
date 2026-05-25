@@ -4,21 +4,13 @@ import { CartContext } from '../../context/CartContext';
 import { getBulkDiscount, getEffectivePrice } from '../../context/CartContext';
 import { AuthContext } from '../../context/AuthContext';
 import api from '../../services/api';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { CheckCircle2, Tag } from 'lucide-react';
 import '../user/UserLayout.css';
-
-// Replace with your Stripe publishable key
-const stripePromise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
 
 const CheckoutContent = () => {
   const { cartItems, clearCart } = useContext(CartContext);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const stripe = useStripe();
-  const elements = useElements();
-
   const [shippingAddress, setShippingAddress] = useState({
     email: '',
     phone: '',
@@ -28,19 +20,11 @@ const CheckoutContent = () => {
     country: ''
   });
 
-  const [paymentMethod, setPaymentMethod] = useState('Store Credit / Invoice');
+  const [paymentMethod, setPaymentMethod] = useState('Clover');
   const [loading, setLoading] = useState(false);
-  const [clientSecret, setClientSecret] = useState('');
-  const [isCardComplete, setIsCardComplete] = useState(false);
-  const [stripeError, setStripeError] = useState(null);
-  const [useMockStripe, setUseMockStripe] = useState(false);
-  const [mockCard, setMockCard] = useState({
-    number: '',
-    expiry: '',
-    cvc: '',
-    zip: ''
-  });
-  
+  const [cloverToken, setCloverToken] = useState('');
+  const [cloverError, setCloverError] = useState(null);
+
   // Success state
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [countdown, setCountdown] = useState(10);
@@ -68,32 +52,6 @@ const CheckoutContent = () => {
   }, [user]);
 
   // Fetch client secret when CC is chosen
-  useEffect(() => {
-    if (paymentMethod === 'Credit Card') {
-      const getClientSecret = async () => {
-        try {
-          const res = await api.post('/payment/create-payment-intent', { amount: finalTotal });
-          if (res.data.success) {
-            setClientSecret(res.data.clientSecret);
-            setUseMockStripe(false);
-            setStripeError(null);
-          } else {
-            throw new Error(res.data.error || 'Failed to initialize payment');
-          }
-        } catch (err) {
-          console.error("Failed to initialize Stripe", err);
-          setStripeError("Stripe API key is expired. Local Sandbox Simulation mode enabled automatically.");
-          setUseMockStripe(true);
-          setClientSecret('mock_secret'); // Bypass clientSecret check
-        }
-      };
-      getClientSecret();
-    } else {
-      setClientSecret('');
-      setUseMockStripe(false);
-      setStripeError(null);
-    }
-  }, [paymentMethod, finalTotal]);
 
   // Success Modal Countdown
   useEffect(() => {
@@ -112,43 +70,12 @@ const CheckoutContent = () => {
     setShippingAddress({ ...shippingAddress, [e.target.name]: e.target.value });
   };
 
-  const handleCardChange = (e) => {
-    setIsCardComplete(e.complete);
-    if (e.error) {
-      setStripeError(e.error.message);
-    } else {
-      setStripeError(null);
-    }
+  const handleCloverTokenChange = (e) => {
+    setCloverToken(e.target.value);
+    setCloverError(null);
   };
 
-  const handleMockCardChange = (e) => {
-    const { name, value } = e.target;
-    let formattedValue = value;
-    if (name === 'number') {
-      formattedValue = value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim().slice(0, 19);
-    } else if (name === 'expiry') {
-      formattedValue = value.replace(/\D/g, '').replace(/(.{2})/g, '$1/').trim().slice(0, 5);
-      if (formattedValue.endsWith('/')) {
-        formattedValue = formattedValue.slice(0, -1);
-      }
-    } else if (name === 'cvc') {
-      formattedValue = value.replace(/\D/g, '').slice(0, 3);
-    } else if (name === 'zip') {
-      formattedValue = value.replace(/\D/g, '').slice(0, 5);
-    }
-
-    const updated = { ...mockCard, [name]: formattedValue };
-    setMockCard(updated);
-
-    const isNumValid = updated.number.replace(/\s/g, '').length === 16;
-    const isExpValid = updated.expiry.length === 5;
-    const isCvcValid = updated.cvc.length === 3;
-    const isZipValid = updated.zip.length >= 5;
-
-    setIsCardComplete(isNumValid && isExpValid && isCvcValid && isZipValid);
-  };
-
-  const submitOrder = async () => {
+  const submitOrder = async (paymentResult = {}) => {
     try {
       const response = await api.post('/orders', {
         orderItems: cartItems.map(item => ({
@@ -167,6 +94,7 @@ const CheckoutContent = () => {
         email: shippingAddress.email,
         phone: shippingAddress.phone,
         paymentMethod,
+        paymentResult,
         itemsPrice: cartTotal,
         taxPrice: tax,
         shippingPrice: shipping,
@@ -191,59 +119,44 @@ const CheckoutContent = () => {
     if (loading) return;
 
     setLoading(true);
+    setCloverError(null);
 
-    if (paymentMethod === 'Credit Card') {
-      if (useMockStripe) {
-        await submitOrder();
-        setLoading(false);
-        return;
-      }
-
-      if (!stripe || !elements) {
-        alert('Stripe has not loaded yet. Please wait.');
-        setLoading(false);
-        return;
-      }
-
-      if (!clientSecret) {
-        alert('Secure session not initialized yet. Please try again.');
-        setLoading(false);
-        return;
-      }
-
-      const cardElement = elements.getElement(CardElement);
-      const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: cardElement,
-          billing_details: {
-            email: shippingAddress.email,
-            phone: shippingAddress.phone,
-            name: user?.name || 'Valued B2B Customer',
-            address: {
-              line1: shippingAddress.address,
-              city: shippingAddress.city,
-              postal_code: shippingAddress.postalCode,
-              country: shippingAddress.country
-            }
-          }
+    try {
+      if (paymentMethod === 'Clover') {
+        if (!cloverToken) {
+          setCloverError('Clover payment token is required for this payment method.');
+          setLoading(false);
+          return;
         }
-      });
 
-      if (error) {
-        setStripeError(error.message);
-        setLoading(false);
-        return;
-      }
+        const paymentResponse = await api.post('/payment/clover-charge', {
+          token: cloverToken,
+          amount: finalTotal,
+          currency: 'usd'
+        });
 
-      if (paymentIntent && paymentIntent.status === 'succeeded') {
-        await submitOrder();
+        if (!paymentResponse.data.success) {
+          setCloverError(paymentResponse.data.error || 'Clover payment failed.');
+          setLoading(false);
+          return;
+        }
+
+        const paymentResult = {
+          id: paymentResponse.data.chargeId,
+          status: paymentResponse.data.status,
+          update_time: new Date().toISOString(),
+          email_address: shippingAddress.email
+        };
+
+        await submitOrder(paymentResult);
       } else {
-        setStripeError('Payment verification failed.');
-        setLoading(false);
+        await submitOrder();
       }
-    } else {
-      await submitOrder();
+    } catch (error) {
+      console.error('Checkout error:', error);
+      setCloverError(error.response?.data?.error || 'Checkout failed.');
     }
+
     setLoading(false);
   };
 
@@ -256,13 +169,12 @@ const CheckoutContent = () => {
 
   const isSubmitDisabled = loading || 
                            !isFormValid || 
-                           (paymentMethod === 'Credit Card' && (!isCardComplete || !clientSecret));
+                           (paymentMethod === 'Clover' && !cloverToken);
 
   console.log('Checkout Validation:', {
     loading,
     isFormValid: !!isFormValid,
-    isCardComplete,
-    hasClientSecret: !!clientSecret,
+    paymentMethod,
     shippingAddress,
     isSubmitDisabled
   });
@@ -347,86 +259,38 @@ const CheckoutContent = () => {
               <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '15px', fontWeight: '500' }}>
                 <input 
                   type="radio" 
-                  value="Store Credit / Invoice" 
-                  checked={paymentMethod === 'Store Credit / Invoice'} 
+                  value="Clover" 
+                  checked={paymentMethod === 'Clover'} 
                   onChange={(e) => setPaymentMethod(e.target.value)} 
                 />
-                Pay via Store Credit / Net 30 Invoice
+                Pay with Clover
               </label>
               <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '15px', fontWeight: '500' }}>
                 <input 
                   type="radio" 
-                  value="Credit Card" 
-                  checked={paymentMethod === 'Credit Card'} 
+                  value="Cash on Delivery" 
+                  checked={paymentMethod === 'Cash on Delivery'} 
                   onChange={(e) => setPaymentMethod(e.target.value)} 
                 />
-                Credit Card (Stripe)
+                Cash on Delivery (COD)
               </label>
             </div>
 
-            {paymentMethod === 'Credit Card' && (
+            {paymentMethod === 'Clover' && (
               <div style={{ marginTop: '25px', padding: '20px', border: '1px solid var(--border-color)', borderRadius: '8px', backgroundColor: 'var(--bg-elevated)' }}>
-                <h4 style={{ marginBottom: '15px', color: 'var(--text-primary)', fontSize: '15px', fontWeight: '600' }}>Card Details</h4>
-                {useMockStripe ? (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '15px' }}>
-                    <input 
-                      type="text" 
-                      name="number" 
-                      value={mockCard.number} 
-                      onChange={handleMockCardChange} 
-                      placeholder="Card Number (e.g. 4242 4242 4242 4242)" 
-                      required 
-                      style={{ padding: '12px', border: '1px solid var(--border-color)', borderRadius: '6px', fontSize: '15px', width: '100%', boxSizing: 'border-box', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)' }} 
-                    />
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px' }}>
-                      <input 
-                        type="text" 
-                        name="expiry" 
-                        value={mockCard.expiry} 
-                        onChange={handleMockCardChange} 
-                        placeholder="MM/YY" 
-                        required 
-                        style={{ padding: '12px', border: '1px solid var(--border-color)', borderRadius: '6px', fontSize: '15px', width: '100%', boxSizing: 'border-box', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)' }} 
-                      />
-                      <input 
-                        type="text" 
-                        name="cvc" 
-                        value={mockCard.cvc} 
-                        onChange={handleMockCardChange} 
-                        placeholder="CVC" 
-                        required 
-                        style={{ padding: '12px', border: '1px solid var(--border-color)', borderRadius: '6px', fontSize: '15px', width: '100%', boxSizing: 'border-box', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)' }} 
-                      />
-                      <input 
-                        type="text" 
-                        name="zip" 
-                        value={mockCard.zip} 
-                        onChange={handleMockCardChange} 
-                        placeholder="ZIP Code" 
-                        required 
-                        style={{ padding: '12px', border: '1px solid var(--border-color)', borderRadius: '6px', fontSize: '15px', width: '100%', boxSizing: 'border-box', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)' }} 
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div style={{ padding: '12px', border: '1px solid #cbd5e1', borderRadius: '6px', backgroundColor: 'var(--bg-card)', boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)' }}>
-                    <CardElement 
-                      onChange={handleCardChange}
-                      options={{
-                        style: {
-                          base: {
-                            fontSize: '16px',
-                            color: 'var(--text-primary)',
-                            fontFamily: "'Inter', sans-serif",
-                            '::placeholder': { color: '#94a3b8' }
-                          },
-                          invalid: { color: '#ef4444' }
-                        }
-                      }}
-                    />
-                  </div>
-                )}
-                {stripeError && <div style={{ color: useMockStripe ? '#3b82f6' : '#ef4444', marginTop: '10px', fontSize: '13px', fontWeight: '500' }}>{stripeError}</div>}
+                <h4 style={{ marginBottom: '15px', color: 'var(--text-primary)', fontSize: '15px', fontWeight: '600' }}>Clover Payment Token</h4>
+                <p style={{ margin: '0 0 15px 0', color: 'var(--text-secondary)', fontSize: '13px' }}>
+                  Enter the Clover payment token obtained from your Clover terminal or device.
+                </p>
+                <input 
+                  type="text" 
+                  value={cloverToken} 
+                  onChange={handleCloverTokenChange} 
+                  placeholder="Clover Card Token"
+                  required 
+                  style={{ padding: '12px', border: '1px solid var(--border-color)', borderRadius: '6px', fontSize: '15px', width: '100%', boxSizing: 'border-box', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)' }} 
+                />
+                {cloverError && <div style={{ color: '#ef4444', marginTop: '10px', fontSize: '13px', fontWeight: '500' }}>{cloverError}</div>}
               </div>
             )}
           </form>
@@ -500,7 +364,7 @@ const CheckoutContent = () => {
               transition: 'all 0.2s'
             }}
           >
-            {loading ? 'Processing...' : (paymentMethod === 'Credit Card' ? 'Pay Securely with Stripe' : 'Place B2B Order')}
+            {loading ? 'Processing...' : (paymentMethod === 'Clover' ? 'Pay with Clover' : 'Confirm COD Order')}
           </button>
 
           {isSubmitDisabled && (
@@ -512,13 +376,11 @@ const CheckoutContent = () => {
               {!shippingAddress.city && <div>• City is required</div>}
               {!shippingAddress.postalCode && <div>• Postal Code is required</div>}
               {!shippingAddress.country && <div>• Country is required</div>}
-              {isFormValid && paymentMethod === 'Credit Card' && !isCardComplete && <div>• Card details must be fully filled out</div>}
-              {isFormValid && paymentMethod === 'Credit Card' && isCardComplete && !clientSecret && <div>• Initializing secure Stripe session...</div>}
+              {isFormValid && paymentMethod === 'Clover' && !cloverToken && <div>• Clover payment token is required</div>}
             </div>
           )}
-          
+          </div>
         </div>
-      </div>
 
       {showSuccessModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
@@ -583,11 +445,7 @@ const CheckoutContent = () => {
 };
 
 const Checkout = () => {
-  return (
-    <Elements stripe={stripePromise}>
-      <CheckoutContent />
-    </Elements>
-  );
+  return <CheckoutContent />;
 };
 
 export default Checkout;

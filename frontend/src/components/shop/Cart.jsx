@@ -34,6 +34,8 @@ const Cart = () => {
     return tiers.find(t => t.minQty > item.qty) || null;
   };
 
+  const isRetailer = user?.role === 'retailer';
+
   const checkoutHandler = () => {
     if (user?.role === 'admin') {
       showAlert('Admin Account', 'Admin accounts cannot place orders. Please use a customer account.');
@@ -103,7 +105,7 @@ const Cart = () => {
                             <Tag size={10} /> {disc}% BULK DISCOUNT APPLIED
                           </div>
                         )}
-                        {nextTier && (
+                        {isRetailer && nextTier && (
                           <div style={{
                             marginTop: '5px', fontSize: '11px', color: '#f59e0b', fontWeight: '600'
                           }}>

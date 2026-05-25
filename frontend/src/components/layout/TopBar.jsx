@@ -1,14 +1,21 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Phone, User, Info, FileText, Activity } from 'lucide-react';
+import { Phone, User, Info, FileText, Activity, ShieldCheck } from 'lucide-react';
+import { AuthContext } from '../../context/AuthContext';
 import './Header.css';
 
 const TopBar = () => {
+  const { user } = useContext(AuthContext);
+  const isAdmin = user?.role === 'admin';
+  const accountPath = isAdmin ? '/admin' : '/dashboard';
+  const accountLabel = isAdmin ? 'Admin Panel' : 'My Account';
+  const AccountIcon = isAdmin ? ShieldCheck : User;
+
   return (
     <div className="top-bar">
       <div className="container top-bar-content">
         <div className="top-bar-left">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', whiteSpace: 'nowrap' }}>
             <a href="https://wa.me/14169197565" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'inherit', textDecoration: 'none' }}>
               <Phone size={13} /> +1 (416) 919-7565
             </a>
@@ -21,7 +28,9 @@ const TopBar = () => {
           <Link to="/support"><Info size={14} /> Support</Link>
           <Link to="/quick-order">Quick Order</Link>
           <Link to="/dashboard/marketing">Marketing Material</Link>
-          <Link to="/dashboard"><User size={14} /> My Account</Link>
+          <Link to={accountPath} className={isAdmin ? 'top-bar-admin-link' : ''}>
+            <AccountIcon size={14} /> {accountLabel}
+          </Link>
         </div>
       </div>
     </div>
