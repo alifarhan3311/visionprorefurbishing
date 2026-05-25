@@ -417,62 +417,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* NEW SECTION 2: B2B Dealer Pricing Tiers */}
-      <section className="pricing-tiers-section">
-        <div className="container">
-          <div className="centered-header">
-            <span className="premium-badge-glow">B2B Tiers</span>
-            <h2>Volume Pricing Tiers</h2>
-            <p>Unlock custom margins as your order volume scales. Register to view your real-time catalog pricing.</p>
-          </div>
-
-          <div className="tiers-grid">
-            <div className="tier-card-premium">
-              <div className="tier-header-wrap">
-                <span className="tier-badge">Level 1</span>
-                <h3>Bronze Member</h3>
-              </div>
-              <div className="tier-pricing-discount">Standard B2B Rates</div>
-              <ul className="tier-features">
-                <li>Access to full parts ledger</li>
-                <li>Standard 12-Month warranty</li>
-                <li>No monthly minimum volume</li>
-                <li>Same-day dispatch option</li>
-              </ul>
-            </div>
-            
-            <div className="tier-card-premium featured-tier">
-              <div className="featured-ribbon">Most Popular</div>
-              <div className="tier-header-wrap">
-                <span className="tier-badge-gold">Level 2</span>
-                <h3>Silver Dealer</h3>
-              </div>
-              <div className="tier-pricing-discount">10% OFF base retail</div>
-              <ul className="tier-features">
-                <li>Requires $1,000 monthly volume</li>
-                <li>Priority support queue</li>
-                <li>Extended 14-day return window</li>
-                <li>Free shipping on orders over $500</li>
-              </ul>
-            </div>
-
-            <div className="tier-card-premium">
-              <div className="tier-header-wrap">
-                <span className="tier-badge">Level 3</span>
-                <h3>Gold Partner</h3>
-              </div>
-              <div className="tier-pricing-discount">15% - 20% OFF base retail</div>
-              <ul className="tier-features">
-                <li>Requires $3,000 monthly volume</li>
-                <li>Dedicated Account rep</li>
-                <li>Custom parts pre-ordering</li>
-                <li>Free priority shipping on all orders</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
+  
       {/* NEW SECTION 3: Appointment Booking Form */}
       <section className="homepage-booking-section" id="book-repair">
         <div className="container">

@@ -33,7 +33,7 @@ const Contact = () => {
             <div className="info-card-icon"><Phone size={20} /></div>
             <div className="info-card-body">
               <h3>Call / WhatsApp</h3>
-              <a href="https://wa.me/14169197565" target="_blank" rel="noreferrer">+1 (416) 919-7565</a>
+              <a href="https://wa.me/14169197565" target="_blank" rel="noreferrer">+1 (647) 261-5077</a>
             </div>
           </div>
 

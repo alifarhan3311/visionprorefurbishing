@@ -17,7 +17,7 @@ const TopBar = () => {
         <div className="top-bar-left">
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px', whiteSpace: 'nowrap' }}>
             <a href="https://wa.me/14169197565" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'inherit', textDecoration: 'none' }}>
-              <Phone size={13} /> +1 (416) 919-7565
+              <Phone size={13} /> +1 (647) 261-5077
             </a>
             <span>Introducing the Genuine Apple Parts Program!</span>
           </div>
