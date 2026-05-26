@@ -87,10 +87,98 @@ const authLimiter = rateLimit({
 });
 app.use('/api/v1/auth', authLimiter);
 
-// Database Connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB Connected Successfully'))
-  .catch(err => console.error('MongoDB Connection Error:', err));
+// ==========================================
+// 1. Global Process Safety Catchers
+// ==========================================
+process.on('uncaughtException', (err) => {
+  console.error('🔥 UNCAUGHT EXCEPTION! Shutting down gracefully...');
+  console.error(err.name, err.message, err.stack);
+  if (mongoose.connection.readyState === 1) {
+    mongoose.connection.close(() => process.exit(1));
+  } else {
+    process.exit(1);
+  }
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('🔥 UNHANDLED REJECTION! Shutting down gracefully...');
+  console.error(err);
+  if (mongoose.connection.readyState === 1) {
+    mongoose.connection.close(() => process.exit(1));
+  } else {
+    process.exit(1);
+  }
+});
+
+// ==========================================
+// 2. Database Connection & Options
+// ==========================================
+const dbOptions = {
+  maxPoolSize: 15,            // Raise pool size to accommodate parallel test requests
+  serverSelectionTimeoutMS: 5000, // Timeout fast (5s instead of 30s) if Atlas is down
+  socketTimeoutMS: 45000,     // Close idle sockets after 45 seconds
+  heartbeatFrequencyMS: 2000, // Heartbeat every 2s to detect and repair drops quickly
+};
+
+mongoose.connect(process.env.MONGO_URI, dbOptions)
+  .then(() => console.log('🚀 Initial MongoDB Connection Successful'))
+  .catch(err => console.error('❌ MongoDB Initial Connection Error:', err));
+
+// ==========================================
+// 3. Mongoose Lifecycle Event Handlers
+// ==========================================
+mongoose.connection.on('connected', () => {
+  console.log('💚 Mongoose connection successfully established.');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('❤️ Mongoose connection error event:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.warn('💛 Mongoose connection disconnected! Attempting automatic reconnection...');
+});
+
+mongoose.connection.on('reconnected', () => {
+  console.log('💚 Mongoose connection successfully reestablished.');
+});
+
+// ==========================================
+// 4. Graceful Shutdown & Cleanup Hooks
+// ==========================================
+const gracefulShutdown = async (msg, callback) => {
+  try {
+    if (mongoose.connection.readyState === 1) {
+      await mongoose.connection.close();
+      console.log(`🔌 Mongoose connection closed cleanly via: ${msg}`);
+    }
+    callback();
+  } catch (err) {
+    console.error(`❌ Error closing Mongoose connection via ${msg}:`, err);
+    callback();
+  }
+};
+
+// Handle Nodemon restarts (SIGUSR2)
+process.once('SIGUSR2', () => {
+  gracefulShutdown('Nodemon restart', () => {
+    process.kill(process.pid, 'SIGUSR2');
+  });
+});
+
+// Handle standard exit (Ctrl+C / SIGINT)
+process.on('SIGINT', () => {
+  gracefulShutdown('App termination (SIGINT)', () => {
+    process.exit(0);
+  });
+});
+
+// Handle Docker/Platform termination (SIGTERM)
+process.on('SIGTERM', () => {
+  gracefulShutdown('App termination (SIGTERM)', () => {
+    process.exit(0);
+  });
+});
 
 // Mount Routes
 app.use('/api/v1/categories', categoryRoutes);
