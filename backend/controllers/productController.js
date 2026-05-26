@@ -174,6 +174,48 @@ exports.getProducts = async (req, res) => {
   }
 };
 
+// @desc    Get single product by ID
+// @route   GET /api/v1/products/:id
+// @access  Public
+exports.getProductById = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id).populate('category', 'name slug');
+
+    if (!product) {
+      return res.status(404).json({ success: false, error: 'Product not found' });
+    }
+
+    // Apply B2B Tier Pricing logic similar to getProducts
+    let finalPrice = product.baseRetailPrice;
+
+    // If authenticated user is a retailer and an explicit retailerPrice is set, use it
+    const userRole = req.user?.role || 'user';
+    if (userRole === 'retailer' && product.retailerPrice !== undefined && product.retailerPrice !== null) {
+      finalPrice = Number(product.retailerPrice);
+    } else {
+      // Fallback to tier-based discounts for other users
+      const userTier = req.user?.tier || 'Tier 1';
+      if (userTier === 'Tier 4') {
+        finalPrice = finalPrice * 0.80; // 20% off
+      } else if (userTier === 'Tier 3') {
+        finalPrice = finalPrice * 0.85; // 15% off
+      } else if (userTier === 'Tier 2') {
+        finalPrice = finalPrice * 0.90; // 10% off
+      }
+    }
+
+    const productData = {
+      ...product._doc,
+      b2bPrice: Number(finalPrice).toFixed(2),
+      retailPrice: Number(product.baseRetailPrice).toFixed(2)
+    };
+
+    res.status(200).json({ success: true, data: productData });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Server Error fetching product' });
+  }
+};
+
 // @desc    Validate multiple SKUs
 // @route   POST /api/v1/products/validate-skus
 // @access  Public
