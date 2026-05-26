@@ -37,11 +37,10 @@ const productSchema = new mongoose.Schema({
     bulkTierPrice: { type: Number }
   },
 
-  // 3. For Standard Parts
-  partDetails: {
-    qualityType: { type: String },
-    warrantyPeriod: { type: String }
-  },
+   // 3. For Standard Parts
+   partDetails: {
+     qualityType: { type: String }
+   },
 
   // Warranty & Compatibility (all product types)
   warrantyPeriod: { type: String, default: '' },

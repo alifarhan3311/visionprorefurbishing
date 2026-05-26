@@ -26,21 +26,20 @@ const ProductDetails = () => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [id]);
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const { data } = await api.get(`/products`);
-        // Mock finding the specific product since we don't have a single GET yet
-        const found = data.data.find(p => p._id === id);
-        setProduct(found);
-      } catch (error) {
-        console.error('Error fetching product:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProduct();
-  }, [id]);
+    useEffect(() => {
+      const fetchProduct = async () => {
+        try {
+          const { data } = await api.get(`/products/${id}`);
+          // Assuming the response is { data: product }
+          setProduct(data.data);
+        } catch (error) {
+          console.error('Error fetching product:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchProduct();
+    }, [id]);
 
   if (loading) return <div className="product-details-loading">Loading Premium Catalog...</div>;
   if (!product) return <div className="product-details-error">Product not found</div>;
@@ -126,6 +125,14 @@ const ProductDetails = () => {
             </div>
             <h1 className="product-title">{product.name}</h1>
             <div className="sku-label">SKU: {product.sku}</div>
+
+            {product.features && product.features.length > 0 && (
+              <ul className="product-features-list">
+                {product.features.map((feature, idx) => (
+                  <li key={idx}>{feature}</li>
+                ))}
+              </ul>
+            )}
 
             {/* Price display: Retailers see only retailer price; regular users see only base retail price. */}
             {user?.role === 'retailer' ? (

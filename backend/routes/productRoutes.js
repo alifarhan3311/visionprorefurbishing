@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createProduct, getProducts, validateSKUs, updateProduct, deleteProduct } = require('../controllers/productController');
+const { createProduct, getProducts, getProductById, validateSKUs, updateProduct, deleteProduct } = require('../controllers/productController');
 const { protect, admin, optional } = require('../middleware/authMiddleware');
 const { uploadProductImages } = require('../middleware/uploadMiddleware');
 
@@ -14,6 +14,7 @@ const productImageFields = [
 
 // Public Routes (optional auth to allow role-aware pricing)
 router.get('/', optional, getProducts);
+router.get('/:id', optional, getProductById);
 router.post('/validate-skus', validateSKUs);
 
 // Admin Routes
