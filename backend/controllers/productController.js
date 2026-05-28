@@ -123,17 +123,30 @@ exports.getProducts = async (req, res) => {
     const query = { status: 'in_stock' };
     
     if (category) {
-      // Check if category is an ObjectId or a slug
+      let targetCatId;
       if (category.match(/^[0-9a-fA-F]{24}$/)) {
-        query.category = category;
+        targetCatId = category;
       } else {
         const cat = await require('../models/Category').findOne({ slug: category });
         if (cat) {
-          query.category = cat._id;
+          targetCatId = cat._id;
         } else {
           return res.status(200).json({ success: true, count: 0, data: [] });
         }
       }
+
+      const allCategories = await require('../models/Category').find({}, '_id parentCategory');
+      const getDescendantIds = (parentId) => {
+        const children = allCategories.filter(c => c.parentCategory && c.parentCategory.toString() === parentId.toString());
+        let ids = children.map(c => c._id);
+        children.forEach(c => {
+          ids = [...ids, ...getDescendantIds(c._id)];
+        });
+        return ids;
+      };
+      
+      const categoryIds = [targetCatId, ...getDescendantIds(targetCatId)];
+      query.category = { $in: categoryIds };
     }
     
     if (type) query.productType = type;
@@ -240,6 +253,46 @@ exports.validateSKUs = async (req, res) => {
     res.status(200).json({ success: true, data: resultMap });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
+  }
+};
+
+// @desc    Get 10 recent Samsung products
+// @route   GET /api/v1/products/recent/samsung
+// @access  Public
+exports.getRecentSamsung = async (req, res) => {
+  try {
+    const Category = require('../models/Category');
+    const samsungCat = await Category.findOne({ name: /Samsung/i });
+    if (!samsungCat) {
+      return res.status(200).json({ success: true, data: [] });
+    }
+    const products = await Product.find({ category: samsungCat._id })
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .populate('category', 'name slug');
+    res.status(200).json({ success: true, count: products.length, data: products });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Server Error fetching recent Samsung products' });
+  }
+};
+
+// @desc    Get 10 recent iPhone products
+// @route   GET /api/v1/products/recent/iphone
+// @access  Public
+exports.getRecentIphone = async (req, res) => {
+  try {
+    const Category = require('../models/Category');
+    const iphoneCat = await Category.findOne({ name: /Apple|iPhone/i });
+    if (!iphoneCat) {
+      return res.status(200).json({ success: true, data: [] });
+    }
+    const products = await Product.find({ category: iphoneCat._id })
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .populate('category', 'name slug');
+    res.status(200).json({ success: true, count: products.length, data: products });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Server Error fetching recent iPhone products' });
   }
 };
 

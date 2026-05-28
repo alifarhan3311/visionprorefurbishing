@@ -316,7 +316,7 @@ const ProductDetails = () => {
         {/* Technical Specs Tab Area */}
         <div className="product-tabs">
           <div className="tab-headers">
-            <div className={`tab-item ${activeTab === 'specs' ? 'active' : ''}`} onClick={() => setActiveTab('specs')}>Specifications</div>
+            
             <div className={`tab-item ${activeTab === 'warranty' ? 'active' : ''}`} onClick={() => setActiveTab('warranty')}>Warranty Info</div>
             <div className={`tab-item ${activeTab === 'compatibility' ? 'active' : ''}`} onClick={() => setActiveTab('compatibility')}>Compatible Models</div>
           </div>
@@ -354,13 +354,9 @@ const ProductDetails = () => {
             
             {activeTab === 'warranty' && (
               <div className="tab-text-content">
-                <h3>Standard Warranty Policy</h3>
-                <p>This product comes with a <strong>{product.warrantyPeriod || product.partDetails?.warrantyPeriod || 'Lifetime'} Warranty</strong> covering manufacturing defects and functional failures under normal use.</p>
-                <ul style={{ marginTop: '15px', paddingLeft: '20px', lineHeight: '1.6' }}>
-                  <li>All parts must be tested prior to installation.</li>
-                  <li>Physical damage, water damage, or modified parts are not covered.</li>
-                  <li>Hassle-free RMA process for our B2B partners.</li>
-                </ul>
+                
+                <p className='font-bold'>{product?.warrantyPeriod }</p>
+                
               </div>
             )}
 

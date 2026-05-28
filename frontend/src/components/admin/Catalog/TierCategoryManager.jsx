@@ -78,7 +78,7 @@ const TierCategoryManager = ({ tierLevel }) => {
     setNavIconUrl(category.navIconUrl || '');
     setPromoBannerUrl(category.promoBannerUrl || '');
 
-    if (parseInt(tierLevel) === 4) {
+    if (parseInt(tierLevel) === 4 || parseInt(tierLevel) === 3) {
       fetchCategoryProducts(category._id);
       const topProds = category.topProducts || [];
       setSelectedTopProducts(topProds.map(id => typeof id === 'object' && id ? id._id : id));
@@ -147,7 +147,7 @@ const TierCategoryManager = ({ tierLevel }) => {
       formData.append('promoBannerUrl', promoBannerUrl);
       if (navIconFile) formData.append('icon', navIconFile);
       if (promoBannerFile) formData.append('banner', promoBannerFile);
-      if (tierNumber === 4) {
+      if (tierNumber === 4 || tierNumber === 3) {
         formData.append('topProducts', JSON.stringify(selectedTopProducts));
       }
 
@@ -385,7 +385,7 @@ const TierCategoryManager = ({ tierLevel }) => {
                   <input type="text" value={slug} onChange={e => setSlug(e.target.value)} required style={{ marginTop: '12px' }} />
                 </div>
 
-                {parseInt(tierLevel) === 4 && (
+                {(parseInt(tierLevel) === 4 || parseInt(tierLevel) === 3) && (
                   <div className="inspector-section">
                     <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span>Featured Top Products (Max 10)</span>

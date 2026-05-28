@@ -41,6 +41,7 @@ import PolicyPage from './components/shop/PolicyPage';
 import Support from './components/shop/Support';
 import Preloader from './components/common/Preloader';
 import Home from './components/home/Home';
+import Products from './components/shop/Products';
 import './index.css';
 
 // Scroll to top on every route change — placed outside App so it's stable
@@ -87,6 +88,13 @@ function App() {
       <Routes>
       {/* Public Routes */}
       <Route path="/" element={<><Home /><Footer /></>} />
+      <Route path="/products" element={
+        <div className="app-container">
+          <Header />
+          <Products />
+          <Footer />
+        </div>
+      } />
       <Route path="/category/:id" element={<><Home /><Footer /></>} />
       <Route path="/product/:id" element={<><ProductDetails /><Footer /></>} />
       <Route path="/contact" element={<Contact />} />

@@ -20,6 +20,8 @@ const Home = () => {
   const { addToCart } = useContext(CartContext);
   const { user } = useContext(AuthContext);
   const { id: categoryId } = useParams();
+  const [recentSamsung, setRecentSamsung] = useState([]);
+  const [recentIphone, setRecentIphone] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -153,6 +155,34 @@ const Home = () => {
     fetchBlogs();
   }, []);
 
+  useEffect(() => {
+    const fetchRecentSamsung = async () => {
+      try {
+        const { data } = await api.get('/products/recent/samsung');
+        if (data.success) {
+          setRecentSamsung(data.data);
+        }
+      } catch (err) {
+        console.error('Error fetching recent Samsung products', err);
+      }
+    };
+    fetchRecentSamsung();
+  }, []);
+
+  useEffect(() => {
+    const fetchRecentIphone = async () => {
+      try {
+        const { data } = await api.get('/products/recent/iphone');
+        if (data.success) {
+          setRecentIphone(data.data);
+        }
+      } catch (err) {
+        console.error('Error fetching recent iPhone products', err);
+      }
+    };
+    fetchRecentIphone();
+  }, []);
+
   // Auto-play slideshow timer
   useEffect(() => {
     if (slides.length <= 1) return;
@@ -279,7 +309,7 @@ const Home = () => {
             <div className="hero-slide-content" style={{ opacity: 1, transform: 'translateY(0)' }}>
               <h1 className="hero-title shimmer-text">Premium B2B Parts & Devices</h1>
               <p className="hero-subtitle">Wholesale pricing on Apple, Samsung, and more. Register for a B2B account to unlock tier-based bulk discounts.</p>
-              <button className="hero-btn" onClick={() => navigate('/shop')}>
+              <button className="hero-btn" onClick={() => navigate('/products')}>
                 Shop The Catalog <ArrowRight size={18} style={{ verticalAlign: 'middle', marginLeft: '8px' }} />
               </button>
             </div>
@@ -331,7 +361,7 @@ const Home = () => {
           </div>
         ) : (
           <div className="product-grid">
-            {filteredProducts.map((product, index) => (
+            {filteredProducts.slice(0, 8).map((product, index) => (
               <div
                 className="product-card reveal"
                 key={product._id}
@@ -382,6 +412,115 @@ const Home = () => {
           </div>
         )}
       </div>
+
+      {recentSamsung.length > 0 && (
+        <div className="container" style={{ padding: '0 20px', marginTop: '40px' }}>
+          <h2 className="section-title" style={{ borderBottom: 'none', margin: '20px 0' }}>Recent Samsung Products</h2>
+          <div className="product-grid">
+            {recentSamsung.map((product, index) => (
+              <div
+                className="product-card reveal"
+                key={product._id}
+                style={{ transitionDelay: `${index * 100}ms` }}
+              >
+                {product.badge && (
+                  <div className={`product-badge ${product.badge.toLowerCase().replace(' ', '-')}`}>
+                    {product.badge}
+                  </div>
+                )}
+                {(product.stockQuantity === 0) && (
+                  <div className="card-out-of-stock-ribbon">Out of Stock</div>
+                )}
+                <Link to={`/product/${product._id}`} className="product-image-container">
+                  {product.imageUrl ? (
+                    <img src={getImageUrl(product.imageUrl)} alt={product.name} className="product-image" style={{ opacity: product.stockQuantity === 0 ? 0.45 : 1 }} />
+                  ) : (
+                    getIcon(product.productType)
+                  )}
+                </Link>
+                <div className="product-category">{product.productType}</div>
+                <Link to={`/product/${product._id}`} className="product-name">{product.name}</Link>
+                <div className="product-price">${product.retailPrice}</div>
+
+                {user?.role === 'admin' ? (
+                  <button className="add-to-cart-btn" disabled style={{ opacity: 0.45, cursor: 'not-allowed' }}>
+                    Admin View Only
+                  </button>
+                ) : product.stockQuantity === 0 ? (
+                  <button className="add-to-cart-btn out-of-stock-btn" disabled>
+                    Out of Stock
+                  </button>
+                ) : (
+                  <button
+                    className="add-to-cart-btn"
+                    onClick={() => {
+                      addToCart(product, 1);
+                      navigate('/cart');
+                    }}
+                  >
+                    <ShoppingCart size={16} /> Add to Cart
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {recentIphone.length > 0 && (
+        <div className="container" style={{ padding: '0 20px', marginTop: '40px' }}>
+          <h2 className="section-title" style={{ borderBottom: 'none', margin: '20px 0' }}>Recent iPhone Products</h2>
+          <div className="product-grid">
+            {recentIphone.map((product, index) => (
+              <div
+                className="product-card reveal"
+                key={product._id}
+                style={{ transitionDelay: `${index * 100}ms` }}
+              >
+                {product.badge && (
+                  <div className={`product-badge ${product.badge.toLowerCase().replace(' ', '-')}`}>
+                    {product.badge}
+                  </div>
+                )}
+                {(product.stockQuantity === 0) && (
+                  <div className="card-out-of-stock-ribbon">Out of Stock</div>
+                )}
+                <Link to={`/product/${product._id}`} className="product-image-container">
+                  {product.imageUrl ? (
+                    <img src={getImageUrl(product.imageUrl)} alt={product.name} className="product-image" style={{ opacity: product.stockQuantity === 0 ? 0.45 : 1 }} />
+                  ) : (
+                    getIcon(product.productType)
+                  )}
+                </Link>
+                <div className="product-category">{product.productType}</div>
+                <Link to={`/product/${product._id}`} className="product-name">{product.name}</Link>
+                <div className="product-price">${product.retailPrice}</div>
+
+                {user?.role === 'admin' ? (
+                  <button className="add-to-cart-btn" disabled style={{ opacity: 0.45, cursor: 'not-allowed' }}>
+                    Admin View Only
+                  </button>
+                ) : product.stockQuantity === 0 ? (
+                  <button className="add-to-cart-btn out-of-stock-btn" disabled>
+                    Out of Stock
+                  </button>
+                ) : (
+                  <button
+                    className="add-to-cart-btn"
+                    onClick={() => {
+                      addToCart(product, 1);
+                      navigate('/cart');
+                    }}
+                  >
+                    <ShoppingCart size={16} /> Add to Cart
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
 
       {/* NEW SECTION 1: B2B Advantage / Benefits cards */}
       <section className="b2b-advantages-section">

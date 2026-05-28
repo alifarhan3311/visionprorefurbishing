@@ -171,6 +171,15 @@ const MegaMenu = ({ isOpen, onClose }) => {
           {/* Categories label */}
           <div className="mobile-section-label mobile-only">Categories</div>
           <ul className="mega-menu-list">
+            <li className="mega-menu-item">
+              <Link 
+                to="/products" 
+                onClick={onClose}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: 'inherit' }}
+              >
+                <span>All Products</span>
+              </Link>
+            </li>
             {categories.map(category => (
             <li 
               key={category._id}
