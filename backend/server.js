@@ -26,7 +26,21 @@ const PORT = process.env.PORT || 5000;
 
 
 
-app.set('trust proxy', true);
+// Configure `trust proxy` safely. Do NOT set to boolean `true` (too permissive)
+// for express-rate-limit. Use an explicit value via env or leave unset.
+// Acceptable values: a number (hops), a string (e.g., 'loopback'), or 'false'.
+const rawTrustProxy = process.env.TRUST_PROXY;
+if (rawTrustProxy !== undefined) {
+  let tpValue = rawTrustProxy;
+  if (rawTrustProxy === 'true') tpValue = 1; // treat legacy 'true' as 1 hop
+  if (rawTrustProxy === 'false') tpValue = false;
+  if (!isNaN(Number(rawTrustProxy))) tpValue = Number(rawTrustProxy);
+  app.set('trust proxy', tpValue);
+  console.log('⚙️  Express trust proxy set to:', tpValue);
+} else {
+  // Default: do not enable permissive proxy trust
+  console.log('⚙️  Express trust proxy not explicitly set (recommended for dev).');
+}
 // Security Middlewares (OWASP Top 10)
 
 // 1. Set security HTTP headers

@@ -334,91 +334,15 @@ const Home = () => {
       </section>
 
       {/* Main Content */}
-      <div className="container" style={{ padding: '0 20px' }}>
-
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
-          <h2 className="section-title" style={{ borderBottom: 'none', margin: '50px 0 20px 0' }}>Latest Inventory</h2>
-          
-          {/* Live Search Input Bar */}
-          <div className="search-bar-premium">
-            <Search size={18} className="search-icon-live" />
-            <input 
-              type="text" 
-              placeholder="Search catalog live..." 
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </div>
-
-        {loading ? (
-          <p style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>Loading products...</p>
-        ) : filteredProducts.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px', backgroundColor: 'var(--bg-elevated)', borderRadius: '8px', border: '1px dashed var(--border-color)' }}>
-            <Box size={48} style={{ color: 'var(--border-color)', marginBottom: '15px' }} />
-            <h3 style={{ color: 'var(--text-primary)' }}>No Products Found</h3>
-            <p style={{ color: 'var(--text-secondary)' }}>Try refining your search terms.</p>
-          </div>
-        ) : (
-          <div className="product-grid">
-            {filteredProducts.slice(0, 8).map((product, index) => (
-              <div
-                className="product-card reveal"
-                key={product._id}
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
-                {product.badge && (
-                  <div className={`product-badge ${product.badge.toLowerCase().replace(' ', '-')}`}>
-                    {product.badge}
-                  </div>
-                )}
-                {/* Out of stock overlay on image */}
-                {(product.stockQuantity === 0) && (
-                  <div className="card-out-of-stock-ribbon">Out of Stock</div>
-                )}
-                <Link to={`/product/${product._id}`} className="product-image-container">
-                  {product.imageUrl ? (
-                    <img src={getImageUrl(product.imageUrl)} alt={product.name} className="product-image" style={{ opacity: product.stockQuantity === 0 ? 0.45 : 1 }} />
-                  ) : (
-                    getIcon(product.productType)
-                  )}
-                </Link>
-                <div className="product-category">{product.productType}</div>
-                <Link to={`/product/${product._id}`} className="product-name">{product.name}</Link>
-                <div className="product-price">${product.retailPrice}</div>
-
-                {/* Button logic: admin → view only | out of stock → disabled | normal → add to cart */}
-                {user?.role === 'admin' ? (
-                  <button className="add-to-cart-btn" disabled style={{ opacity: 0.45, cursor: 'not-allowed' }}>
-                    Admin View Only
-                  </button>
-                ) : product.stockQuantity === 0 ? (
-                  <button className="add-to-cart-btn out-of-stock-btn" disabled>
-                    Out of Stock
-                  </button>
-                ) : (
-                  <button
-                    className="add-to-cart-btn"
-                    onClick={() => {
-                      addToCart(product, 1);
-                      navigate('/cart');
-                    }}
-                  >
-                    <ShoppingCart size={16} /> Add to Cart
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+   
 
       {recentSamsung.length > 0 && (
         <div className="container" style={{ padding: '0 20px', marginTop: '40px' }}>
           <h2 className="section-title" style={{ borderBottom: 'none', margin: '20px 0' }}>Recent Samsung Products</h2>
           <div className="product-grid">
             {recentSamsung.map((product, index) => (
-              <div
+              <Link
+                to={`/product/${product._id}`}
                 className="product-card reveal"
                 key={product._id}
                 style={{ transitionDelay: `${index * 100}ms` }}
@@ -431,29 +355,31 @@ const Home = () => {
                 {(product.stockQuantity === 0) && (
                   <div className="card-out-of-stock-ribbon">Out of Stock</div>
                 )}
-                <Link to={`/product/${product._id}`} className="product-image-container">
+                <div className="product-image-container">
                   {product.imageUrl ? (
                     <img src={getImageUrl(product.imageUrl)} alt={product.name} className="product-image" style={{ opacity: product.stockQuantity === 0 ? 0.45 : 1 }} />
                   ) : (
                     getIcon(product.productType)
                   )}
-                </Link>
+                </div>
                 <div className="product-category">{product.productType}</div>
-                <Link to={`/product/${product._id}`} className="product-name">{product.name}</Link>
+                <div className="product-name">{product.name}</div>
                 <div className="product-price">${product.retailPrice}</div>
 
                 {user?.role === 'admin' ? (
-                  <button className="add-to-cart-btn" disabled style={{ opacity: 0.45, cursor: 'not-allowed' }}>
+                  <button className="add-to-cart-btn" disabled style={{ opacity: 0.45, cursor: 'not-allowed' }} onClick={(e) => e.stopPropagation()}>
                     Admin View Only
                   </button>
                 ) : product.stockQuantity === 0 ? (
-                  <button className="add-to-cart-btn out-of-stock-btn" disabled>
+                  <button className="add-to-cart-btn out-of-stock-btn" disabled onClick={(e) => e.stopPropagation()}>
                     Out of Stock
                   </button>
                 ) : (
                   <button
                     className="add-to-cart-btn"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
                       addToCart(product, 1);
                       navigate('/cart');
                     }}
@@ -461,7 +387,7 @@ const Home = () => {
                     <ShoppingCart size={16} /> Add to Cart
                   </button>
                 )}
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -472,7 +398,8 @@ const Home = () => {
           <h2 className="section-title" style={{ borderBottom: 'none', margin: '20px 0' }}>Recent iPhone Products</h2>
           <div className="product-grid">
             {recentIphone.map((product, index) => (
-              <div
+              <Link
+                to={`/product/${product._id}`}
                 className="product-card reveal"
                 key={product._id}
                 style={{ transitionDelay: `${index * 100}ms` }}
@@ -485,29 +412,31 @@ const Home = () => {
                 {(product.stockQuantity === 0) && (
                   <div className="card-out-of-stock-ribbon">Out of Stock</div>
                 )}
-                <Link to={`/product/${product._id}`} className="product-image-container">
+                <div className="product-image-container">
                   {product.imageUrl ? (
                     <img src={getImageUrl(product.imageUrl)} alt={product.name} className="product-image" style={{ opacity: product.stockQuantity === 0 ? 0.45 : 1 }} />
                   ) : (
                     getIcon(product.productType)
                   )}
-                </Link>
+                </div>
                 <div className="product-category">{product.productType}</div>
-                <Link to={`/product/${product._id}`} className="product-name">{product.name}</Link>
+                <div className="product-name">{product.name}</div>
                 <div className="product-price">${product.retailPrice}</div>
 
                 {user?.role === 'admin' ? (
-                  <button className="add-to-cart-btn" disabled style={{ opacity: 0.45, cursor: 'not-allowed' }}>
+                  <button className="add-to-cart-btn" disabled style={{ opacity: 0.45, cursor: 'not-allowed' }} onClick={(e) => e.stopPropagation()}>
                     Admin View Only
                   </button>
                 ) : product.stockQuantity === 0 ? (
-                  <button className="add-to-cart-btn out-of-stock-btn" disabled>
+                  <button className="add-to-cart-btn out-of-stock-btn" disabled onClick={(e) => e.stopPropagation()}>
                     Out of Stock
                   </button>
                 ) : (
                   <button
                     className="add-to-cart-btn"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
                       addToCart(product, 1);
                       navigate('/cart');
                     }}
@@ -515,7 +444,7 @@ const Home = () => {
                     <ShoppingCart size={16} /> Add to Cart
                   </button>
                 )}
-              </div>
+              </Link>
             ))}
           </div>
         </div>
