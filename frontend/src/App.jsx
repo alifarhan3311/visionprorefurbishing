@@ -95,7 +95,8 @@ function App() {
           <Footer />
         </div>
       } />
-      <Route path="/category/:id" element={<><Home /><Footer /></>} />
+      <Route path="/category/:slug" element={<><Home /><Footer /></>} />
+      <Route path="/category/*" element={<><Home /><Footer /></>} />
       <Route path="/product/:id" element={<><ProductDetails /><Footer /></>} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/blog" element={<Blog />} />

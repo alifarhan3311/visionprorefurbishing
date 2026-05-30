@@ -13,6 +13,8 @@ const productImageFields = [
 ];
 
 // Public Routes (optional auth to allow role-aware pricing)
+router.get('/recent/samsung', getRecentSamsung);
+router.get('/recent/iphone', getRecentIphone);
 router.get('/', optional, getProducts);
 router.get('/:id', optional, getProductById);
 router.post('/validate-skus', validateSKUs);

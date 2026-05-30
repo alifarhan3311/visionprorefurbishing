@@ -262,15 +262,28 @@ exports.validateSKUs = async (req, res) => {
 exports.getRecentSamsung = async (req, res) => {
   try {
     const Category = require('../models/Category');
-    const samsungCat = await Category.findOne({ name: /Samsung/i });
-    if (!samsungCat) {
+    // Find all Samsung-related categories (top-level and descendants)
+    const allCategories = await Category.find({}, '_id name parentCategory');
+    const samsungRoot = allCategories.find(c => /samsung/i.test(c.name) && !c.parentCategory);
+    if (!samsungRoot) {
       return res.status(200).json({ success: true, data: [] });
     }
-    const products = await Product.find({ category: samsungCat._id })
+    const getDescendantIds = (parentId) => {
+      const children = allCategories.filter(c => c.parentCategory && c.parentCategory.toString() === parentId.toString());
+      let ids = children.map(c => c._id);
+      children.forEach(c => { ids = [...ids, ...getDescendantIds(c._id)]; });
+      return ids;
+    };
+    const categoryIds = [samsungRoot._id, ...getDescendantIds(samsungRoot._id)];
+    const products = await Product.find({ category: { $in: categoryIds } })
       .sort({ createdAt: -1 })
       .limit(10)
       .populate('category', 'name slug');
-    res.status(200).json({ success: true, count: products.length, data: products });
+    const data = products.map(p => ({
+      ...p._doc,
+      retailPrice: Number(p.baseRetailPrice).toFixed(2)
+    }));
+    res.status(200).json({ success: true, count: data.length, data });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Server Error fetching recent Samsung products' });
   }
@@ -282,15 +295,27 @@ exports.getRecentSamsung = async (req, res) => {
 exports.getRecentIphone = async (req, res) => {
   try {
     const Category = require('../models/Category');
-    const iphoneCat = await Category.findOne({ name: /Apple|iPhone/i });
-    if (!iphoneCat) {
+    const allCategories = await Category.find({}, '_id name parentCategory');
+    const appleRoot = allCategories.find(c => /apple|iphone/i.test(c.name) && !c.parentCategory);
+    if (!appleRoot) {
       return res.status(200).json({ success: true, data: [] });
     }
-    const products = await Product.find({ category: iphoneCat._id })
+    const getDescendantIds = (parentId) => {
+      const children = allCategories.filter(c => c.parentCategory && c.parentCategory.toString() === parentId.toString());
+      let ids = children.map(c => c._id);
+      children.forEach(c => { ids = [...ids, ...getDescendantIds(c._id)]; });
+      return ids;
+    };
+    const categoryIds = [appleRoot._id, ...getDescendantIds(appleRoot._id)];
+    const products = await Product.find({ category: { $in: categoryIds } })
       .sort({ createdAt: -1 })
       .limit(10)
       .populate('category', 'name slug');
-    res.status(200).json({ success: true, count: products.length, data: products });
+    const data = products.map(p => ({
+      ...p._doc,
+      retailPrice: Number(p.baseRetailPrice).toFixed(2)
+    }));
+    res.status(200).json({ success: true, count: data.length, data });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Server Error fetching recent iPhone products' });
   }

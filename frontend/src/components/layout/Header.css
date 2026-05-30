@@ -263,6 +263,8 @@
   padding: 0;
   gap: 0;
   min-height: 450px;
+  max-height: 480px;
+  overflow: hidden;
 }
 
 /* --- Sidebar (Tier 2) --- */
@@ -273,6 +275,7 @@
   display: flex;
   flex-direction: column;
   padding: 20px 0;
+  overflow-y: auto;
 }
 
 .sidebar-item {
@@ -313,6 +316,7 @@
   flex-grow: 1;
   padding: 40px;
   background-color: var(--bg-card);
+  overflow-y: auto;
 }
 
 .dropdown-columns {
@@ -783,5 +787,192 @@
   }
 }
 
-/* Desktop quick links row (visible on larger screens, hidden on mobile) */
-/* Desktop quick links removed — quick links remain only in mobile drawer */
+/* --- Catalog Filter Panel (replaces promo image in mega menu right column) --- */
+.catalog-filter-panel {
+  width: 320px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.filter-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-secondary);
+  padding-bottom: 10px;
+  border-bottom: 1.5px solid var(--border-color);
+}
+
+.filter-clear-btn {
+  margin-left: auto;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.filter-clear-btn:hover {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: white;
+}
+
+.filter-panel-icon {
+  color: var(--primary-color);
+}
+
+.filter-search-form {
+  width: 100%;
+}
+
+.filter-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.filter-search-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+.filter-search-input {
+  width: 100%;
+  padding: 9px 12px 9px 32px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-search-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.filter-type-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filter-chip {
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+.filter-chip:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.filter-chip.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+.filter-results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: 260px;
+  padding-right: 2px;
+}
+
+.filter-results-list::-webkit-scrollbar {
+  width: 4px;
+}
+.filter-results-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.filter-results-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.filter-empty-msg {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 20px 0;
+  margin: 0;
+}
+
+/* Sidebar header label */
+.sidebar-header {
+  padding: 10px 25px 8px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 4px;
+}
+
+/* Main content header */
+.main-content-header {
+  margin-bottom: 24px;
+}
+
+.main-content-header h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+/* Banner card fallback */
+.banner-card {
+  text-align: center;
+  padding: 20px;
+}
+
+.banner-card h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.banner-card p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}

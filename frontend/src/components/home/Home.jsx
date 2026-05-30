@@ -19,7 +19,8 @@ const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { addToCart } = useContext(CartContext);
   const { user } = useContext(AuthContext);
-  const { id: categoryId } = useParams();
+  const { slug, '*': wildcard } = useParams();
+  const categoryId = slug || wildcard || null;
   const [recentSamsung, setRecentSamsung] = useState([]);
   const [recentIphone, setRecentIphone] = useState([]);
   const navigate = useNavigate();
@@ -313,9 +314,7 @@ const Home = () => {
                 Shop The Catalog <ArrowRight size={18} style={{ verticalAlign: 'middle', marginLeft: '8px' }} />
               </button>
             </div>
-            <div style={{ position: 'absolute', right: '-5%', top: '10%', opacity: 0.05, transform: 'rotate(15deg)', zIndex: 1 }}>
-              <Smartphone size={400} />
-            </div>
+
           </div>
         )}
 
@@ -334,122 +333,7 @@ const Home = () => {
       </section>
 
       {/* Main Content */}
-   
-
-      {recentSamsung.length > 0 && (
-        <div className="container" style={{ padding: '0 20px', marginTop: '40px' }}>
-          <h2 className="section-title" style={{ borderBottom: 'none', margin: '20px 0' }}>Recent Samsung Products</h2>
-          <div className="product-grid">
-            {recentSamsung.map((product, index) => (
-              <Link
-                to={`/product/${product._id}`}
-                className="product-card reveal"
-                key={product._id}
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
-                {product.badge && (
-                  <div className={`product-badge ${product.badge.toLowerCase().replace(' ', '-')}`}>
-                    {product.badge}
-                  </div>
-                )}
-                {(product.stockQuantity === 0) && (
-                  <div className="card-out-of-stock-ribbon">Out of Stock</div>
-                )}
-                <div className="product-image-container">
-                  {product.imageUrl ? (
-                    <img src={getImageUrl(product.imageUrl)} alt={product.name} className="product-image" style={{ opacity: product.stockQuantity === 0 ? 0.45 : 1 }} />
-                  ) : (
-                    getIcon(product.productType)
-                  )}
-                </div>
-                <div className="product-category">{product.productType}</div>
-                <div className="product-name">{product.name}</div>
-                <div className="product-price">${product.retailPrice}</div>
-
-                {user?.role === 'admin' ? (
-                  <button className="add-to-cart-btn" disabled style={{ opacity: 0.45, cursor: 'not-allowed' }} onClick={(e) => e.stopPropagation()}>
-                    Admin View Only
-                  </button>
-                ) : product.stockQuantity === 0 ? (
-                  <button className="add-to-cart-btn out-of-stock-btn" disabled onClick={(e) => e.stopPropagation()}>
-                    Out of Stock
-                  </button>
-                ) : (
-                  <button
-                    className="add-to-cart-btn"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      addToCart(product, 1);
-                      navigate('/cart');
-                    }}
-                  >
-                    <ShoppingCart size={16} /> Add to Cart
-                  </button>
-                )}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {recentIphone.length > 0 && (
-        <div className="container" style={{ padding: '0 20px', marginTop: '40px' }}>
-          <h2 className="section-title" style={{ borderBottom: 'none', margin: '20px 0' }}>Recent iPhone Products</h2>
-          <div className="product-grid">
-            {recentIphone.map((product, index) => (
-              <Link
-                to={`/product/${product._id}`}
-                className="product-card reveal"
-                key={product._id}
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
-                {product.badge && (
-                  <div className={`product-badge ${product.badge.toLowerCase().replace(' ', '-')}`}>
-                    {product.badge}
-                  </div>
-                )}
-                {(product.stockQuantity === 0) && (
-                  <div className="card-out-of-stock-ribbon">Out of Stock</div>
-                )}
-                <div className="product-image-container">
-                  {product.imageUrl ? (
-                    <img src={getImageUrl(product.imageUrl)} alt={product.name} className="product-image" style={{ opacity: product.stockQuantity === 0 ? 0.45 : 1 }} />
-                  ) : (
-                    getIcon(product.productType)
-                  )}
-                </div>
-                <div className="product-category">{product.productType}</div>
-                <div className="product-name">{product.name}</div>
-                <div className="product-price">${product.retailPrice}</div>
-
-                {user?.role === 'admin' ? (
-                  <button className="add-to-cart-btn" disabled style={{ opacity: 0.45, cursor: 'not-allowed' }} onClick={(e) => e.stopPropagation()}>
-                    Admin View Only
-                  </button>
-                ) : product.stockQuantity === 0 ? (
-                  <button className="add-to-cart-btn out-of-stock-btn" disabled onClick={(e) => e.stopPropagation()}>
-                    Out of Stock
-                  </button>
-                ) : (
-                  <button
-                    className="add-to-cart-btn"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      addToCart(product, 1);
-                      navigate('/cart');
-                    }}
-                  >
-                    <ShoppingCart size={16} /> Add to Cart
-                  </button>
-                )}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
+      
 
       {/* NEW SECTION 1: B2B Advantage / Benefits cards */}
       <section className="b2b-advantages-section">

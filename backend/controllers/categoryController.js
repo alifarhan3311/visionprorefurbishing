@@ -7,6 +7,19 @@ const parseBoolean = (value) => {
   return Boolean(value);
 };
 
+// Sanitize slugs: replace any character that breaks URL routing with a hyphen
+const sanitizeSlug = (slug) => {
+  if (!slug) return slug;
+  return slug
+    .toLowerCase()
+    .trim()
+    .replace(/[\/\\]/g, '-')       // forward/back slashes → hyphen
+    .replace(/[()[\]{}'",;:!@#$%^&*+=<>?|`~]/g, '') // remove special chars
+    .replace(/\s+/g, '-')          // spaces → hyphen
+    .replace(/-{2,}/g, '-')        // collapse multiple hyphens
+    .replace(/^-+|-+$/g, '');      // trim leading/trailing hyphens
+};
+
 const validateParentCategory = async (tierLevel, parentCategoryId) => {
   if (tierLevel <= 1) return null;
   if (!parentCategoryId) {
@@ -66,7 +79,7 @@ exports.createCategory = async (req, res) => {
 
     const category = await Category.create({
       name,
-      slug,
+      slug: sanitizeSlug(slug),
       tierLevel: tierNumber,
       isSubTier,
       parentCategory: tierNumber > 1 ? parentCategoryRecord._id : null,
@@ -138,7 +151,7 @@ exports.getMegaMenu = async (req, res) => {
 // @access  Public
 exports.getCategories = async (req, res) => {
   try {
-    const categories = await Category.find().populate('parentCategory', 'name');
+    const categories = await Category.find().select('name tierLevel parentCategory').lean();
     res.status(200).json({ success: true, data: categories });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
@@ -191,7 +204,7 @@ exports.updateCategory = async (req, res) => {
 
     category = await Category.findByIdAndUpdate(req.params.id, {
       name,
-      slug,
+      slug: sanitizeSlug(slug),
       tierLevel: tierNumber,
       isSubTier,
       parentCategory: tierNumber > 1 ? parentCategoryRecord._id : null,

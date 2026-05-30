@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { ChevronRight, X, User, ShieldCheck, Activity, FileText, Info, Zap, Megaphone } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ChevronRight, X, User, ShieldCheck, Activity, FileText, Info, Zap, Megaphone, Search, SlidersHorizontal } from 'lucide-react';
 import api, { getImageUrl } from '../../services/api';
 import { AuthContext } from '../../context/AuthContext';
 import './Header.css';
@@ -13,40 +13,102 @@ const MegaMenu = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(true);
   const timeoutRef = useRef(null);
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  // --- Catalog Filter State ---
+  const [filterSearch, setFilterSearch] = useState('');
+  const [filterType, setFilterType] = useState('all');
+  const [filterProducts, setFilterProducts] = useState([]);
+  const [filterLoading, setFilterLoading] = useState(false);
+  const [allProducts, setAllProducts] = useState([]);         // full catalog (fallback)
+  const [categoryProducts, setCategoryProducts] = useState(null); // products for selected category (null = not set)
+  const [selectedFilterCat, setSelectedFilterCat] = useState(null); // the tier3/tier4 cat that was clicked
+  const filterDebounceRef = useRef(null);
+
+  // Fetch full catalog once on mount (used when no category is selected)
+  useEffect(() => {
+    const fetchAllProducts = async () => {
+      setFilterLoading(true);
+      try {
+        const { data } = await api.get('/products');
+        if (data.success) {
+          setAllProducts(data.data || []);
+        }
+      } catch (err) {
+        console.error('Filter products fetch error', err);
+      } finally {
+        setFilterLoading(false);
+      }
+    };
+    fetchAllProducts();
+  }, []);
+
+  // When a tier3 category is selected, fetch its products
+  useEffect(() => {
+    if (!activeTier3) {
+      setCategoryProducts(null);
+      setSelectedFilterCat(null);
+      setFilterSearch('');
+      setFilterType('all');
+      return;
+    }
+    setSelectedFilterCat(activeTier3);
+    const fetchCategoryProducts = async () => {
+      setFilterLoading(true);
+      try {
+        const { data } = await api.get(`/products?category=${activeTier3.slug}`);
+        if (data.success) {
+          setCategoryProducts(data.data || []);
+        }
+      } catch (err) {
+        console.error('Category filter fetch error', err);
+        setCategoryProducts([]);
+      } finally {
+        setFilterLoading(false);
+      }
+    };
+    fetchCategoryProducts();
+    setFilterSearch('');
+    setFilterType('all');
+  }, [activeTier3]);
+
+  // The base pool: category products if a category is selected, otherwise full catalog
+  const basePool = categoryProducts !== null ? categoryProducts : allProducts;
+
+  // Apply search + type filter on top of the base pool
+  useEffect(() => {
+    clearTimeout(filterDebounceRef.current);
+    filterDebounceRef.current = setTimeout(() => {
+      let results = basePool;
+      if (filterType !== 'all') {
+        results = results.filter(p => (p.productType || '').toLowerCase() === filterType.toLowerCase());
+      }
+      if (filterSearch.trim()) {
+        const q = filterSearch.toLowerCase();
+        results = results.filter(p =>
+          (p.name || '').toLowerCase().includes(q) ||
+          (p.sku || '').toLowerCase().includes(q)
+        );
+      }
+      setFilterProducts(results.slice(0, 8));
+    }, 200);
+  }, [filterSearch, filterType, basePool]);
+
+  const productTypes = ['all', ...Array.from(new Set(basePool.map(p => p.productType).filter(Boolean)))];
+
+  const handleFilterSearchSubmit = (e) => {
+    e.preventDefault();
+    if (filterSearch.trim()) {
+      navigate(`/?search=${encodeURIComponent(filterSearch.trim())}`);
+      setFilterSearch('');
+      setActiveCategory(null);
+    }
+  };
   const isAdmin = user?.role === 'admin';
 
   const handleTier2Select = (item) => {
     setActiveTier2(item._id);
     setActiveTier3(item);
-  };
-
-  // Recursively gather top products from leaf descendants (Tier 4)
-  const getDescendantTopProducts = (cat) => {
-    if (!cat) return [];
-    let products = [];
-    
-    if (cat.topProducts && Array.isArray(cat.topProducts)) {
-      products = [...products, ...cat.topProducts];
-    }
-    
-    if (cat.children && Array.isArray(cat.children)) {
-      cat.children.forEach(child => {
-        products = [...products, ...getDescendantTopProducts(child)];
-      });
-    }
-    
-    return products;
-  };
-
-  // De-duplicate products by ID
-  const getUniqueProducts = (products) => {
-    const seen = new Set();
-    return products.filter(p => {
-      if (!p || !p._id) return false;
-      const duplicate = seen.has(p._id.toString());
-      seen.add(p._id.toString());
-      return !duplicate;
-    });
   };
 
   useEffect(() => {
@@ -93,11 +155,6 @@ const MegaMenu = ({ isOpen, onClose }) => {
   const currentTier1 = categories.find(c => c._id === activeCategory);
   const currentTier2Items = currentTier1?.children || [];
   const currentTier2Data = currentTier2Items.find(c => c._id === activeTier2);
-
-  const targetShowcaseCategory = activeTier3 || currentTier2Data;
-  const showcaseProducts = targetShowcaseCategory 
-    ? getUniqueProducts(getDescendantTopProducts(targetShowcaseCategory)).slice(0, 10)
-    : [];
 
   return (
     <>
@@ -255,7 +312,11 @@ const MegaMenu = ({ isOpen, onClose }) => {
                         <ul className="tier4-list">
                           {tier3.children?.map(tier4 => (
                             <li key={tier4._id}>
-                              <Link to={`/category/${tier4.slug}`} className="tier4-item">
+                              <Link
+                                to={`/category/${tier4.slug}`}
+                                className="tier4-item"
+                                onClick={(e) => { e.stopPropagation(); setActiveTier3(tier4); }}
+                              >
                                 {tier4.name}
                               </Link>
                             </li>
@@ -272,66 +333,99 @@ const MegaMenu = ({ isOpen, onClose }) => {
               )}
             </div>
             
-            {/* Showcase / Promo Area */}
-            <div className="dropdown-banner showcase-container">
-              {showcaseProducts.length > 0 ? (
-                <div className="top-products-showcase">
-                  <div className="showcase-header">
-                    <h4>Top {targetShowcaseCategory.name}</h4>
-                    <span className="showcase-subtitle">Featured Items</span>
-                  </div>
-                  <div className="showcase-list">
-                    {showcaseProducts.map(product => (
-                      <Link 
-                        key={product._id} 
-                        to={`/product/${product._id}`} 
-                        className="showcase-item"
-                        onClick={onClose}
-                      >
-                        <div className="showcase-img">
-                          {product.imageUrl ? (
-                            <img src={getImageUrl(product.imageUrl)} alt="" />
-                          ) : (
-                            <div className="showcase-placeholder">📦</div>
-                          )}
-                        </div>
-                        <div className="showcase-details">
-                          <span className="showcase-name">{product.name}</span>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
-                            <span className="showcase-price">${(product.baseRetailPrice || 0).toFixed(2)}</span>
-                            {product.badge && (
-                              <span className="showcase-badge">{product.badge}</span>
-                            )}
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                  <Link 
-                    to={`/category/${targetShowcaseCategory.slug}`} 
-                    className="showcase-more-btn"
-                    onClick={onClose}
+            {/* Catalog Filter Panel — context-aware: updates when a category is clicked */}
+            <div className="dropdown-banner showcase-container catalog-filter-panel">
+              <div className="filter-panel-header">
+                <SlidersHorizontal size={15} className="filter-panel-icon" />
+                <span>
+                  {selectedFilterCat ? selectedFilterCat.name : 'Filter Catalog'}
+                </span>
+                {selectedFilterCat && (
+                  <button
+                    className="filter-clear-btn"
+                    onClick={() => { setCategoryProducts(null); setSelectedFilterCat(null); setActiveTier3(null); setFilterSearch(''); setFilterType('all'); }}
+                    title="Clear filter"
+                    type="button"
                   >
-                    Show More
-                  </Link>
-                </div>
-              ) : currentTier1.promoBannerUrl ? (
-                <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                  <img 
-                    src={getImageUrl(currentTier1.promoBannerUrl)} 
-                    alt={currentTier1.name} 
-                    style={{ width: '100%', maxHeight: '180px', objectFit: 'cover', borderRadius: '8px', marginBottom: '15px' }} 
+                    <X size={12} />
+                  </button>
+                )}
+              </div>
+
+              {/* Search input */}
+              <form onSubmit={handleFilterSearchSubmit} className="filter-search-form">
+                <div className="filter-search-wrap">
+                  <Search size={14} className="filter-search-icon" />
+                  <input
+                    type="text"
+                    placeholder="Search parts, SKU..."
+                    value={filterSearch}
+                    onChange={e => setFilterSearch(e.target.value)}
+                    className="filter-search-input"
                   />
-                  <h4 style={{ fontSize: '15px', fontWeight: '700', marginBottom: '5px' }}>{currentTier1.name} Accessories</h4>
-                  <Link to={currentTier1.promoBannerLink || `/category/${currentTier1.slug}`} className="banner-link" style={{ marginTop: '5px' }}>Shop Collection</Link>
                 </div>
-              ) : (
-                <div className="banner-card">
-                  <h4>{currentTier1.name} Accessories</h4>
-                  <p>Bulk discounts available on all {currentTier1.name} accessories.</p>
-                  <Link to={`/category/${currentTier1.slug}`} className="banner-link">Shop Collection</Link>
-                </div>
-              )}
+              </form>
+
+              {/* Product type chips */}
+              <div className="filter-type-chips">
+                {productTypes.map(type => (
+                  <button
+                    key={type}
+                    className={`filter-chip ${filterType === type ? 'active' : ''}`}
+                    onClick={() => setFilterType(type)}
+                    type="button"
+                  >
+                    {type === 'all' ? 'All Types' : type}
+                  </button>
+                ))}
+              </div>
+
+              {/* Results list */}
+              <div className="filter-results-list">
+                {filterLoading ? (
+                  <p className="filter-empty-msg">Loading...</p>
+                ) : filterProducts.length === 0 ? (
+                  <p className="filter-empty-msg">No products found.</p>
+                ) : (
+                  filterProducts.map(product => (
+                    <Link
+                      key={product._id}
+                      to={`/product/${product._id}`}
+                      className="showcase-item"
+                      onClick={() => { onClose(); setActiveCategory(null); }}
+                    >
+                      <div className="showcase-img">
+                        {product.imageUrl ? (
+                          <img src={getImageUrl(product.imageUrl)} alt="" />
+                        ) : (
+                          <div className="showcase-placeholder">📦</div>
+                        )}
+                      </div>
+                      <div className="showcase-details">
+                        <span className="showcase-name">{product.name}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                          <span className="showcase-price">${parseFloat(product.retailPrice || 0).toFixed(2)}</span>
+                          {product.badge && <span className="showcase-badge">{product.badge}</span>}
+                        </div>
+                      </div>
+                    </Link>
+                  ))
+                )}
+              </div>
+
+              <Link
+                to={
+                  selectedFilterCat
+                    ? `/category/${selectedFilterCat.slug}`
+                    : filterSearch.trim()
+                    ? `/?search=${encodeURIComponent(filterSearch.trim())}`
+                    : '/products'
+                }
+                className="showcase-more-btn"
+                onClick={() => { onClose(); setActiveCategory(null); }}
+              >
+                {selectedFilterCat ? `All ${selectedFilterCat.name} Products` : 'View All Results'}
+              </Link>
             </div>
           </div>
         </div>
