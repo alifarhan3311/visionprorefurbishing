@@ -127,6 +127,12 @@ const MegaMenu = ({ isOpen, onClose }) => {
     fetchCategories();
   }, []);
 
+  const handleCategoryHover = (category) => {
+    if (category.children?.length > 0) {
+      setActiveCategory(category._id);
+    }
+  };
+
   const handleCategoryClick = (category, event) => {
     if (category.children?.length > 0) {
       event.preventDefault();
@@ -135,8 +141,13 @@ const MegaMenu = ({ isOpen, onClose }) => {
   };
 
   const handleMouseLeave = () => {
-    // Removed hover-based menu closing for better UX
-    // Users can now close the menu intentionally using the close button
+    setActiveCategory(null);
+    setActiveTier2(null);
+    setActiveTier3(null);
+    setCategoryProducts(null);
+    setSelectedFilterCat(null);
+    setFilterSearch('');
+    setFilterType('all');
   };
 
   useEffect(() => {
@@ -231,6 +242,7 @@ const MegaMenu = ({ isOpen, onClose }) => {
             <li 
               key={category._id}
               className={`mega-menu-item ${activeCategory === category._id ? 'active' : ''}`}
+              onMouseEnter={() => handleCategoryHover(category)}
             >
               <Link 
                 to={`/category/${category.slug}`} 
@@ -303,11 +315,11 @@ const MegaMenu = ({ isOpen, onClose }) => {
                       <div 
                         key={tier3._id} 
                         className="dropdown-col"
-                        onClick={() => setActiveTier3(tier3)}
+                        onMouseEnter={() => setActiveTier3(tier3)}
                       >
                         <button 
                           className="tier3-title"
-                          onClick={() => setActiveTier3(tier3)}
+                          onClick={() => { navigate(`/category/${tier3.slug}`); onClose(); }}
                           type="button"
                           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'inherit' }}
                         >
@@ -318,7 +330,8 @@ const MegaMenu = ({ isOpen, onClose }) => {
                             <li key={tier4._id}>
                               <button
                                 className="tier4-item"
-                                onClick={(e) => { e.stopPropagation(); setActiveTier3(tier4); }}
+                                onMouseEnter={() => setActiveTier3(tier4)}
+                                onClick={(e) => { e.stopPropagation(); navigate(`/category/${tier4.slug}`); onClose(); }}
                                 type="button"
                                 style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'inherit', color: 'inherit', font: 'inherit' }}
                               >
@@ -418,19 +431,6 @@ const MegaMenu = ({ isOpen, onClose }) => {
                 )}
               </div>
 
-              <Link
-                to={
-                  selectedFilterCat
-                    ? `/category/${selectedFilterCat.slug}`
-                    : filterSearch.trim()
-                    ? `/?search=${encodeURIComponent(filterSearch.trim())}`
-                    : '/products'
-                }
-                className="showcase-more-btn"
-                onClick={() => { onClose(); setActiveCategory(null); }}
-              >
-                {selectedFilterCat ? `All ${selectedFilterCat.name} Products` : 'View All Results'}
-              </Link>
             </div>
           </div>
         </div>
