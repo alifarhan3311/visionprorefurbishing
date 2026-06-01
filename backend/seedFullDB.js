@@ -52,7 +52,7 @@ const seedFullDB = async () => {
     }
 
     // 3. Seed Products
-    const products = await Product.create([
+    const productsToSeed = [
       {
         name: 'iPhone 15 Pro Max OLED Assembly (Premium)',
         sku: 'IP15PM-OLED-PRM',
@@ -64,7 +64,9 @@ const seedFullDB = async () => {
           warrantyPeriod: 'Lifetime'
         },
         status: 'in_stock',
-        imageUrl: 'https://images.unsplash.com/photo-1591337676887-a21bfc42d103?auto=format&fit=crop&q=80&w=400',
+        images: [
+          'https://images.unsplash.com/photo-1591337676887-a21bfc42d103?auto=format&fit=crop&q=80&w=400'
+        ],
         badge: 'Hot Seller'
       },
       {
@@ -78,10 +80,19 @@ const seedFullDB = async () => {
           bulkTierPrice: 450.00
         },
         status: 'in_stock',
-        imageUrl: 'https://images.unsplash.com/photo-1504917595217-d4f3915ce113?auto=format&fit=crop&q=80&w=400',
+        images: [
+          'https://images.unsplash.com/photo-1504917595217-d4f3915ce113?auto=format&fit=crop&q=80&w=400'
+        ],
         badge: 'Genuine'
       }
-    ]);
+    ];
+
+    const products = await Product.create(
+      productsToSeed.map(product => ({
+        ...product,
+        imageUrl: (Array.isArray(product.images) && product.images[0]) || ''
+      }))
+    );
 
     // 4. Seed Orders
     await Order.create({

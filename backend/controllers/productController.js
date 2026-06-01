@@ -40,8 +40,8 @@ exports.createProduct = async (req, res) => {
     }
 
     let imageUrl = dynamicFields.imageUrl || '';
-    if (req.file) {
-      imageUrl = `/uploads/${req.file.filename}`;
+    if (req.files?.imageUrl?.[0]) {
+      imageUrl = `/uploads/${req.files.imageUrl[0].filename}`;
     }
 
     // Handle multiple images (image0..image3)
@@ -54,8 +54,8 @@ exports.createProduct = async (req, res) => {
         images.push(dynamicFields[`existingImage${i}`]);
       }
     }
-    // primary imageUrl = first uploaded image or existing
-    if (images.length > 0 && !imageUrl) imageUrl = images[0];
+    // primary imageUrl = explicit upload or first uploaded image
+    if (!imageUrl && images.length > 0) imageUrl = images[0];
 
     const stockQuantity = dynamicFields.stockQuantity !== undefined ? Number(dynamicFields.stockQuantity) : 10;
 
@@ -334,8 +334,8 @@ exports.updateProduct = async (req, res) => {
     const { name, sku, baseRetailPrice, retailerPrice, category, productType, ...dynamicFields } = req.body;
 
     let imageUrl = dynamicFields.imageUrl || product.imageUrl;
-    if (req.file) {
-      imageUrl = `/uploads/${req.file.filename}`;
+    if (req.files?.imageUrl?.[0]) {
+      imageUrl = `/uploads/${req.files.imageUrl[0].filename}`;
     }
 
     // Handle multiple images (image0..image3)
@@ -350,7 +350,11 @@ exports.updateProduct = async (req, res) => {
     }
     // Keep existing images if none uploaded
     const finalImages = images.length > 0 ? images : (product.images || []);
-    if (finalImages.length > 0 && !imageUrl) imageUrl = finalImages[0];
+    if (images.length > 0) {
+      imageUrl = images[0];
+    } else if (!imageUrl && finalImages.length > 0) {
+      imageUrl = finalImages[0];
+    }
 
     const updateData = {
       name,

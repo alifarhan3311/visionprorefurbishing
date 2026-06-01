@@ -4,8 +4,9 @@ const { createProduct, getProducts, getProductById, validateSKUs, updateProduct,
 const { protect, admin, optional } = require('../middleware/authMiddleware');
 const { uploadProductImages } = require('../middleware/uploadMiddleware');
 
-// field config: image0..image3 (4 slots)
+// field config: primary imageUrl plus image0..image3 slots
 const productImageFields = [
+  { name: 'imageUrl', maxCount: 1 },
   { name: 'image0', maxCount: 1 },
   { name: 'image1', maxCount: 1 },
   { name: 'image2', maxCount: 1 },
