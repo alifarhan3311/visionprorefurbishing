@@ -348,13 +348,15 @@
   margin-bottom: 8px;
 }
 
-.tier4-list li a {
+.tier4-list li a,
+.tier4-item {
   font-size: 13.5px;
   color: var(--text-secondary);
   transition: color 0.2s ease;
 }
 
-.tier4-list li a:hover {
+.tier4-list li a:hover,
+.tier4-item:hover {
   color: var(--secondary-color);
 }
 

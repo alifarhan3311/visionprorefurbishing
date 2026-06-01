@@ -42,6 +42,7 @@ import Support from './components/shop/Support';
 import Preloader from './components/common/Preloader';
 import Home from './components/home/Home';
 import Products from './components/shop/Products';
+import CategoryPage from './components/shop/CategoryPage';
 import './index.css';
 
 // Scroll to top on every route change — placed outside App so it's stable
@@ -95,8 +96,7 @@ function App() {
           <Footer />
         </div>
       } />
-      <Route path="/category/:slug" element={<><Home /><Footer /></>} />
-      <Route path="/category/*" element={<><Home /><Footer /></>} />
+      <Route path="/category/:slug" element={<><CategoryPage /><Footer /></>} />
       <Route path="/product/:id" element={<><ProductDetails /><Footer /></>} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/blog" element={<Blog />} />

@@ -73,7 +73,13 @@ const Footer = () => {
               <div className="footer-contact-icon"><MapPin size={16} /></div>
               <div>
                 <span className="footer-contact-label">Store Address</span>
-                <span>Vision Pro Lcd — 7215 Goreway Dr #1c27, Mississauga, ON L4T 2T9</span>
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=Vision+Pro+Lcd+7215+Goreway+Dr+%231c27+Mississauga+ON+L4T+2T9"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Vision Pro Lcd — 7215 Goreway Dr #1c27, Mississauga, ON L4T 2T9
+                </a>
               </div>
             </div>
 

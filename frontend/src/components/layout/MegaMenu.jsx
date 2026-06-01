@@ -90,7 +90,7 @@ const MegaMenu = ({ isOpen, onClose }) => {
           (p.sku || '').toLowerCase().includes(q)
         );
       }
-      setFilterProducts(results.slice(0, 8));
+      setFilterProducts(results.slice(0, 10));
     }, 200);
   }, [filterSearch, filterType, basePool]);
 
@@ -305,19 +305,25 @@ const MegaMenu = ({ isOpen, onClose }) => {
                         className="dropdown-col"
                         onClick={() => setActiveTier3(tier3)}
                       >
-                        <Link to={`/category/${tier3.slug}`} className="tier3-title">
+                        <button 
+                          className="tier3-title"
+                          onClick={() => setActiveTier3(tier3)}
+                          type="button"
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'inherit' }}
+                        >
                           {tier3.name}
-                        </Link>
+                        </button>
                         <ul className="tier4-list">
                           {tier3.children?.map(tier4 => (
                             <li key={tier4._id}>
-                              <Link
-                                to={`/category/${tier4.slug}`}
+                              <button
                                 className="tier4-item"
                                 onClick={(e) => { e.stopPropagation(); setActiveTier3(tier4); }}
+                                type="button"
+                                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'inherit', color: 'inherit', font: 'inherit' }}
                               >
                                 {tier4.name}
-                              </Link>
+                              </button>
                             </li>
                           ))}
                         </ul>
