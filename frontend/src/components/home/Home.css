@@ -29,9 +29,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Use contain to show full-width banners without cropping; no-repeat keeps single-banner layout */
+  /* Use contain to show full image without cropping */
   background-size: contain;
-  background-position: center center;
+  background-position: center;
   background-repeat: no-repeat;
 }
 
@@ -266,15 +266,28 @@
 }
 
 /* --- Responsive Layout for Home --- */
+
+/* Tablet (landscape and up): Adjust hero height */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hero-slider-container {
+    height: 55vh;
+    min-height: 400px;
+  }
+  
+  .hero-title {
+    font-size: 38px;
+  }
+  
+  .hero-subtitle {
+    font-size: 18px;
+  }
+}
+
+/* Mobile (portrait and landscape): Optimize for smaller screens */
 @media (max-width: 768px) {
   .hero-slider-container {
     height: 45vh;
-    min-height: 350px;
-  }
-  
-  .hero-slide {
-    background-size: cover;
-    background-position: center;
+    min-height: 320px;
   }
   
   .hero-slide-content {
@@ -283,11 +296,13 @@
   }
   
   .hero-title {
-    font-size: 32px;
+    font-size: 28px;
+    margin-bottom: 15px;
   }
   
   .hero-subtitle {
-    font-size: 16px;
+    font-size: 14px;
+    margin-bottom: 25px;
   }
   
   .product-grid {
@@ -305,5 +320,26 @@
   
   .product-price {
     font-size: 18px;
+  }
+}
+
+/* Small phones: Further optimize */
+@media (max-width: 480px) {
+  .hero-slider-container {
+    height: 40vh;
+    min-height: 280px;
+  }
+  
+  .hero-title {
+    font-size: 24px;
+  }
+  
+  .hero-subtitle {
+    font-size: 12px;
+  }
+  
+  .hero-btn {
+    padding: 10px 20px;
+    font-size: 14px;
   }
 }

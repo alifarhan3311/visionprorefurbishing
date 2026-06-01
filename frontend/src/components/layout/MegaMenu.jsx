@@ -135,10 +135,8 @@ const MegaMenu = ({ isOpen, onClose }) => {
   };
 
   const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setActiveCategory(null);
-      setActiveTier3(null);
-    }, 300);
+    // Removed hover-based menu closing for better UX
+    // Users can now close the menu intentionally using the close button
   };
 
   useEffect(() => {
@@ -228,15 +226,7 @@ const MegaMenu = ({ isOpen, onClose }) => {
           {/* Categories label */}
           <div className="mobile-section-label mobile-only">Categories</div>
           <ul className="mega-menu-list">
-            <li className="mega-menu-item">
-              <Link 
-                to="/products" 
-                onClick={onClose}
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: 'inherit' }}
-              >
-                <span>All Products</span>
-              </Link>
-            </li>
+            
             {categories.map(category => (
             <li 
               key={category._id}
@@ -264,6 +254,15 @@ const MegaMenu = ({ isOpen, onClose }) => {
       {/* Dropdown Panel */}
       {activeCategory && currentTier1 && (
         <div className={`mega-dropdown show`}>
+          <button 
+            className="dropdown-close-btn" 
+            onClick={() => { setActiveCategory(null); setActiveTier3(null); }}
+            title="Close menu"
+            type="button"
+            aria-label="Close menu"
+          >
+            <X size={18} />
+          </button>
           <div className="container mega-dropdown-content">
             
             {/* Sidebar (Tier 2 - Brands/Sub-Categories) */}

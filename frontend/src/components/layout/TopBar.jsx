@@ -16,9 +16,14 @@ const TopBar = () => {
       <div className="container top-bar-content">
         <div className="top-bar-left">
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px', whiteSpace: 'nowrap' }}>
-            <a href="https://wa.me/14169197565" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'inherit', textDecoration: 'none' }}>
-              <Phone size={13} /> +1 (647) 261-5077
-            </a>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flexWrap: 'wrap' }}>
+              <a href="https://wa.me/14169197565" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'inherit', textDecoration: 'none' }}>
+                <Phone size={13} /> +1 (416) 919-7565
+              </a>
+              <a href="https://wa.me/16472615077" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'inherit', textDecoration: 'none' }}>
+                <Phone size={13} /> +1 (647) 261-5077
+              </a>
+            </div>
             <span>Introducing the Genuine Apple Parts Program!</span>
           </div>
         </div>

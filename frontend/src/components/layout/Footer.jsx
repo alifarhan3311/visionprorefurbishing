@@ -81,7 +81,13 @@ const Footer = () => {
               <div className="footer-contact-icon"><MapPin size={16} /></div>
               <div>
                 <span className="footer-contact-label">Warehouse</span>
-                <span>O2 Lcd Refurbishing — 14 Automatic Rd #34, Brampton, ON L6S 5N5</span>
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=O2+Lcd+Refurbishing+14+Automatic+Rd+%2334+Brampton+ON+L6S+5N5"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  O2 Lcd Refurbishing — 14 Automatic Rd #34, Brampton, ON L6S 5N5
+                </a>
               </div>
             </div>
 
@@ -89,7 +95,11 @@ const Footer = () => {
               <div className="footer-contact-icon"><Phone size={16} /></div>
               <div>
                 <span className="footer-contact-label">Phone / WhatsApp</span>
-                <a href="https://wa.me/14169197565" target="_blank" rel="noreferrer">+1 (647) 261-5077</a>
+                <div className="footer-contact-numbers">
+                  <a href="https://wa.me/14169197565" target="_blank" rel="noreferrer">+1 (416) 919-7565</a>
+                  <br />
+                  <a href="https://wa.me/16472615077" target="_blank" rel="noreferrer">+1 (647) 261-5077</a>
+                </div>
               </div>
             </div>
 
@@ -105,7 +115,7 @@ const Footer = () => {
               <div className="footer-contact-icon"><Clock size={16} /></div>
               <div>
                 <span className="footer-contact-label">Working Hours</span>
-                <span>Mon – Fri: 10 AM – 9 PM &nbsp;|&nbsp; Sat: 10 AM – 9 PM &nbsp;|&nbsp; Sun: 12 PM – 6 PM</span>
+                <span>Mon – Fri: 10 AM – 9 PM &nbsp;|&nbsp; Sat: 10 AM – 6 PM &nbsp;|&nbsp; Sun: 12 PM – 5 PM</span>
               </div>
             </div>
 
