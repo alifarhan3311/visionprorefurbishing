@@ -104,7 +104,7 @@ const Signup = () => {
 
             {formData.role === 'retailer' && (
               <div className="form-group">
-                <label>House Address</label>
+                <label>Store Address</label>
                 <input
                   type="text"
                   name="houseAddress"

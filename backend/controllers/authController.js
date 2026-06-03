@@ -13,20 +13,38 @@ const generateToken = (id) => {
 exports.registerUser = async (req, res) => {
   try {
     const { name, email, password, companyName, role, houseAddress } = req.body;
-    
+
     const userExists = await User.findOne({ email });
+
     if (userExists) {
       if (!userExists.isEmailVerified) {
         const otp = userExists.getEmailVerificationOtp();
         await userExists.save({ validateBeforeSave: false });
+
         await sendEmail({
           to: userExists.email,
           subject: 'Vision PRO - Email Verification OTP',
-          html: `<h1>Welcome to Vision PRO!</h1><p>Your OTP for email verification is: <strong style="font-size:24px;">${otp}</strong></p><p>It is valid for 10 minutes.</p>`
+          html: `
+            <h2>Vision PRO Email Verification</h2>
+            <p>Hello ${userExists.name || "User"},</p>
+            <p>Your OTP for email verification is:</p>
+            <h1>${otp}</h1>
+            <p>This OTP is valid for 10 minutes.</p>
+            <p>If you did not request this, ignore this email.</p>
+          `
         });
-        return res.status(200).json({ success: true, message: 'OTP resent to email. Please verify.', email: userExists.email });
+
+        return res.status(200).json({
+          success: true,
+          message: 'OTP resent to email. Please verify.',
+          email: userExists.email
+        });
       }
-      return res.status(400).json({ success: false, error: 'User already exists' });
+
+      return res.status(400).json({
+        success: false,
+        error: 'User already exists'
+      });
     }
 
     const allowedRoles = ['user', 'admin', 'retailer'];
@@ -48,17 +66,29 @@ exports.registerUser = async (req, res) => {
     await sendEmail({
       to: user.email,
       subject: 'Vision PRO - Email Verification OTP',
-      html: `<h1>Welcome to Vision PRO!</h1><p>Your OTP for email verification is: <strong style="font-size:24px;">${otp}</strong></p><p>It is valid for 10 minutes.</p>`
+      html: `
+        <h2>Welcome to Vision PRO</h2>
+        <p>Hello ${name || "User"},</p>
+        <p>Thank you for registering.</p>
+        <p>Your OTP for email verification is:</p>
+        <h1>${otp}</h1>
+        <p>This OTP is valid for 10 minutes.</p>
+        <p>If you did not create this account, ignore this email.</p>
+      `
     });
 
     res.status(201).json({
       success: true,
-      message: 'Registration successful. Please verify your OTP sent to your email.',
+      message: 'Registration successful. Please verify OTP sent to email.',
       email: user.email
     });
+
   } catch (error) {
     console.error('Registration Error:', error);
-    res.status(400).json({ success: false, error: error.message });
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
   }
 };
 
@@ -138,37 +168,7 @@ exports.getMe = async (req, res) => {
   }
 };
 
-exports.forgotPassword = async (req, res) => {
-  try {
-    const user = await User.findOne({ email: req.body.email });
-    if (!user) return res.status(404).json({ success: false, error: 'User not found' });
 
-    const otp = user.getResetPasswordOtp();
-    await user.save({ validateBeforeSave: false });
-
-    const message = `
-      <h1>Password Reset Request</h1>
-      <p>Your OTP for password reset is: <strong style="font-size:24px;">${otp}</strong></p>
-      <p>This OTP is valid for 10 minutes. Do not share it with anyone.</p>
-    `;
-
-    try {
-      await sendEmail({
-        to: user.email,
-        subject: 'Vision PRO - Password Reset OTP',
-        html: message
-      });
-      res.status(200).json({ success: true, data: 'OTP sent to email' });
-    } catch (err) {
-      user.resetPasswordOtp = undefined;
-      user.resetPasswordOtpExpire = undefined;
-      await user.save({ validateBeforeSave: false });
-      return res.status(500).json({ success: false, error: 'Email could not be sent' });
-    }
-  } catch (error) {
-    res.status(400).json({ success: false, error: error.message });
-  }
-};
 
 exports.resetPassword = async (req, res) => {
   try {
