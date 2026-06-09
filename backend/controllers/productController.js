@@ -117,11 +117,18 @@ exports.createProduct = async (req, res) => {
 // @access  Public (Pricing alters based on auth token in reality)
 exports.getProducts = async (req, res) => {
   try {
-    const { category, type } = req.query;
+    const { category, type, search } = req.query;
     
     // Build filter
     const query = { status: 'in_stock' };
     
+    if (search) {
+      const escapeRegex = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      query.$or = [
+        { name: { $regex: escapeRegex, $options: 'i' } },
+        { sku: { $regex: escapeRegex, $options: 'i' } }
+      ];
+    }
     if (category) {
       let targetCatId;
       if (category.match(/^[0-9a-fA-F]{24}$/)) {

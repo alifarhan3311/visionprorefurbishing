@@ -24,7 +24,11 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
+// Static Files
+app.use(express.static(path.join(__dirname, "public")));
 
 // Configure `trust proxy` safely. Do NOT set to boolean `true` (too permissive)
 // for express-rate-limit. Use an explicit value via env or leave unset.
@@ -94,10 +98,14 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // 8. Stricter Rate Limiting for Authentication routes (Brute Force prevention)
+// Temp increased for development; revert to 5 for production
 const authLimiter = rateLimit({
-  max: 20, // Only 20 login/signup attempts per hour
+  max: process.env.NODE_ENV === 'production' ? 5 : 100,
   windowMs: 60 * 60 * 1000,
-  message: 'Too many login attempts from this IP, please try again after an hour'
+  message: 'Too many login attempts from this IP, please try again after an hour',
+  skipSuccessfulRequests: false,
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 app.use('/api/v1/auth', authLimiter);
 
@@ -194,6 +202,14 @@ process.on('SIGTERM', () => {
   });
 });
 
+
+// ejs
+
+app.get("/", (req, res) => {
+  res.render("home");
+});
+
+
 // Mount Routes
 app.use('/api/v1/categories', categoryRoutes);
 app.use('/api/v1/products', productRoutes)
@@ -231,10 +247,7 @@ app.use((err, req, res, next) => {
   next();
 });
 
-// Basic Route
-app.get('/', (req, res) => {
-  res.json({ message: 'MobileSentrix Backend API is running!' });
-});
+
 
 app.listen(PORT, () => {
   console.log(`🚀 Server is blasting off on port ${PORT}`);

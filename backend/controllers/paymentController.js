@@ -1,8 +1,8 @@
 const https = require('https');
 
-// Clover production base URL
-const CLOVER_BASE_URL = 'https://scl.clover.com';
-// For sandbox testing use: 'https://scl-sandbox.dev.clover.com'
+const CLOVER_BASE_URL = process.env.CLOVER_SANDBOX === 'true' 
+  ? 'https://scl-sandbox.dev.clover.com' 
+  : 'https://scl.clover.com';
 
 /**
  * @desc    Create a Clover charge using a card token from the iframe
@@ -20,7 +20,7 @@ exports.createCloverCharge = async (req, res) => {
       return res.status(400).json({ success: false, error: 'Valid amount is required' });
     }
 
-    const privateKey = process.env.CLOVER_PRIVATE_IP || process.env.CLOVER_PRIVATE_API_KEY;
+    const privateKey = process.env.CLOVER_PRIVATE_API_KEY;
     if (!privateKey) {
       return res.status(500).json({ success: false, error: 'Clover private key not configured' });
     }

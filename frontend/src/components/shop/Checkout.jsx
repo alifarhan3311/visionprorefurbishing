@@ -5,6 +5,7 @@ import { getBulkDiscount, getEffectivePrice } from '../../context/CartContext';
 import { AuthContext } from '../../context/AuthContext';
 import api from '../../services/api';
 import { CheckCircle2, Tag } from 'lucide-react';
+import CloverPayment from './CloverPayment';
 import '../user/UserLayout.css';
 
 const CheckoutContent = () => {
@@ -68,11 +69,6 @@ const CheckoutContent = () => {
 
   const handleChange = (e) => {
     setShippingAddress({ ...shippingAddress, [e.target.name]: e.target.value });
-  };
-
-  const handleCloverTokenChange = (e) => {
-    setCloverToken(e.target.value);
-    setCloverError(null);
   };
 
   const submitOrder = async (paymentResult = {}) => {
@@ -276,25 +272,20 @@ const CheckoutContent = () => {
               </label>
             </div>
 
-            {paymentMethod === 'Clover' && (
-              <div style={{ marginTop: '25px', padding: '20px', border: '1px solid var(--border-color)', borderRadius: '8px', backgroundColor: 'var(--bg-elevated)' }}>
-                <h4 style={{ marginBottom: '15px', color: 'var(--text-primary)', fontSize: '15px', fontWeight: '600' }}>Clover Payment Token</h4>
-                <p style={{ margin: '0 0 15px 0', color: 'var(--text-secondary)', fontSize: '13px' }}>
-                  Enter the Clover payment token obtained from your Clover terminal or device.
-                </p>
-                <input 
-                  type="text" 
-                  value={cloverToken} 
-                  onChange={handleCloverTokenChange} 
-                  placeholder="Clover Card Token"
-                  required 
-                  style={{ padding: '12px', border: '1px solid var(--border-color)', borderRadius: '6px', fontSize: '15px', width: '100%', boxSizing: 'border-box', backgroundColor: 'var(--bg-elevated)', color: 'var(--text-primary)' }} 
-                />
-                {cloverError && <div style={{ color: '#ef4444', marginTop: '10px', fontSize: '13px', fontWeight: '500' }}>{cloverError}</div>}
-              </div>
-            )}
-          </form>
-        </div>
+{paymentMethod === 'Clover' && (
+               <CloverPayment
+                 amount={finalTotal}
+                 onTokenGenerated={(token) => {
+                   setCloverToken(token);
+                   setCloverError(null);
+                 }}
+                 onError={(error) => setCloverError(error)}
+                 disabled={loading}
+               />
+             )}
+             {cloverError && <div style={{ color: '#ef4444', marginTop: '10px', fontSize: '13px', fontWeight: '500' }}>{cloverError}</div>}
+           </form>
+         </div>
 
         <div className="user-card" style={{ height: 'fit-content' }}>
           <h3 style={{ fontSize: '18px', borderBottom: '1px solid var(--border-color)', paddingBottom: '15px', marginBottom: '15px' }}>Order Summary</h3>
